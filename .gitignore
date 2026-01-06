@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Ignition specific
+backup/
+autosave/
+*.gwbk.bak
+*.proj.bak
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+*.local

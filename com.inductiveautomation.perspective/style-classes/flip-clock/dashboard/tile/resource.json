@@ -1,0 +1,16 @@
+{
+  "scope": "G",
+  "version": 1,
+  "restricted": false,
+  "overridable": true,
+  "files": [
+    "style.json"
+  ],
+  "attributes": {
+    "lastModification": {
+      "actor": "brad@detron.com.au",
+      "timestamp": "2026-01-06T07:03:12Z"
+    },
+    "lastModificationSignature": "76e31fcc2d4b1a0caa2bcd3401f48422cd62aa9de6a0576e342e678ac4d45aa7"
+  }
+}

@@ -1,0 +1,2399 @@
+{
+  "custom": {
+    "allRecipes": [
+      {
+        "label": "All Function Check Large",
+        "value": 19
+      }
+    ],
+    "currentID": null,
+    "currentRecipe": "",
+    "currentRunning": false,
+    "data": [],
+    "endTime": 0,
+    "function": 0,
+    "paused": 0,
+    "runningRecipes": [],
+    "show": false,
+    "showPresets": false,
+    "startStops": [],
+    "startTime": {
+      "$": [
+        "ts",
+        192,
+        1674155524319
+      ],
+      "$ts": 1674155341283
+    },
+    "step": null,
+    "presetList": []
+  },
+  "params": {},
+  "propConfig": {
+    "custom.allRecipes": {
+      "binding": {
+        "config": {
+          "queryPath": "Exchange/SFC Recipe Handler/Query All Recipes(Dropdown)",
+          "returnFormat": "json"
+        },
+        "type": "query"
+      },
+      "persistent": true
+    },
+    "custom.currentID": {
+      "persistent": true
+    },
+    "custom.currentRecipe": {
+      "binding": {
+        "config": {
+          "expression": "{/root/FlexContainer Select/Dropdown.props.value}"
+        },
+        "transforms": [
+          {
+            "code": "\tname\u003d\"\"\n\tfor recipe in self.custom.allRecipes:\n\t\tif recipe[\"value\"]\u003d\u003dvalue:\n\t\t\tname\u003drecipe[\"label\"]\n\t\t\tbreak\n\t\n\treturn name",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.currentRunning": {
+      "binding": {
+        "config": {
+          "expression": "{view.custom.currentRecipe}"
+        },
+        "transforms": [
+          {
+            "code": "\tstate\u003dFalse\n\tfor recipe in self.custom.runningRecipes:\n\t\tif recipe[\"recipe_name\"]\u003d\u003dvalue:\n\t\t\tself.custom.currentID\u003drecipe[\"id\"]\n\t\t\tstate\u003dTrue\n\t\t\tbreak\n\t\n\tif not state:\n\t\tself.custom.currentID\u003dNone\n\t\tself.custom.startStops\u003d[]\n\treturn state",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.data": {
+      "binding": {
+        "config": {
+          "parameters": {
+            "recipeId": "{/root/FlexContainer Select/Dropdown.props.value}"
+          },
+          "queryPath": "Exchange/SFC Recipe Handler/Query Recipe Steps by Recipe view",
+          "returnFormat": "json"
+        },
+        "overlayOptOut": true,
+        "transforms": [
+          {
+            "code": "\tx\u003d0\n\tdatalength\u003dlen(value)\n\tstartlength\u003dlen(self.custom.startStops)\n\t\n\t#formats the table data to include start times for each step if the step has started.\n\tif startlength\u003c\u003ddatalength and len(self.custom.startStops)\u003e0:\n\t\tfor date in self.custom.startStops:\n\t\t\tvalue[x][\"Start\"]\u003ddate\t\t\t\t\n\t\t\tx+\u003d1\n\t\tfor y in range(datalength-x):\n\t\t\tvalue[y+x][\"Start\"]\u003dNone\n\telse:\n\t\tfor points in value:\n\t\t\tpoints[\"Start\"]\u003dNone\n\treturn value",
+            "type": "script"
+          }
+        ],
+        "type": "query"
+      },
+      "persistent": true
+    },
+    "custom.endTime": {
+      "persistent": true
+    },
+    "custom.function": {
+      "binding": {
+        "config": {
+          "expression": "if({view.custom.currentRunning},{view.custom.data}[{view.custom.step}][\"recipe_function\"],0)"
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.paused": {
+      "persistent": true
+    },
+    "custom.runningRecipes": {
+      "persistent": true
+    },
+    "custom.show": {
+      "persistent": true
+    },
+    "custom.startStops": {
+      "persistent": true
+    },
+    "custom.startTime": {
+      "persistent": true
+    },
+    "custom.presetList": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Recipe_Manager/GetAllRecipes",
+          "pollRate": 30000,
+          "parameters": {}
+        }
+      }
+    },
+    "custom.step": {
+      "binding": {
+        "config": {
+          "expression": "now(1000)"
+        },
+        "transforms": [
+          {
+            "code": "\t\n\tself.refreshBinding(\"custom.data\")\n\tid \u003d self.custom.currentID\n\tdata \u003d system.sfc.getRunningCharts(\"Exchange/SFC Recipe Handler/SFC Recipe Handler\")\n\trunning\u003d[]\n\tcurrent\u003d[]\n\t#create a list of dictionaries for all running charts.\n\tfor row in range(data.rowCount):\n\t\trunningChartId \u003d data.getValueAt(row, \"instanceId\")\n\t\trunningChartName \u003d data.getValueAt(row, \"keyParamValue\")\n\t\trunning.append(runningChartId)\n\t\tcurrent.append({\"id\":runningChartId,\"recipe_name\":runningChartName})\n\tself.custom.runningRecipes\u003dcurrent\n\t\n\t#if the current recipe is running in an SFC chart, set the custom values to items from the sfc variables.\n\tif id in running:\n\t\tchartVars \u003d system.sfc.getVariables(id)\n\t\tself.custom.startTime\u003dchartVars[\"stepStartTime\"]\n\t\tself.custom.endTime\u003dchartVars[\"estEndTime\"]\n\t\tself.custom.startStops\u003dchartVars[\"startStops\"]\n\t\tself.custom.paused\u003dchartVars[\"stepTotalPause\"]\n\t\tif chartVars[\"paused\"]:\n\t\t\tself.getChild(\"root\").getChild(\"Button Pause\").custom.state\u003dFalse\n\t\telse:\n\t\t\tself.getChild(\"root\").getChild(\"Button Pause\").custom.state\u003dTrue\n\t\t\n\t\ttry:\n\t\t\treturn chartVars[\"stepNum\"]-1\n\t\texcept:\n\t\t\treturn None\n\telse:\n\t\tself.custom.startStops\u003d[]\n\t\tself.custom.currentID\u003dNone\n\t\tself.refreshBinding(\"custom.currentRunning\")\n\t\tself.refreshBinding(\"custom.data\")\n\t\treturn None\n\t",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "onChange": {
+        "enabled": null,
+        "script": "\t#if the current step is not null then\n\tif currentValue.value is not None:\n\t\t\n\t\tself.getChild(\"root\").getChild(\"BreakpointContainer\").getChild(\"FlexContainer\").getChild(\"FlexContainer Navigate\").getChild(\"EmbeddedView\").custom.activestep\u003dcurrentValue.value\n\t\t\n\t\t#open the step 7 popup if the chart is running.\n\t\tif self.custom.function\u003d\u003d7 and self.custom.currentID is not None and self.custom.currentID!\u003d\"\":\n\t\t\tstep\u003dint(currentValue.value)+1\n\t\t\tid\u003dself.custom.currentID\n\t\t\tstepdescipt\u003dself.custom.data[currentValue.value].step_descrip\n\t\t\tsystem.perspective.openPopup(\"F7Popup\",\u0027Exchange/SFC Recipe Handler/F7 Popup\u0027, params \u003d {\u0027name\u0027:stepdescipt,\u0027step\u0027:step,\u0027id\u0027:id},title\u003d\"Function 7\", showCloseIcon \u003d True, resizable \u003d True, draggable\u003dTrue, modal\u003dTrue)\n\t\t\t\n\telse:\n\t\tself.getChild(\"root\").getChild(\"BreakpointContainer\").getChild(\"FlexContainer\").getChild(\"FlexContainer Navigate\").getChild(\"EmbeddedView\").custom.activestep\u003d0"
+      },
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 870,
+      "width": 822
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "custom": {
+              "selectedChart": {
+                "Name": null,
+                "id": null,
+                "step": null
+              }
+            },
+            "meta": {
+              "name": "Dropdown"
+            },
+            "position": {
+              "basis": "200px",
+              "grow": 1
+            },
+            "propConfig": {
+              "custom.recipe": {
+                "binding": {
+                  "config": {
+                    "parameters": {
+                      "recipeName": "{this.custom.selectedChart.Name}"
+                    },
+                    "queryPath": "Exchange/SFC Recipe Handler/Query Recipe by Name",
+                    "returnFormat": "json"
+                  },
+                  "type": "query"
+                }
+              },
+              "props.options": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.allRecipes"
+                  },
+                  "type": "property"
+                }
+              },
+              "props.value": {
+                "onChange": {
+                  "enabled": null,
+                  "script": "\tstep\u003dself.view.custom.step\n\tself.view.refreshBinding(\"custom.allRecipes\")\n\tself.view.refreshBinding(\"custom.currentRecipe\")\n\tself.view.refreshBinding(\"custom.currentRunning\")\n\tself.view.refreshBinding(\"custom.currentRunning\")\n"
+                }
+              }
+            },
+            "props": {
+              "dropdownOptionStyle": {
+                "textAlign": "center"
+              },
+              "placeholder": {
+                "text": "Select Recipe..."
+              },
+              "search": {
+                "noResultsText": "No results, Create Recipe..."
+              },
+              "style": {
+                "margin": "5px"
+              },
+              "textAlign": "center"
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "events": {
+              "dom": {
+                "onClick": {
+                  "config": {
+                    "script": "\tself.view.refreshBinding(\"custom.allRecipes\")\n\tself.getSibling(\"Dropdown\").props.value\u003d\"\""
+                  },
+                  "scope": "G",
+                  "type": "script"
+                },
+                "onMouseOut": {
+                  "config": {
+                    "script": "\tself.props.style.backgroundColor\u003d\"\""
+                  },
+                  "scope": "G",
+                  "type": "script"
+                },
+                "onMouseOver": {
+                  "config": {
+                    "script": "\tself.props.style.backgroundColor\u003d\"#80808080\""
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button"
+            },
+            "position": {
+              "basis": "60px"
+            },
+            "props": {
+              "image": {
+                "height": 36,
+                "icon": {
+                  "path": "material/refresh"
+                },
+                "width": 36
+              },
+              "primary": false,
+              "style": {
+                "backgroundColor": "",
+                "margin": "5px",
+                "marginLeft": "0px"
+              },
+              "text": ""
+            },
+            "type": "ia.input.button"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer Select"
+        },
+        "position": {
+          "basis": "64px",
+          "shrink": 0
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {"name": "PresetsSection"},
+        "position": {"basis": "auto", "shrink": 0},
+        "props": {"direction": "column", "style": {"marginLeft": "5px", "marginRight": "5px", "marginBottom": "5px"}},
+        "children": [
+          {
+            "meta": {"name": "PresetsToggle"},
+            "position": {"basis": "32px", "shrink": 0},
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {"backgroundColor": "rgba(110, 206, 178, 0.1)", "borderRadius": "6px", "padding": "0 10px", "cursor": "pointer"}
+            },
+            "children": [
+              {
+                "meta": {"name": "PresetsIcon"},
+                "position": {"basis": "24px"},
+                "props": {"path": "material/restaurant_menu", "color": "#6ECEB2"},
+                "type": "ia.display.icon"
+              },
+              {
+                "meta": {"name": "PresetsLabel"},
+                "position": {"grow": 1},
+                "props": {"text": "Quick Load Presets", "style": {"fontSize": "13px", "fontWeight": "bold", "color": "#6ECEB2", "marginLeft": "8px"}},
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {"name": "ExpandIcon"},
+                "position": {"basis": "24px"},
+                "propConfig": {
+                  "props.path": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {"expression": "if({view.custom.showPresets}, 'material/expand_less', 'material/expand_more')"}
+                    }
+                  }
+                },
+                "props": {"path": "material/expand_more", "color": "#6ECEB2"},
+                "type": "ia.display.icon"
+              }
+            ],
+            "type": "ia.container.flex",
+            "events": {
+              "component": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "C",
+                  "config": {"script": "self.view.custom.showPresets = not self.view.custom.showPresets"}
+                }
+              }
+            }
+          },
+          {
+            "meta": {"name": "PresetsGrid", "visible": false},
+            "position": {"basis": "auto", "shrink": 0},
+            "propConfig": {
+              "meta.visible": {
+                "binding": {
+                  "type": "property",
+                  "config": {"path": "view.custom.showPresets"}
+                }
+              }
+            },
+            "props": {
+              "direction": "column",
+              "style": {"gap": "8px", "padding": "10px 0"}
+            },
+            "children": [
+              {
+                "meta": {"name": "PresetsTable"},
+                "position": {"basis": "auto", "shrink": 0, "grow": 1},
+                "propConfig": {
+                  "props.data": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.presetList"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "columns": [
+                    {"field": "recipe_name", "header": {"title": "Recipe"}, "width": 120, "style": {"color": "#FFFFFF", "fontWeight": "bold", "fontSize": "13px"}},
+                    {"field": "total_days", "header": {"title": "Days"}, "width": 50, "justify": "center", "style": {"color": "#6ECEB2", "fontWeight": "bold"}},
+                    {"field": "step_count", "header": {"title": "Steps"}, "width": 50, "justify": "center", "style": {"color": "#888888"}}
+                  ],
+                  "data": [],
+                  "selection": {
+                    "enableRowSelection": true,
+                    "enableColumnSelection": false
+                  },
+                  "pager": {"show": false},
+                  "style": {"backgroundColor": "transparent"},
+                  "header": {"style": {"backgroundColor": "#003E69", "color": "#FFFFFF", "fontWeight": "600", "fontSize": "10px", "textTransform": "uppercase", "height": "30px"}},
+                  "rows": {"style": {"backgroundColor": "rgba(110, 206, 178, 0.1)", "borderBottom": "1px solid rgba(110, 206, 178, 0.2)", "height": "36px", "cursor": "pointer"}}
+                },
+                "type": "ia.display.table",
+                "events": {
+                  "component": {
+                    "onSelectionChange": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "row = self.props.selection.data[0] if self.props.selection.data else None\nif row:\n\trecipe_name = row['recipe_name']\n\tparentView = self.parent.parent.parent.parent.parent\n\tfor recipe in parentView.custom.allRecipes:\n\t\tif recipe['label'] == recipe_name:\n\t\t\tparentView.getChild('root').getChild('FlexContainer Select').getChild('Dropdown').props.value = recipe['value']\n\t\t\tbreak\n\tparentView.custom.showPresets = False"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "meta": {"name": "ViewAllPresets"},
+                "position": {"basis": "36px", "shrink": 0},
+                "props": {
+                  "text": "View Full Presets Page",
+                  "style": {"backgroundColor": "transparent", "color": "#6ECEB2", "border": "1px dashed #6ECEB2", "borderRadius": "6px", "marginTop": "5px", "fontSize": "12px"}
+                },
+                "type": "ia.input.button",
+                "events": {
+                  "component": {
+                    "onActionPerformed": {
+                      "type": "script",
+                      "scope": "C",
+                      "config": {"script": "system.perspective.navigate('Exchange/SFC Recipe Handler/Recipe Presets')"}
+                    }
+                  }
+                }
+              }
+            ],
+            "type": "ia.container.flex"
+          }
+        ],
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "custom": {
+              "rotate": 90
+            },
+            "meta": {
+              "name": "Icon Running"
+            },
+            "position": {
+              "basis": "40px"
+            },
+            "propConfig": {
+              "props.style.transform": {
+                "binding": {
+                  "config": {
+                    "expression": "now(500)"
+                  },
+                  "transforms": [
+                    {
+                      "code": "\tnewval\u003dself.custom.rotate\n\tnewval+\u003d22.5\n\ttry:\n\t\tif newval\u003e\u003d360:\n\t\t\tnewval\u003d 0\n\n\texcept:\n\t\tnewval\u003d0\n\tself.custom.rotate\u003dnewval\n\treturn \"rotate(%sdeg)\"%newval\n",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "color": "#00AC00",
+              "path": "material/autorenew",
+              "style": {
+                "marginLeft": "15px"
+              }
+            },
+            "type": "ia.display.icon"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Label"
+                    },
+                    "position": {
+                      "basis": "125px",
+                      "grow": 1
+                    },
+                    "props": {
+                      "style": {
+                        "fontSize": 12
+                      },
+                      "text": "Step Elapsed Time:",
+                      "textStyle": {
+                        "textAlign": "Right"
+                      }
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Label Time"
+                    },
+                    "position": {
+                      "basis": "125px",
+                      "grow": 1
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "config": {
+                            "expression": "secondsBetween({view.custom.startTime},now())"
+                          },
+                          "overlayOptOut": true,
+                          "transforms": [
+                            {
+                              "code": "\timport datetime\n\ta \u003d datetime.timedelta(seconds\u003dvalue)\n\treturn str(a)",
+                              "type": "script"
+                            }
+                          ],
+                          "type": "expr"
+                        }
+                      }
+                    },
+                    "props": {
+                      "style": {
+                        "fontSize": 12,
+                        "marginLeft": "10px"
+                      },
+                      "textStyle": {
+                        "textAlign": "Left"
+                      }
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "FlexContainer Elapsed"
+                },
+                "position": {
+                  "basis": "26px",
+                  "grow": 1
+                },
+                "props": {
+                  "style": {
+                    "overflow": "hidden"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Label"
+                    },
+                    "position": {
+                      "basis": "125px",
+                      "grow": 1
+                    },
+                    "props": {
+                      "style": {
+                        "fontSize": 12
+                      },
+                      "text": "Est Time Left:",
+                      "textStyle": {
+                        "textAlign": "Right"
+                      }
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Label Time"
+                    },
+                    "position": {
+                      "basis": "125px",
+                      "grow": 1
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "config": {
+                            "expression": "if({view.custom.endTime}\u003d0,0,secondsBetween(now(),{view.custom.endTime}))"
+                          },
+                          "overlayOptOut": true,
+                          "transforms": [
+                            {
+                              "code": "\tif value \u003d\u003d0:\n\t\treturn \"Hold/Paused\"\n\telse:\n\t\timport datetime\n\t\ta \u003d datetime.timedelta(seconds\u003dvalue)\n\t\treturn str(a)",
+                              "type": "script"
+                            }
+                          ],
+                          "type": "expr"
+                        }
+                      }
+                    },
+                    "props": {
+                      "style": {
+                        "fontSize": 12,
+                        "marginLeft": "10px"
+                      },
+                      "textStyle": {
+                        "textAlign": "Left"
+                      }
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "FlexContainer Remaining"
+                },
+                "position": {
+                  "basis": "26px",
+                  "grow": 1
+                },
+                "props": {
+                  "style": {
+                    "overflow": "hidden"
+                  }
+                },
+                "type": "ia.container.flex"
+              }
+            ],
+            "meta": {
+              "name": "FlexContainer Data"
+            },
+            "position": {
+              "basis": "200px",
+              "grow": 1
+            },
+            "props": {
+              "direction": "column"
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "custom": {
+              "rotate": 315
+            },
+            "meta": {
+              "name": "Icon Running 2"
+            },
+            "position": {
+              "basis": "40px"
+            },
+            "propConfig": {
+              "props.style.transform": {
+                "binding": {
+                  "config": {
+                    "expression": "now(500)"
+                  },
+                  "transforms": [
+                    {
+                      "code": "\tnewval\u003dself.custom.rotate\n\tnewval+\u003d22.5\n\ttry:\n\t\tif newval\u003e\u003d360:\n\t\t\tnewval\u003d 0\n\n\texcept:\n\t\tnewval\u003d0\n\tself.custom.rotate\u003dnewval\n\treturn \"rotate(%sdeg)\"%newval\n",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "color": "#00AC00",
+              "path": "material/autorenew",
+              "style": {
+                "marginRight": "15px"
+              }
+            },
+            "type": "ia.display.icon"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer Running Props"
+        },
+        "position": {
+          "basis": "60px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "view.custom.currentRunning"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "overflow": "hidden"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "custom": {
+          "State": "value"
+        },
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\tstate\u003dself.view.custom.show\n\tif state:\n\t\tself.view.custom.show\u003dFalse\n\telse:\n\t\tself.view.custom.show\u003dTrue"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button View Plot"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{../FlexContainer Select/Dropdown.props.value}!\u003d\"\""
+              },
+              "type": "expr"
+            }
+          },
+          "props.image.icon.path": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.show},\"material/vertical_align_top\",\"material/vertical_align_bottom\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.show},\"View Recipe\",\"View Recipe Tag Plot\")"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {},
+            "position": "right"
+          },
+          "primary": false,
+          "style": {
+            "margin": "5px"
+          }
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Table"
+            },
+            "position": {
+              "size": "large"
+            },
+            "propConfig": {
+              "custom.Functions[0].descrip": {
+                "binding": {
+                  "config": {
+                    "expression": "{this.props.selection.selectedRow}"
+                  },
+                  "overlayOptOut": true,
+                  "transforms": [
+                    {
+                      "code": "\treturn \u0027Changes tag \\n (%s) \\n to (%s)\u0027 %(self.props.data[value].t1,self.props.data[value].p1)\n\t",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "expr"
+                }
+              },
+              "props.columns[0].viewParams.step": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.step"
+                  },
+                  "overlayOptOut": true,
+                  "type": "property"
+                }
+              },
+              "props.data": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.data"
+                  },
+                  "overlayOptOut": true,
+                  "type": "property"
+                }
+              },
+              "props.rows.subview.viewParams.chartId": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.currentID"
+                  },
+                  "type": "property"
+                }
+              },
+              "props.rows.subview.viewParams.currentFunction": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.function"
+                  },
+                  "transforms": [
+                    {
+                      "code": "\tif value is None:\n\t\treturn 0\n\telse:\n\t\treturn value",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "property"
+                }
+              },
+              "props.rows.subview.viewParams.step": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.step"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "columns": [
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "recipe_step",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "center",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": "Step"
+                  },
+                  "justify": "center",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "Exchange/SFC Recipe Handler/Current Row Subview",
+                  "visible": true,
+                  "width": 80
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "step_descrip",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": "Descrip."
+                  },
+                  "justify": "left",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12,
+                    "marginRight": "5px"
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 100
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "p1",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "right",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "justify": "right",
+                  "number": "value",
+                  "numberFormat": "0,0.###",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12,
+                    "fontWeight": "bolder",
+                    "marginRight": "5px"
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 50
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "p1unit",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "center",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": " "
+                  },
+                  "justify": "left",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 45
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "p2",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "right",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": "p2"
+                  },
+                  "justify": "right",
+                  "number": "value",
+                  "numberFormat": "0,0.###",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12,
+                    "fontWeight": "bolder",
+                    "marginRight": "5px"
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 50
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "p2unit",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": " "
+                  },
+                  "justify": "left",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 45
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "p3",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "right",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "justify": "right",
+                  "number": "value",
+                  "numberFormat": "0,0.###",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12,
+                    "fontWeight": "bolder",
+                    "marginRight": "5px"
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 50
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "p3unit",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": " "
+                  },
+                  "justify": "left",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "auto",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12,
+                    "marginRight": "5px"
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 45
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY HH:mm:ss",
+                  "editable": false,
+                  "field": "Start",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": "",
+                      "fontWeight": "bolder"
+                    },
+                    "title": "Start Date"
+                  },
+                  "justify": "left",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "date",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": true,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": 125
+                },
+                {
+                  "align": "center",
+                  "boolean": "checkbox",
+                  "dateFormat": "MM/DD/YYYY",
+                  "editable": false,
+                  "field": "pause_action",
+                  "filter": {
+                    "boolean": {
+                      "condition": ""
+                    },
+                    "date": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "enabled": false,
+                    "number": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "string": {
+                      "condition": "",
+                      "value": ""
+                    },
+                    "visible": "on-hover"
+                  },
+                  "footer": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": ""
+                    },
+                    "title": ""
+                  },
+                  "header": {
+                    "align": "center",
+                    "justify": "left",
+                    "style": {
+                      "classes": "",
+                      "fontSize": 12
+                    },
+                    "title": "Pause Wait"
+                  },
+                  "justify": "left",
+                  "number": "value",
+                  "numberFormat": "0,0.##",
+                  "progressBar": {
+                    "bar": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "track": {
+                      "color": "",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "value": {
+                      "enabled": true,
+                      "format": "0,0.##",
+                      "justify": "center",
+                      "style": {
+                        "classes": ""
+                      }
+                    }
+                  },
+                  "render": "boolean",
+                  "resizable": true,
+                  "sort": "none",
+                  "sortable": false,
+                  "strictWidth": false,
+                  "style": {
+                    "classes": "",
+                    "fontSize": 12
+                  },
+                  "toggleSwitch": {
+                    "color": {
+                      "selected": "",
+                      "unselected": ""
+                    }
+                  },
+                  "viewParams": {},
+                  "viewPath": "",
+                  "visible": true,
+                  "width": ""
+                }
+              ],
+              "rows": {
+                "subview": {
+                  "enabled": true,
+                  "viewParams": {
+                    "path": "value"
+                  },
+                  "viewPath": "Exchange/SFC Recipe Handler/Row Sub View"
+                },
+                "subviewExpansionMode": "single"
+              },
+              "style": {
+                "marginBottom": "3px",
+                "marginLeft": "3px",
+                "marginRight": "3px",
+                "marginTop": "3px"
+              }
+            },
+            "type": "ia.display.table"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Label"
+                    },
+                    "position": {
+                      "basis": "32px",
+                      "grow": 1
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "config": {
+                            "expression": "\"Current Step: (\" + ({view.custom.step}+1) + \") -   Step Start: \"+dateformat({view.custom.startTime},\"MM/dd/yy HH:mm:ss\")"
+                          },
+                          "type": "expr"
+                        }
+                      }
+                    },
+                    "props": {
+                      "textStyle": {
+                        "fontSize": 12,
+                        "textAlign": "center"
+                      }
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "config": {
+                            "script": "\t#self.parent.parent.getChild(\"Carousel\").props.activePane\u003dself.view.custom.step\n\tself.parent.parent.getChild(\"FlexContainer Navigate\").getChild(\"EmbeddedView\").custom.activestep\u003dself.view.custom.step"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "name": "Icon"
+                    },
+                    "position": {
+                      "basis": "30px"
+                    },
+                    "props": {
+                      "path": "material/input",
+                      "style": {
+                        "borderStyle": "solid",
+                        "borderWidth": 1,
+                        "margin": "2px",
+                        "marginRight": "20px"
+                      }
+                    },
+                    "type": "ia.display.icon"
+                  }
+                ],
+                "meta": {
+                  "name": "FlexContainer Current Step"
+                },
+                "position": {
+                  "basis": "32px"
+                },
+                "propConfig": {
+                  "position.display": {
+                    "binding": {
+                      "config": {
+                        "expression": "{view.custom.step}!\u003dNull"
+                      },
+                      "type": "expr"
+                    }
+                  }
+                },
+                "props": {
+                  "style": {
+                    "borderStyle": "solid",
+                    "borderWidth": 1,
+                    "margin": "3px",
+                    "marginLeft": "10px",
+                    "marginRight": "10px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "config": {
+                            "script": "\t#move view to previous step\n\tviews\u003dlen(self.view.custom.data)\n\tactiveStep\u003dself.getSibling(\"EmbeddedView\").custom.activestep\n\tif activeStep\u003d\u003d0:\n\t\tself.getSibling(\"EmbeddedView\").custom.activestep\u003dactiveStep\n\telse:\n\t\tself.getSibling(\"EmbeddedView\").custom.activestep-\u003d1"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "name": "Icon Previous"
+                    },
+                    "position": {
+                      "basis": "30px"
+                    },
+                    "props": {
+                      "path": "material/fast_rewind"
+                    },
+                    "type": "ia.display.icon"
+                  },
+                  {
+                    "custom": {
+                      "activestep": 0,
+                      "mouseEnd": 275,
+                      "mouseStart": 509
+                    },
+                    "meta": {
+                      "name": "EmbeddedView"
+                    },
+                    "position": {
+                      "basis": "320px",
+                      "grow": 1
+                    },
+                    "propConfig": {
+                      "props.params": {
+                        "binding": {
+                          "config": {
+                            "expression": "{..../FlexContainer.custom.smallview}"
+                          },
+                          "overlayOptOut": true,
+                          "transforms": [
+                            {
+                              "code": "\tif len(value)\u003e0:\n\t\treturn value[self.custom.activestep]\n\telse:\n\t\treturn {\t\t   \n\t\t\t\t\"currentFunction\": 0,\n\t\t\t\t\"chartId\":\"\",\n\t\t\t\t\"data\": 0,\n\t\t\t\t\"step\": 0\n\t\t\t\t}",
+                              "type": "script"
+                            }
+                          ],
+                          "type": "expr"
+                        }
+                      }
+                    },
+                    "props": {
+                      "path": "Exchange/SFC Recipe Handler/Small Breakpoint Recipe"
+                    },
+                    "scripts": {
+                      "customMethods": [],
+                      "extensionFunctions": null,
+                      "messageHandlers": [
+                        {
+                          "messageType": "updatedCarousel",
+                          "pageScope": true,
+                          "script": "\tself.custom.activestep\u003dpayload[\u0027step\u0027]",
+                          "sessionScope": false,
+                          "viewScope": false
+                        }
+                      ]
+                    },
+                    "type": "ia.display.view"
+                  },
+                  {
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "config": {
+                            "script": "\t#move view to next step\n\tviews\u003dlen(self.view.custom.data)\n\tactiveStep\u003dself.getSibling(\"EmbeddedView\").custom.activestep\n\tif activeStep+1\u003e\u003dviews:\n\t\tself.getSibling(\"EmbeddedView\").custom.activestep\u003dactiveStep\n\telse:\n\t\tself.getSibling(\"EmbeddedView\").custom.activestep+\u003d1"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "name": "Icon Next"
+                    },
+                    "position": {
+                      "basis": "30px"
+                    },
+                    "props": {
+                      "path": "material/fast_forward"
+                    },
+                    "type": "ia.display.icon"
+                  }
+                ],
+                "meta": {
+                  "name": "FlexContainer Navigate"
+                },
+                "position": {
+                  "basis": "200px",
+                  "grow": 1
+                },
+                "propConfig": {
+                  "meta.visible": {
+                    "binding": {
+                      "config": {
+                        "expression": "{..../FlexContainer Select/Dropdown.props.value}!\u003d\"\""
+                      },
+                      "type": "expr"
+                    }
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Flex Repeater"
+                },
+                "position": {
+                  "basis": "25px"
+                },
+                "propConfig": {
+                  "meta.visible": {
+                    "binding": {
+                      "config": {
+                        "expression": "{..../FlexContainer Select/Dropdown.props.value}!\u003d\"\""
+                      },
+                      "type": "expr"
+                    }
+                  },
+                  "props.instances": {
+                    "binding": {
+                      "config": {
+                        "expression": "{../FlexContainer Navigate/EmbeddedView.custom.activestep}"
+                      },
+                      "transforms": [
+                        {
+                          "code": "\tinstances\u003d[]\n\tactive\u003dFalse\n\trunning\u003dFalse\n\tlength\u003dlen(self.view.custom.data)\n\tfor x in range(length):\n\t\tif self.view.custom.step is not None:\n\t\t\tif x\u003d\u003dself.view.custom.step:\n\t\t\t\trunning\u003dTrue\n\t\t\telse:\n\t\t\t\trunning\u003dFalse\n\t\tif x\u003d\u003dvalue:\n\t\t\tactive\u003dTrue\n\t\telse:\n\t\t\tactive\u003dFalse\n\t\tinstances.append({\n\t\t  \"instanceStyle\": {\n\t\t    \"classes\": \"\"\n\t\t  },\n\t\t  \"instancePosition\": {},\n\t\t  \"active\": active,\n\t\t  \"running\": running,\n\t\t  \"step\":x\n\t\t})\n\t\n\t\n\treturn instances",
+                          "type": "script"
+                        }
+                      ],
+                      "type": "expr"
+                    }
+                  }
+                },
+                "props": {
+                  "path": "Exchange/SFC Recipe Handler/Bullets Carousel",
+                  "style": {
+                    "margin": "5px"
+                  },
+                  "useDefaultViewHeight": false,
+                  "useDefaultViewWidth": false
+                },
+                "type": "ia.display.flex-repeater"
+              }
+            ],
+            "meta": {
+              "name": "FlexContainer"
+            },
+            "propConfig": {
+              "custom.smallview": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.data"
+                  },
+                  "transforms": [
+                    {
+                      "code": "\t#reformat the view.custom.data property to be dynamic in the views of the carousel.\n\tviews\u003d[]\n\tfor row in value:\n\t\tviews.append({\t\t   \n\t\t    \"currentFunction\": self.view.custom.function,\n\t\t    \"chartId\":self.view.custom.currentID,\n\t\t    \"data\": row,\n\t\t    \"step\": self.view.custom.step\n\t\t\t})\n\treturn views\n",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "direction": "column"
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "BreakpointContainer"
+        },
+        "position": {
+          "basis": "200px",
+          "grow": 1
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.show}"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "type": "ia.container.breakpt"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t\n\t#populate of list of running charts\n\tdata \u003d system.sfc.getRunningCharts()\n\trunning\u003d[]\n\tfor row in range(data.rowCount):\n\t\trunningChartId \u003d data.getValueAt(row, \"keyParamValue\")\n\t\trunning.append(runningChartId)\n\t\n\t#query the selected recipe from dropdown\n\tstep\u003d1\n\trecipe_id\u003dself.parent.getChild(\"FlexContainer Select\").getChild(\"Dropdown\").props.value\n\tparams\u003d{\"recipeId\":recipe_id}\n\tstepData\u003dsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Query Recipe Steps by Recipe\",params)\n\t\n\t#retrive data from  the query and assign variables.\n\tfunction\u003dstepData.getValueAt(0,\"recipe_function\")\n\tp1\u003dstepData.getValueAt(0,\"p1\")\n\tp2\u003dstepData.getValueAt(0,\"p2\")\n\tp3\u003dstepData.getValueAt(0,\"p3\")\n\tt1\u003dstepData.getValueAt(0,\"t1\")\n\ttotalSteps\u003dstepData.getRowCount()\n\tpauseAction\u003dstepData.getValueAt(0,\"pause_action\")\n\tpath\u003d\"Exchange/SFC Recipe Handler/SFC Recipe Handler\"\n\t\n\t#assign the SFC chart variables to variables from the query\n\targs\u003d{}\n\targs[\u0027function\u0027]\u003dfunction\n\targs[\u0027param1\u0027]\u003dp1\n\targs[\u0027param2\u0027]\u003dp2\n\targs[\u0027param3\u0027]\u003dp3\n\targs[\u0027targetPath1\u0027]\u003dt1\n\targs[\u0027recipeId\u0027]\u003drecipe_id\n\targs[\u0027startStops\u0027]\u003d[system.date.now()]\n\targs[\u0027pauseAction\u0027]\u003dpauseAction\n\targs[\u0027totalSteps\u0027]\u003dtotalSteps\n\t\n\t#find the selected recipe in the dropdown list and assign SFC chart variable\n\tfor item in self.parent.getChild(\"FlexContainer Select\").getChild(\"Dropdown\").props.options:\n\t\tif item[\"value\"]\u003d\u003dself.parent.getChild(\"FlexContainer Select\").getChild(\"Dropdown\").props.value:\n\t\t\targs[\u0027SFCName\u0027]\u003ditem[\"label\"]\n\t\n\t\n\t#start the chart if it is not running.\n\tif args[\u0027SFCName\u0027] not in running:\t\n\t\tproject\u003dsystem.project.getProjectName()\n\t\tself.view.custom.currentID \u003d system.sfc.startChart(project, path, args)\n\t\tself.view.custom.currentRunning\u003dTrue\n\t\tself.props.text\u003d\"Start Recipe\"\n\t\tself.getSibling(\"Button Stop\").props.text\u003d\"Stop/Cancel Recipe\"\n\telse:\n\t\tself.props.text\u003d\"Recipe already Running\"\n\t\tself.view.refreshBinding(\"custom.allRecipes\")\n\t\tself.view.refreshBinding(\"custom.currentRecipe\")\n\t\tself.view.refreshBinding(\"custom.currentRunning\")"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Start"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.show}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.currentRunning}\u0026\u0026\r\n{../FlexContainer Select/Dropdown.props.value}!\u003dNull \u0026\u0026\r\n{../FlexContainer Select/Dropdown.props.value}!\u003d\"\" "
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "color": "#00FF00",
+              "path": "material/play_circle_filled"
+            }
+          },
+          "primary": false,
+          "style": {
+            "marginBottom": "5px",
+            "marginLeft": "5px",
+            "marginRight": "5px"
+          },
+          "text": "Start Recipe"
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "children": [
+          {
+            "custom": {
+              "state": true
+            },
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\t#if a chart is running go back on step\n\tif self.view.custom.currentRunning:\n\t\t#get the current chart id and pull all of the variables of the SFC\n\t\tid\u003dself.view.custom.currentID\n\t\tchartVars \u003d system.sfc.getVariables(id)\n\t\t\n\t\t#query the previous step variables for DB\n\t\tstep\u003dchartVars[\"stepNum\"]-1\n\t\trecipe_id\u003dchartVars[\"recipeId\"]\n\t\tparams\u003d{\"recipeId\":recipe_id, \"recipeStep\":step}\n\t\tstepData\u003dsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Query Recipe Step by Recipe\",params)\n\t\t\n\t\t#assign variables from query and default values for step initiation\n\t\tfunction\u003dstepData.getValueAt(0,\"recipe_function\")\n\t\tparam1\u003dstepData.getValueAt(0,\"p1\")\n\t\tparam2\u003dstepData.getValueAt(0,\"p2\")\n\t\tparam3\u003dstepData.getValueAt(0,\"p3\")\n\t\ttargetPath1\u003dstepData.getValueAt(0,\"t1\")\n\t\tpauseAction\u003dstepData.getValueAt(0,\"pause_action\")\n\t\tstepStartTime\u003dsystem.date.now()\n\t\tstepComplete\u003dFalse\n\t\tstepTotalPause\u003d0\n\t\tpausedTime\u003d0\n\t\tstepStartValue\u003dNone\n\t\testEndTime\u003d0\n\t\tgHoldStart\u003d0\n\t\tgHoldActive\u003dFalse\n\t\tprescribedPause\u003dFalse\n\t\twriteString\u003dNone\n\t\tf7Message\u003dFalse\n\n\t\t#set SFC variables\n\t\targs\u003d{}\n\t\targs[\u0027function\u0027]\u003dfunction\n\t\targs[\u0027param1\u0027]\u003dparam1\n\t\targs[\u0027param2\u0027]\u003dparam2\n\t\targs[\u0027param3\u0027]\u003dparam3\n\t\targs[\u0027targetPath1\u0027]\u003dtargetPath1\n\t\targs[\u0027pauseAction\u0027]\u003dpauseAction\n\t\targs[\u0027stepStartTime\u0027]\u003dstepStartTime\n\t\targs[\u0027stepComplete\u0027]\u003dstepComplete\n\t\targs[\u0027stepTotalPause\u0027]\u003dstepTotalPause\n\t\targs[\u0027stepStartValue\u0027]\u003dstepStartValue\n\t\targs[\u0027estEndTime\u0027]\u003destEndTime\n\t\targs[\u0027stepNum\u0027]\u003dstep\n\t\targs[\u0027gHoldStart\u0027]\u003dgHoldStart\n\t\targs[\u0027gHoldStart\u0027]\u003dgHoldStart\n\t\targs[\u0027prescribedPause\u0027]\u003dprescribedPause\n\t\targs[\u0027writeString\u0027]\u003dwriteString\n\t\targs[\u0027f7Message\u0027]\u003df7Message\n\t\t\n\t\t#send the new variables to the SFC chart\n\t\tif step\u003e1:\n\t\t\tsystem.sfc.setVariables( id, args)"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Reverse"
+            },
+            "position": {
+              "basis": "34px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "!{.../Button Pause.custom.state}\u0026\u0026{view.custom.currentRunning}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "expression": "case(\r\n{view.custom.currentRunning},\r\ntrue,\r\nif({.../Button Pause.custom.state},\"Reverse Step (Pause)\",\"Reverse Step\"),\r\n\"Reverse Step\")"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "color": "#00AC00",
+                  "path": "material/undo"
+                }
+              },
+              "primary": false,
+              "style": {
+                "marginLeft": "5px",
+                "marginRight": "5px"
+              },
+              "textStyle": {
+                "color": "#00AC00"
+              }
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "custom": {
+              "state": true
+            },
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\t#advances to the next step by triggering the stepComplete boolean in the chart.\n\tif self.view.custom.currentRunning:\n\t\tid\u003dself.view.custom.currentID\n\t\tsystem.sfc.setVariable(id, \"stepComplete\", True)\n\t\tif self.parent.parent.getChild(\"Button Pause\").custom.state\u003d\u003dFalse:\n\t\t\tself.custom.state\u003dFalse"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Advance"
+            },
+            "position": {
+              "basis": "34px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.currentRunning}\u0026\u0026{this.custom.state}"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "color": "#00AC00",
+                  "path": "material/redo"
+                },
+                "position": "right"
+              },
+              "primary": false,
+              "style": {
+                "marginLeft": "5px",
+                "marginRight": "5px"
+              },
+              "text": "Advance Step",
+              "textStyle": {
+                "color": "#00AC00"
+              }
+            },
+            "type": "ia.input.button"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer Move"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.show}"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "marginBottom": "5px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "custom": {
+          "state": false
+        },
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#toggles boolean pausing or resuming SFC if the SFC is running.\n\t\n\tif self.view.custom.currentRunning:\n\t\tid\u003dself.view.custom.currentID\n\t\tchartVars \u003d system.sfc.getVariables(id)\n\t\tstate\u003dchartVars[\"paused\"]\n\t\t\n\t\tif state:\n\t\t\tnewState\u003dFalse\n\t\telse:\n\t\t\tnewState\u003dTrue\n\t\t\t\n\t\tself.custom.state\u003dstate\n\t\tsystem.sfc.setVariable(id, \"paused\", newState)\n\t\tself.parent.getChild(\"FlexContainer Move\").getChild(\"Button Advance\").custom.state\u003dTrue"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Pause"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.show}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "path": "view.custom.currentRunning"
+              },
+              "type": "property"
+            }
+          },
+          "props.image.icon.color": {
+            "binding": {
+              "config": {
+                "expression": "if({this.custom.state}\u003dTrue,\"#00AC00\",\"#FFFF00\")"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          },
+          "props.image.icon.path": {
+            "binding": {
+              "config": {
+                "expression": "if({this.custom.state}\u003dTrue,\"material/pause_circle_filled\",\"material/play_circle_filled\")"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          },
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "IF({this.custom.state},\"Pause Recipe\",\"Resume Recipe\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.textStyle.color": {
+            "binding": {
+              "config": {
+                "expression": "if({this.custom.state}\u003dTrue,\"#00AC00\",\"#FFFF00\")"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {}
+          },
+          "primary": false,
+          "style": {
+            "marginBottom": "5px",
+            "marginLeft": "5px",
+            "marginRight": "5px"
+          }
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t\n\t#if the recipe is running, send the endOfRecipe variable to the chart to end the chart.\n\tif self.view.custom.currentRunning:\n\t\ttry:\n\t\t\tid\u003dself.view.custom.currentID\n\t\t\tsystem.sfc.setVariable(id, \"endOfRecipe\", True)\n\t\t\tself.view.custom.currentID\u003d\"\"\n\t\t\tself.props.text\u003d\"Stopping\"\n\t\t\tself.view.refreshBinding(\"custom.allRecipes\")\n\t\t\tself.view.refreshBinding(\"custom.currentRecipe\")\n\t\t\tself.view.refreshBinding(\"custom.currentRunning\")\n\t\t\t\n\t\texcept:\n\t\t    self.props.text\u003d(\"Could not stop the SFC\")\n"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Stop"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.show}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.currentRunning}\u0026\u0026{view.custom.currentID}!\u003d\"\""
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "color": "#FF0000",
+              "path": "material/stop_circle"
+            }
+          },
+          "primary": false,
+          "style": {
+            "marginBottom": "5px",
+            "marginLeft": "5px",
+            "marginRight": "5px"
+          },
+          "text": "Stopping",
+          "textStyle": {
+            "color": "#FF0000"
+          }
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView Chart"
+        },
+        "position": {
+          "basis": "320px",
+          "grow": 1
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "view.custom.show"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.options": {
+            "binding": {
+              "config": {
+                "path": "../FlexContainer Select/Dropdown.props.options"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.recipeID": {
+            "binding": {
+              "config": {
+                "path": "../FlexContainer Select/Dropdown.props.value"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "path": "Exchange/SFC Recipe Handler/Plot View"
+        },
+        "type": "ia.display.view"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": [
+        {
+          "messageType": "processstop",
+          "pageScope": true,
+          "script": "\tif payload[\u0027SFCName\u0027]\u003d\u003dself.view.custom.currentRecipe:\t\n\t\tsystem.perspective.openPopup(id\u003d\"shutdown\", view\u003d\"Exchange/SFC Recipe Handler/Shutdown Popup\", params\u003d{\"params\":payload},resizable\u003dFalse, modal\u003dTrue, draggable\u003dFalse, title\u003d\"SFC Shutting Down\")",
+          "sessionScope": true,
+          "viewScope": true
+        }
+      ]
+    },
+    "type": "ia.container.flex"
+  }
+}

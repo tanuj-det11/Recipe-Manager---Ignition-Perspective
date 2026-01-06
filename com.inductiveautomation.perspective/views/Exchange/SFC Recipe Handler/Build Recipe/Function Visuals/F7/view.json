@@ -1,0 +1,141 @@
+{
+  "custom": {},
+  "params": {
+    "Start": "Dec 23, 2022, 10:12:32 AM",
+    "confirmed": false,
+    "id": "value",
+    "label": "Change Tag String",
+    "p1": 0,
+    "p2": 0,
+    "p3": 0,
+    "t1": ""
+  },
+  "propConfig": {
+    "params.Start": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmed": {
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.id": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.label": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p1": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p2": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p3": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.t1": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 200,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "28px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.label"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "textAlign": "center"
+          },
+          "textStyle": {
+            "color": ""
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "TextField"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "props": {
+          "placeholder": "...Insert Text Here",
+          "style": {
+            "margin": "5px",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.input.text-field"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#set a string value for running SFC chart\n\tif self.getSibling(\"TextField\").props.text!\u003d\"\":\n\t\tid\u003dself.view.params.id\n\t\tsystem.sfc.setVariable(id, \"writeString\", self.getSibling(\"TextField\").props.text)\n\t\tself.view.params.confirmed\u003dTrue\n\t\t"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Confirm"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "props": {
+          "primary": false,
+          "style": {
+            "margin": "5px"
+          },
+          "text": "Confirm Value"
+        },
+        "type": "ia.input.button"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "2px",
+        "margin": "3px",
+        "overflow": "visible"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

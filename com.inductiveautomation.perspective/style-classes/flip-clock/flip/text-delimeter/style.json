@@ -1,0 +1,11 @@
+{
+  "base": {
+    "style": {
+      "color": "var(--neutral-90)",
+      "fontSize": "40px",
+      "fontWeight": "bold",
+      "paddingBottom": "8px",
+      "textAlign": "center"
+    }
+  }
+}

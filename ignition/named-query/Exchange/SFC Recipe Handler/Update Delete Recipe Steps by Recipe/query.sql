@@ -1,0 +1,1 @@
+DELETE FROM exsrh_recipe_steps WHERE recipe_id =:recipeId;

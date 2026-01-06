@@ -1,0 +1,14 @@
+{
+  "base": {
+    "style": {
+      "backgroundColor": "808080",
+      "borderStyle": "outset",
+      "borderWidth": "3px",
+      "color": "FFFFFF",
+      "fontFamily": "Arial",
+      "fontWeight": "bold",
+      "opacity": "0.86",
+      "textAlign": "center"
+    }
+  }
+}

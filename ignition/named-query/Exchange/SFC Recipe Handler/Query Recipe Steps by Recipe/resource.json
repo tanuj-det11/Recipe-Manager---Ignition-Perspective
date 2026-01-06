@@ -1,0 +1,40 @@
+{
+  "scope": "DG",
+  "version": 2,
+  "restricted": false,
+  "overridable": true,
+  "files": [
+    "query.sql"
+  ],
+  "attributes": {
+    "useMaxReturnSize": false,
+    "autoBatchEnabled": false,
+    "fallbackValue": "",
+    "maxReturnSize": 100,
+    "cacheUnit": "SEC",
+    "type": "Query",
+    "enabled": true,
+    "cacheAmount": 1,
+    "cacheEnabled": false,
+    "database": "BalterIgnition_Recipe",
+    "fallbackEnabled": false,
+    "lastModificationSignature": "29641e39c5539e6b17ce98b97f6e466d0ce7ac4c649905e6c7a6cf612380d4bc",
+    "permissions": [
+      {
+        "zone": "",
+        "role": ""
+      }
+    ],
+    "lastModification": {
+      "actor": "brad@detron.com.au",
+      "timestamp": "2026-01-06T07:03:12Z"
+    },
+    "parameters": [
+      {
+        "type": "Parameter",
+        "identifier": "recipeId",
+        "sqlType": 2
+      }
+    ]
+  }
+}

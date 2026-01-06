@@ -1,0 +1,337 @@
+{
+  "custom": {
+    "recipeData": null
+  },
+  "params": {
+    "options": [
+      {
+        "label": "Slow Ramp",
+        "value": 40
+      },
+      {
+        "label": "Slow Ramp R3",
+        "value": 41
+      },
+      {
+        "label": "Test Recipe 2.0",
+        "value": 42
+      }
+    ],
+    "recipeID": ""
+  },
+  "propConfig": {
+    "custom.recipeData": {
+      "binding": {
+        "config": {
+          "parameters": {
+            "recipeId": "{view.params.recipeID}"
+          },
+          "polling": {
+            "enabled": true,
+            "rate": "30"
+          },
+          "queryPath": "Exchange/SFC Recipe Handler/Query Recipe Steps by Recipe view",
+          "returnFormat": "json"
+        },
+        "overlayOptOut": true,
+        "transforms": [
+          {
+            "code": "\ttags\u003d[]\n\t#loop through steps and pull unique tagPaths\n\tfor step in value:\n\t\tif step[\u0027t1\u0027] not in tags and step[\u0027t1\u0027]!\u003d\"0\" and step[\u0027t1\u0027]!\u003dNone:\n\t\t\ttags.append(step[\u0027t1\u0027])\n\treturn tags",
+            "type": "script"
+          }
+        ],
+        "type": "query"
+      },
+      "persistent": true
+    },
+    "params.options": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.recipeID": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 678
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Dropdown"
+            },
+            "position": {
+              "basis": "32px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.options": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.recipeData"
+                  },
+                  "transforms": [
+                    {
+                      "code": "\toptions\u003d[]\n\tfor tag in value:\n\t\tif tag is not None:\n\t\t\toptions.append({\u0027label\u0027:\"...\"+tag[-30:],\u0027value\u0027:tag})\n\treturn options",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "dropdownOptionStyle": {
+                "fontSize": 12,
+                "overflow": "hidden",
+                "overflowWrap": "break-word",
+                "textAlign": "center",
+                "whiteSpace": "pre"
+              },
+              "placeholder": {
+                "text": "Select Tag..."
+              },
+              "search": {
+                "noResultsText": "No results, Create Recipe..."
+              },
+              "showClearIcon": true,
+              "textAlign": "center"
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\timport random\n\t#add tagPath to Chart if dropdown is not empty or null\n\tif self.getSibling(\"Dropdown\").props.value!\u003d\"\" and self.getSibling(\"Dropdown\").props.value is not None:\n\t\tpath\u003dself.getSibling(\"Dropdown\").props.value\n\t\t#split the string and use the last item in the split as the name\n\t\tsplits\u003dpath.split(\"/\")\n\t\tname\u003dsplits[len(splits)-1]\t\n\t\t\n\t\t#generate a random color to use in chart\n\t\thexadecimal \u003d [\"#\"+\u0027\u0027.join([random.choice(\u0027ABCDEF0123456789\u0027) for i in range(6)])]\n\t\t\n\t\t#used to convert copy and pasted json files where capitals are critical and assign variables.\n\t\ttrue\u003dTrue\n\t\tfalse\u003dFalse\n\t\tnull\u003dNone\n\t\t\n\t\t\n\t\tpens\u003dself.parent.parent.getChild(\"PowerChart\").props.pens\n\t\tpenLength\u003dlen(pens)\n\t\t#if penLength\u003c\u003d5:\n\t\tcolor\u003dhexadecimal\n\t\t\n\t\t#append pen dictionary to current list of pens.\n\t\tpens.append({\"name\": name,\n\t\t\t\t  \"visible\": true,\n\t\t\t\t  \"enabled\": true,\n\t\t\t\t  \"selectable\": true,\n\t\t\t\t  \"axis\": \"Values\",\n\t\t\t\t  \"plot\": 0,\n\t\t\t\t  \"display\": {\n\t\t\t\t    \"type\": \"line\",\n\t\t\t\t    \"interpolation\": \"curveLinear\",\n\t\t\t\t    \"breakLine\": true,\n\t\t\t\t    \"radius\": 3,\n\t\t\t\t    \"styles\": {\n\t\t\t\t      \"normal\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 0.8,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 0.8\n\t\t\t\t        }\n\t\t\t\t      },\n\t\t\t\t      \"highlighted\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 1,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 1\n\t\t\t\t        }\n\t\t\t\t      },\n\t\t\t\t      \"selected\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 1,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 1\n\t\t\t\t        }\n\t\t\t\t      },\n\t\t\t\t      \"muted\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 0.4,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 0.4\n\t\t\t\t        }\n\t\t\t\t      }\n\t\t\t\t    }\n\t\t\t\t  },\n\t\t\t\t  \"data\": {\n\t\t\t\t    \"source\": path,\n\t\t\t\t    \"aggregateMode\": \"default\"\n\t\t\t\t  }\n\t\t\t\t})\n\t\t#reset the dropdown\n\t\tself.getSibling(\"Dropdown\").props.value\u003d\"\""
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Add"
+            },
+            "position": {
+              "basis": "125px"
+            },
+            "props": {
+              "primary": false,
+              "style": {
+                "marginLeft": "5px"
+              },
+              "text": "Add Tag to Chart",
+              "textStyle": {
+                "fontSize": 12
+              }
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\timport random\n\t#add tagPath to Chart if dropdown is not empty or null\n\t\n\t\n\tdef addTagToChart(path):\n\t\t#split the string and use the last item in the split as the name\n\t\tsplits\u003dpath.split(\"/\")\n\t\tname\u003dsplits[len(splits)-1]\t\n\t\t\n\t\t#generate a random color to use in chart\n\t\thexadecimal \u003d [\"#\"+\u0027\u0027.join([random.choice(\u0027ABCDEF0123456789\u0027) for i in range(6)])]\n\t\t\n\t\t#used to convert copy and pasted json files where capitals are critical and assign variables.\n\t\ttrue\u003dTrue\n\t\tfalse\u003dFalse\n\t\tnull\u003dNone\n\t\t\n\t\t\n\t\tpens\u003dself.parent.parent.getChild(\"PowerChart\").props.pens\n\t\tpenLength\u003dlen(pens)\n\t\t#if penLength\u003c\u003d5:\n\t\tcolor\u003dhexadecimal\n\t\t\n\t\t#append pen dictionary to current list of pens.\n\t\tpens.append({\"name\": name,\n\t\t\t\t  \"visible\": true,\n\t\t\t\t  \"enabled\": true,\n\t\t\t\t  \"selectable\": true,\n\t\t\t\t  \"axis\": \"Values\",\n\t\t\t\t  \"plot\": 0,\n\t\t\t\t  \"display\": {\n\t\t\t\t    \"type\": \"line\",\n\t\t\t\t    \"interpolation\": \"curveLinear\",\n\t\t\t\t    \"breakLine\": true,\n\t\t\t\t    \"radius\": 3,\n\t\t\t\t    \"styles\": {\n\t\t\t\t      \"normal\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 0.8,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 0.8\n\t\t\t\t        }\n\t\t\t\t      },\n\t\t\t\t      \"highlighted\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 1,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 1\n\t\t\t\t        }\n\t\t\t\t      },\n\t\t\t\t      \"selected\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 1,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 1\n\t\t\t\t        }\n\t\t\t\t      },\n\t\t\t\t      \"muted\": {\n\t\t\t\t        \"stroke\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"width\": 1,\n\t\t\t\t          \"opacity\": 0.4,\n\t\t\t\t          \"dashArray\": 0\n\t\t\t\t        },\n\t\t\t\t        \"fill\": {\n\t\t\t\t          \"color\": color,\n\t\t\t\t          \"opacity\": 0.4\n\t\t\t\t        }\n\t\t\t\t      }\n\t\t\t\t    }\n\t\t\t\t  },\n\t\t\t\t  \"data\": {\n\t\t\t\t    \"source\": path,\n\t\t\t\t    \"aggregateMode\": \"default\"\n\t\t\t\t  }\n\t\t\t\t})\n\t\t#reset the dropdown\n\t\n\t#tags availible in recipe\n\ttagOptions\u003dself.view.custom.recipeData\t\n\ttest\u003d[]\n\t\n\t#look at tag configs for historyEnabled key and if that is true add to chart.\n\tfor tag in tagOptions:\n\t\tconfig\u003dsystem.tag.getConfiguration(tag, False)[0]\n\t\tif \u0027historyEnabled\u0027 in config.keys():\n\t\t\tif config[\"historyEnabled\"]:\n\t\t\t\taddTagToChart(tag)"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Add All"
+            },
+            "position": {
+              "basis": "120px"
+            },
+            "props": {
+              "primary": false,
+              "style": {
+                "marginLeft": "5px"
+              },
+              "text": "Add All Historized Tags to Chart",
+              "textStyle": {
+                "fontSize": 10
+              }
+            },
+            "type": "ia.input.button"
+          }
+        ],
+        "meta": {
+          "name": "Flex Container"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "props": {
+          "style": {
+            "color": "#FF00FF",
+            "margin": "5px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {
+          "name": "PowerChart"
+        },
+        "position": {
+          "basis": "600px",
+          "grow": 1
+        },
+        "props": {
+          "axes": [
+            {
+              "color": "#757A7F",
+              "dataFormat": "0,0.##",
+              "grid": {
+                "color": "",
+                "dashArray": 0,
+                "opacity": 0.9,
+                "style": {
+                  "classes": ""
+                },
+                "visible": false
+              },
+              "label": {
+                "font": {
+                  "color": "#757A7F",
+                  "size": 10
+                },
+                "offset": 0,
+                "style": {
+                  "classes": ""
+                },
+                "text": ""
+              },
+              "name": "Values",
+              "position": "left",
+              "range": {
+                "auto": true,
+                "max": "",
+                "min": ""
+              },
+              "style": {
+                "classes": ""
+              },
+              "tick": {
+                "color": "#757A7F",
+                "count": "Auto",
+                "label": {
+                  "font": {
+                    "color": "#757A7F",
+                    "size": 10
+                  },
+                  "format": "Auto",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "style": {
+                  "classes": ""
+                }
+              },
+              "width": 25
+            },
+            {
+              "color": "#757A7F",
+              "dataFormat": "0,0.##",
+              "grid": {
+                "color": "",
+                "dashArray": 0,
+                "opacity": 0.9,
+                "style": {
+                  "classes": ""
+                },
+                "visible": false
+              },
+              "label": {
+                "font": {
+                  "color": "#757A7F",
+                  "size": 10
+                },
+                "offset": 0,
+                "style": {
+                  "classes": ""
+                },
+                "text": ""
+              },
+              "name": "Default",
+              "position": "left",
+              "range": {
+                "auto": true,
+                "max": "",
+                "min": ""
+              },
+              "style": {
+                "classes": ""
+              },
+              "tick": {
+                "color": "#757A7F",
+                "count": "Auto",
+                "label": {
+                  "font": {
+                    "color": "#757A7F",
+                    "size": 10
+                  },
+                  "format": "Auto",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "style": {
+                  "classes": ""
+                }
+              },
+              "width": 25
+            }
+          ],
+          "config": {
+            "unitOfTime": 1
+          },
+          "dataColumns": {
+            "penControl": {
+              "axis": false,
+              "plot": false,
+              "xTrace": false
+            }
+          },
+          "interaction": {
+            "chartZoomLevel": 1,
+            "panAndZoom": {
+              "freeRange": true
+            },
+            "rangeZoomLevel": 1
+          },
+          "plots": [
+            {
+              "color": "",
+              "markers": [],
+              "relativeWeight": 1,
+              "style": {
+                "classes": ""
+              }
+            }
+          ]
+        },
+        "type": "ia.chart.powerchart"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

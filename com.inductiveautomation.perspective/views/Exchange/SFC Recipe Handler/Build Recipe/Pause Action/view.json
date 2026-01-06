@@ -1,0 +1,106 @@
+{
+  "custom": {},
+  "params": {
+    "output": false
+  },
+  "propConfig": {
+    "params.output": {
+      "binding": {
+        "config": {
+          "bidirectional": true,
+          "path": "/root/Checkbox.props.selected"
+        },
+        "type": "property"
+      },
+      "paramDirection": "inout",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 40,
+      "width": 300
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "125px",
+          "shrink": 0
+        },
+        "props": {
+          "text": "Pause Action:",
+          "textStyle": {
+            "textAlign": "right"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Checkbox",
+          "tooltip": {
+            "style": {
+              "whiteSpace": "pre"
+            },
+            "text": "Soak: \n    -True: Time Paused Will Be Added To Soak\n    -False: Time Paused Will NOT Be Added To Soak\n\nRamp (Value Will Not Ramp During Pause): \n    -True: Ramps at same rate from current value\n    -False: Will jump to value as if never paused."
+          }
+        },
+        "position": {
+          "basis": "56px",
+          "grow": 1
+        },
+        "props": {
+          "style": {
+            "fontSize": 12,
+            "marginLeft": "10px"
+          },
+          "text": "Add Time/Ramp From Current"
+        },
+        "type": "ia.input.checkbox"
+      },
+      {
+        "meta": {
+          "name": "Icon",
+          "tooltip": {
+            "enabled": true,
+            "style": {
+              "whiteSpace": "pre"
+            },
+            "text": "Soak: \n    -True: Time Paused Will Be Added To Soak\n    -False: Time Paused Will NOT Be Added To Soak\n\nRamp (Value Will Not Ramp During Pause): \n    -True: Ramps at same rate from current value\n    -False: Will jump to value as if never paused."
+          }
+        },
+        "position": {
+          "basis": "10px",
+          "shrink": 0
+        },
+        "props": {
+          "path": "material/info",
+          "style": {
+            "textAlign": "start"
+          },
+          "viewBox": {
+            "x": 0,
+            "y": 25
+          }
+        },
+        "type": "ia.display.icon"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "margin": "2px"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

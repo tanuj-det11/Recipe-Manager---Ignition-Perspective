@@ -1,0 +1,25 @@
+{
+  "base": {
+    "style": {
+      "backgroundColor": "#1A1A1A",
+      "borderTopLeftRadius": "10px",
+      "borderTopRightRadius": "10px",
+      "borderBottomLeftRadius": "10px",
+      "borderBottomRightRadius": "10px",
+      "boxShadow": "0 4px 8px rgba(0,0,0,0.6)",
+      "fontFamily": "Roboto",
+      "fontWeight": "bold",
+      "margin": "5px",
+      "opacity": "1",
+      "overflow": "hidden",
+      "overflowWrap": "normal",
+      "overflowX": "hidden",
+      "overflowY": "hidden",
+      "padding": "5px",
+      "paddingLeft": "8px",
+      "paddingTop": "8px",
+      "textAlign": "center",
+      "textOverflow": "ellipsis"
+    }
+  }
+}

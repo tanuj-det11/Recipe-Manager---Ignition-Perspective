@@ -1,0 +1,78 @@
+{
+  "custom": {},
+  "params": {
+    "active": false,
+    "running": false,
+    "step": 0
+  },
+  "propConfig": {
+    "params.active": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.running": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.step": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 30,
+      "width": 30
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "events": {
+          "dom": {
+            "onClick": {
+              "config": {
+                "script": "\tsystem.perspective.sendMessage(\u0027updatedCarousel\u0027,{\"step\":self.view.params.step},\"page\")"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Icon"
+        },
+        "position": {
+          "basis": "30px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.color": {
+            "binding": {
+              "config": {
+                "expression": "if({view.params.active},\"#00FF00\",\"\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.path": {
+            "binding": {
+              "config": {
+                "expression": "if({view.params.running},\"material/play_circle_filled\",if({view.params.active},\"material/radio_button_checked\",\"material/radio_button_unchecked\"))"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "type": "ia.display.icon"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

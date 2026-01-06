@@ -1,0 +1,23 @@
+{
+  "base": {
+    "style": {
+      "backgroundImage": "linear-gradient(to right, var(--div-1) 0%, 50%, var(--div-16))",
+      "borderTopLeftRadius": "10px",
+      "borderTopRightRadius": "10px",
+      "borderBottomLeftRadius": "10px",
+      "borderBottomRightRadius": "10px"
+    }
+  },
+  "variants": [
+    {
+      "pseudo": "hover",
+      "style": {
+        "backgroundImage": "linear-gradient(to left, var(--div-1) 0%, 50%, var(--div-16))",
+        "borderTopLeftRadius": "10px",
+        "borderTopRightRadius": "10px",
+        "borderBottomLeftRadius": "10px",
+        "borderBottomRightRadius": "10px"
+      }
+    }
+  ]
+}

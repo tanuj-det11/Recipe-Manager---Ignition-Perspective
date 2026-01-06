@@ -1,0 +1,836 @@
+{
+  "custom": {
+    "selectedBatch": null,
+    "selectedBatchId": null,
+    "showDetail": false,
+    "filters": {
+      "status": "ALL",
+      "recipe": "ALL",
+      "equipment": "ALL",
+      "dateFrom": "",
+      "dateTo": ""
+    },
+    "batches": [],
+    "batchSteps": [],
+    "recipeList": [],
+    "statusColors": {
+      "COMPLETED": "#4CAF50",
+      "RUNNING": "#2196F3",
+      "ABORTED": "#F44336",
+      "PAUSED": "#FF9800"
+    },
+    "statusIcons": {
+      "COMPLETED": "\u2705",
+      "RUNNING": "\uD83D\uDD04",
+      "ABORTED": "\u274C",
+      "PAUSED": "\u23F8\uFE0F"
+    }
+  },
+  "params": {},
+  "propConfig": {
+    "custom.selectedBatch": {
+      "persistent": true
+    },
+    "custom.selectedBatchId": {
+      "persistent": true
+    },
+    "custom.filters": {
+      "persistent": true
+    },
+    "custom.batches": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Recipe_Manager/GetBatchHistory",
+          "pollRate": 10000,
+          "parameters": {}
+        }
+      }
+    },
+    "custom.batchSteps": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Recipe_Manager/GetBatchStepLogs",
+          "pollRate": 0,
+          "parameters": {
+            "batchId": "{view.custom.selectedBatchId}"
+          }
+        }
+      }
+    },
+    "custom.recipeList": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Recipe_Manager/GetAllRecipes",
+          "pollRate": 30000,
+          "parameters": {}
+        }
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 700,
+      "width": 1200
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Header"
+        },
+        "position": {
+          "basis": "60px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "justify": "space-between",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "rgba(30, 30, 30, 0.95)",
+            "borderBottom": "1px solid rgba(110, 206, 178, 0.3)",
+            "paddingLeft": "20px",
+            "paddingRight": "20px"
+          }
+        },
+        "type": "ia.container.flex",
+        "children": [
+          {
+            "meta": {
+              "name": "Title"
+            },
+            "props": {
+              "text": "Batch History",
+              "style": {
+                "color": "#6ECEB2",
+                "fontSize": "24px",
+                "fontWeight": "600"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "ButtonContainer"
+            },
+            "props": {
+              "direction": "row",
+              "style": {
+                "gap": "10px"
+              }
+            },
+            "type": "ia.container.flex",
+            "children": [
+              {
+                "meta": {
+                  "name": "RefreshButton"
+                },
+                "props": {
+                  "text": "Refresh",
+                  "style": {
+                    "backgroundColor": "rgba(110, 206, 178, 0.2)",
+                    "border": "1px solid #6ECEB2",
+                    "color": "#6ECEB2",
+                    "borderRadius": "6px",
+                    "paddingLeft": "16px",
+                    "paddingRight": "16px"
+                  }
+                },
+                "type": "ia.input.button",
+                "events": {
+                  "component": {
+                    "onActionPerformed": {
+                      "type": "script",
+                      "scope": "C",
+                      "config": {
+                        "code": "self.view.refreshBinding('custom.batches')\nself.view.refreshBinding('custom.recipeList')\nif self.view.custom.selectedBatchId:\n    self.view.refreshBinding('custom.batchSteps')"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "meta": {
+                  "name": "ExportButton"
+                },
+                "props": {
+                  "text": "Export CSV",
+                  "style": {
+                    "backgroundColor": "rgba(33, 150, 243, 0.2)",
+                    "border": "1px solid #2196F3",
+                    "color": "#2196F3",
+                    "borderRadius": "6px",
+                    "paddingLeft": "16px",
+                    "paddingRight": "16px"
+                  }
+                },
+                "type": "ia.input.button",
+                "events": {
+                  "component": {
+                    "onActionPerformed": {
+                      "type": "script",
+                      "scope": "C",
+                      "config": {
+                        "code": "batches = self.view.custom.batches\ncsv_content = 'Batch ID,Recipe,Equipment,Operator,Started,Duration,Status\\n'\nfor batch in batches:\n    csv_content += '%s,%s,%s,%s,%s,%s,%s\\n' % (\n        batch['batchId'],\n        batch['recipe'],\n        batch['equipment'],\n        batch['operator'],\n        batch['started'],\n        batch['duration'],\n        batch['status']\n    )\nprint(csv_content)"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "meta": {
+          "name": "FilterBar"
+        },
+        "position": {
+          "basis": "50px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "rgba(40, 40, 40, 0.9)",
+            "borderBottom": "1px solid rgba(255, 255, 255, 0.1)",
+            "paddingLeft": "20px",
+            "paddingRight": "20px",
+            "gap": "15px"
+          }
+        },
+        "type": "ia.container.flex",
+        "children": [
+          {
+            "meta": {
+              "name": "FilterLabel"
+            },
+            "props": {
+              "text": "Filters:",
+              "style": {
+                "color": "#888888",
+                "fontSize": "14px",
+                "fontWeight": "500"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "StatusFilter"
+            },
+            "position": {
+              "basis": "140px"
+            },
+            "props": {
+              "options": [
+                {"label": "All Status", "value": "ALL"},
+                {"label": "Completed", "value": "COMPLETED"},
+                {"label": "Running", "value": "RUNNING"},
+                {"label": "Aborted", "value": "ABORTED"},
+                {"label": "Paused", "value": "PAUSED"}
+              ],
+              "value": "ALL",
+              "style": {
+                "backgroundColor": "rgba(60, 60, 60, 0.8)",
+                "border": "1px solid rgba(255, 255, 255, 0.2)",
+                "color": "#FFFFFF",
+                "borderRadius": "4px"
+              }
+            },
+            "propConfig": {
+              "props.value": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.filters.status",
+                    "bidirectional": true
+                  }
+                }
+              }
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "meta": {
+              "name": "RecipeFilter"
+            },
+            "position": {
+              "basis": "160px"
+            },
+            "props": {
+              "options": [],
+              "value": "ALL",
+              "style": {
+                "backgroundColor": "rgba(60, 60, 60, 0.8)",
+                "border": "1px solid rgba(255, 255, 255, 0.2)",
+                "color": "#FFFFFF",
+                "borderRadius": "4px"
+              }
+            },
+            "propConfig": {
+              "props.value": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.filters.recipe",
+                    "bidirectional": true
+                  }
+                }
+              },
+              "props.options": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "concat([asMap('label', 'All Recipes', 'value', 'ALL')], forEach({view.custom.recipeList}, (row, i) -> asMap('label', row['recipe_name'], 'value', row['recipe_name'])))"
+                  }
+                }
+              }
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "meta": {
+              "name": "EquipmentFilter"
+            },
+            "position": {
+              "basis": "140px"
+            },
+            "props": {
+              "options": [
+                {"label": "All Equipment", "value": "ALL"},
+                {"label": "FV1", "value": "FV1"},
+                {"label": "FV2", "value": "FV2"},
+                {"label": "FV3", "value": "FV3"},
+                {"label": "FV4", "value": "FV4"}
+              ],
+              "value": "ALL",
+              "style": {
+                "backgroundColor": "rgba(60, 60, 60, 0.8)",
+                "border": "1px solid rgba(255, 255, 255, 0.2)",
+                "color": "#FFFFFF",
+                "borderRadius": "4px"
+              }
+            },
+            "propConfig": {
+              "props.value": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.filters.equipment",
+                    "bidirectional": true
+                  }
+                }
+              }
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "meta": {
+              "name": "ClearFiltersButton"
+            },
+            "props": {
+              "text": "Clear Filters",
+              "style": {
+                "backgroundColor": "transparent",
+                "border": "1px solid rgba(255, 255, 255, 0.3)",
+                "color": "#AAAAAA",
+                "borderRadius": "4px",
+                "fontSize": "12px",
+                "paddingLeft": "12px",
+                "paddingRight": "12px"
+              }
+            },
+            "type": "ia.input.button",
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "type": "script",
+                  "scope": "C",
+                  "config": {
+                    "code": "self.view.custom.filters = {'status': 'ALL', 'recipe': 'ALL', 'equipment': 'ALL', 'dateFrom': '', 'dateTo': ''}"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "meta": {
+          "name": "MainContent"
+        },
+        "position": {
+          "grow": 1
+        },
+        "props": {
+          "direction": "row",
+          "style": {
+            "backgroundColor": "rgba(25, 25, 25, 0.95)"
+          }
+        },
+        "type": "ia.container.flex",
+        "children": [
+          {
+            "meta": {
+              "name": "BatchTable"
+            },
+            "position": {
+              "grow": 1
+            },
+            "props": {
+              "columns": [
+                {
+                  "field": "batchId",
+                  "header": "Batch ID",
+                  "width": 140,
+                  "sortable": true,
+                  "render": {
+                    "style": {
+                      "color": "#6ECEB2",
+                      "fontWeight": "500",
+                      "fontFamily": "monospace"
+                    }
+                  }
+                },
+                {
+                  "field": "recipe",
+                  "header": "Recipe",
+                  "width": 150,
+                  "sortable": true,
+                  "render": {
+                    "style": {
+                      "color": "#FFFFFF"
+                    }
+                  }
+                },
+                {
+                  "field": "equipment",
+                  "header": "Equipment",
+                  "width": 100,
+                  "sortable": true,
+                  "render": {
+                    "style": {
+                      "color": "#AAAAAA"
+                    }
+                  }
+                },
+                {
+                  "field": "operator",
+                  "header": "Operator",
+                  "width": 100,
+                  "sortable": true,
+                  "render": {
+                    "style": {
+                      "color": "#AAAAAA"
+                    }
+                  }
+                },
+                {
+                  "field": "started",
+                  "header": "Started",
+                  "width": 130,
+                  "sortable": true,
+                  "render": {
+                    "style": {
+                      "color": "#BBBBBB"
+                    }
+                  }
+                },
+                {
+                  "field": "duration",
+                  "header": "Duration",
+                  "width": 90,
+                  "sortable": true,
+                  "render": {
+                    "style": {
+                      "color": "#BBBBBB"
+                    }
+                  }
+                },
+                {
+                  "field": "status",
+                  "header": "Status",
+                  "width": 130,
+                  "sortable": true,
+                  "render": "auto"
+                }
+              ],
+              "data": [],
+              "selection": {
+                "enabled": true,
+                "mode": "single"
+              },
+              "pager": {
+                "show": true,
+                "position": "bottom",
+                "pageSize": 20
+              },
+              "style": {
+                "backgroundColor": "transparent"
+              },
+              "header": {
+                "style": {
+                  "backgroundColor": "rgba(50, 50, 50, 0.9)",
+                  "color": "#888888",
+                  "fontWeight": "600",
+                  "fontSize": "12px",
+                  "textTransform": "uppercase",
+                  "letterSpacing": "0.5px"
+                }
+              },
+              "rows": {
+                "style": {
+                  "backgroundColor": "rgba(40, 40, 40, 0.5)",
+                  "borderBottom": "1px solid rgba(255, 255, 255, 0.05)"
+                },
+                "hoverStyle": {
+                  "backgroundColor": "rgba(110, 206, 178, 0.1)"
+                },
+                "selectedStyle": {
+                  "backgroundColor": "rgba(110, 206, 178, 0.2)",
+                  "borderLeft": "3px solid #6ECEB2"
+                }
+              }
+            },
+            "propConfig": {
+              "props.data": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "forEach(\n  filter(\n    {view.custom.batches},\n    it -> \n      ({view.custom.filters.status} = 'ALL' || it['status'] = {view.custom.filters.status}) &&\n      ({view.custom.filters.recipe} = 'ALL' || it['recipe'] = {view.custom.filters.recipe}) &&\n      ({view.custom.filters.equipment} = 'ALL' || it['equipment'] = {view.custom.filters.equipment})\n  ),\n  it -> asMap(\n    'batch_id', it['batch_id'],\n    'batchId', it['batchId'],\n    'recipe', it['recipe'],\n    'equipment', it['equipment'],\n    'operator', it['operator'],\n    'started', it['started'],\n    'duration', it['duration'],\n    'status', it['status']\n  )\n)"
+                  }
+                }
+              }
+            },
+            "type": "ia.display.table",
+            "events": {
+              "component": {
+                "onSelectionChange": {
+                  "type": "script",
+                  "scope": "C",
+                  "config": {
+                    "code": "if self.props.selection.data:\n    selectedRow = self.props.selection.data[0]\n    self.view.custom.selectedBatchId = selectedRow['batch_id']\n    self.view.custom.selectedBatch = selectedRow\n    self.view.custom.showDetail = True\nelse:\n    self.view.custom.showDetail = False\n    self.view.custom.selectedBatchId = None"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "meta": {
+              "name": "DetailPanel"
+            },
+            "position": {
+              "basis": "400px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "rgba(35, 35, 35, 0.95)",
+                "borderLeft": "1px solid rgba(110, 206, 178, 0.3)",
+                "display": "flex"
+              }
+            },
+            "propConfig": {
+              "props.style.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.showDetail}, 'flex', 'none')"
+                  }
+                }
+              }
+            },
+            "type": "ia.container.flex",
+            "children": [
+              {
+                "meta": {
+                  "name": "DetailHeader"
+                },
+                "position": {
+                  "basis": "100px",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "backgroundColor": "rgba(110, 206, 178, 0.1)",
+                    "borderBottom": "1px solid rgba(110, 206, 178, 0.3)",
+                    "padding": "15px"
+                  }
+                },
+                "type": "ia.container.flex",
+                "children": [
+                  {
+                    "meta": {
+                      "name": "DetailTitle"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "color": "#6ECEB2",
+                        "fontSize": "18px",
+                        "fontWeight": "600",
+                        "marginBottom": "5px"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.selectedBatch} != null, {view.custom.selectedBatch.batchId}, '')"
+                          }
+                        }
+                      }
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "DetailSubtitle"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "color": "#AAAAAA",
+                        "fontSize": "14px"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.selectedBatch} != null, \n  {view.custom.selectedBatch.recipe} + ' | ' + {view.custom.selectedBatch.equipment} + ' | ' + {view.custom.selectedBatch.operator},\n  '')"
+                          }
+                        }
+                      }
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "DetailStatus"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "fontSize": "12px",
+                        "fontWeight": "600",
+                        "marginTop": "8px",
+                        "padding": "4px 12px",
+                        "borderRadius": "12px",
+                        "display": "inline-block",
+                        "width": "fit-content"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.selectedBatch} != null,\n  if({view.custom.selectedBatch.status} = 'COMPLETED', '\u2705 COMPLETED',\n    if({view.custom.selectedBatch.status} = 'RUNNING', '\uD83D\uDD04 RUNNING',\n      if({view.custom.selectedBatch.status} = 'ABORTED', '\u274C ABORTED',\n        if({view.custom.selectedBatch.status} = 'PAUSED', '\u23F8 PAUSED', {view.custom.selectedBatch.status})))),\n  '')"
+                          }
+                        }
+                      },
+                      "props.style.backgroundColor": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.selectedBatch} != null,\n  if({view.custom.selectedBatch.status} = 'COMPLETED', 'rgba(76, 175, 80, 0.3)',\n    if({view.custom.selectedBatch.status} = 'RUNNING', 'rgba(33, 150, 243, 0.3)',\n      if({view.custom.selectedBatch.status} = 'ABORTED', 'rgba(244, 67, 54, 0.3)',\n        if({view.custom.selectedBatch.status} = 'PAUSED', 'rgba(255, 152, 0, 0.3)', 'transparent')))),\n  'transparent')"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.selectedBatch} != null,\n  if({view.custom.selectedBatch.status} = 'COMPLETED', '#4CAF50',\n    if({view.custom.selectedBatch.status} = 'RUNNING', '#2196F3',\n      if({view.custom.selectedBatch.status} = 'ABORTED', '#F44336',\n        if({view.custom.selectedBatch.status} = 'PAUSED', '#FF9800', '#FFFFFF')))),\n  '#FFFFFF')"
+                          }
+                        }
+                      }
+                    },
+                    "type": "ia.display.label"
+                  }
+                ]
+              },
+              {
+                "meta": {
+                  "name": "StepsLabel"
+                },
+                "position": {
+                  "basis": "35px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Step-by-Step Log",
+                  "style": {
+                    "color": "#888888",
+                    "fontSize": "12px",
+                    "fontWeight": "600",
+                    "textTransform": "uppercase",
+                    "letterSpacing": "1px",
+                    "paddingLeft": "15px",
+                    "paddingTop": "15px"
+                  }
+                },
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {
+                  "name": "StepsTable"
+                },
+                "position": {
+                  "grow": 1
+                },
+                "props": {
+                  "columns": [
+                    {
+                      "field": "step",
+                      "header": "#",
+                      "width": 35,
+                      "render": {
+                        "style": {
+                          "color": "#6ECEB2",
+                          "fontWeight": "600",
+                          "textAlign": "center"
+                        }
+                      }
+                    },
+                    {
+                      "field": "action",
+                      "header": "Action",
+                      "width": 120,
+                      "render": {
+                        "style": {
+                          "color": "#FFFFFF"
+                        }
+                      }
+                    },
+                    {
+                      "field": "target",
+                      "header": "Target",
+                      "width": 60,
+                      "render": {
+                        "style": {
+                          "color": "#AAAAAA",
+                          "textAlign": "right"
+                        }
+                      }
+                    },
+                    {
+                      "field": "actual",
+                      "header": "Actual",
+                      "width": 60,
+                      "render": {
+                        "style": {
+                          "color": "#82FFC9",
+                          "textAlign": "right"
+                        }
+                      }
+                    },
+                    {
+                      "field": "status",
+                      "header": "Status",
+                      "width": 90,
+                      "render": {
+                        "style": {
+                          "textAlign": "center"
+                        }
+                      }
+                    }
+                  ],
+                  "data": [],
+                  "selection": {
+                    "enabled": false
+                  },
+                  "pager": {
+                    "show": false
+                  },
+                  "style": {
+                    "backgroundColor": "transparent",
+                    "margin": "10px 15px"
+                  },
+                  "header": {
+                    "style": {
+                      "backgroundColor": "rgba(50, 50, 50, 0.8)",
+                      "color": "#666666",
+                      "fontWeight": "600",
+                      "fontSize": "10px",
+                      "textTransform": "uppercase"
+                    }
+                  },
+                  "rows": {
+                    "style": {
+                      "backgroundColor": "rgba(40, 40, 40, 0.3)",
+                      "borderBottom": "1px solid rgba(255, 255, 255, 0.03)"
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.data": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.batchSteps"
+                      }
+                    }
+                  }
+                },
+                "type": "ia.display.table"
+              },
+              {
+                "meta": {
+                  "name": "CloseDetailButton"
+                },
+                "position": {
+                  "basis": "50px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Close Details",
+                  "style": {
+                    "backgroundColor": "rgba(255, 255, 255, 0.05)",
+                    "border": "1px solid rgba(255, 255, 255, 0.2)",
+                    "color": "#AAAAAA",
+                    "borderRadius": "6px",
+                    "margin": "10px 15px"
+                  }
+                },
+                "type": "ia.input.button",
+                "events": {
+                  "component": {
+                    "onActionPerformed": {
+                      "type": "script",
+                      "scope": "C",
+                      "config": {
+                        "code": "self.view.custom.showDetail = False\nself.view.custom.selectedBatch = None"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#1a1a1a"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

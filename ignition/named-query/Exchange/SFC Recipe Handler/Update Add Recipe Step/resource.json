@@ -1,0 +1,95 @@
+{
+  "scope": "DG",
+  "version": 2,
+  "restricted": false,
+  "overridable": true,
+  "files": [
+    "query.sql"
+  ],
+  "attributes": {
+    "useMaxReturnSize": false,
+    "autoBatchEnabled": false,
+    "fallbackValue": "",
+    "maxReturnSize": 100,
+    "cacheUnit": "SEC",
+    "type": "UpdateQuery",
+    "enabled": true,
+    "cacheAmount": 1,
+    "cacheEnabled": false,
+    "database": "BalterIgnition_Recipe",
+    "fallbackEnabled": false,
+    "lastModificationSignature": "45139e304eacf4016c3caddf32b5cfc69cb17fbf7d5e55c0e2e1b645e516883b",
+    "permissions": [
+      {
+        "zone": "",
+        "role": ""
+      }
+    ],
+    "lastModification": {
+      "actor": "brad@detron.com.au",
+      "timestamp": "2026-01-06T07:03:12Z"
+    },
+    "parameters": [
+      {
+        "type": "Parameter",
+        "identifier": "p1",
+        "sqlType": 4
+      },
+      {
+        "type": "Parameter",
+        "identifier": "p2",
+        "sqlType": 4
+      },
+      {
+        "type": "Parameter",
+        "identifier": "p3",
+        "sqlType": 4
+      },
+      {
+        "type": "Parameter",
+        "identifier": "t1",
+        "sqlType": 7
+      },
+      {
+        "type": "Parameter",
+        "identifier": "p1Unit",
+        "sqlType": 7
+      },
+      {
+        "type": "Parameter",
+        "identifier": "p2Unit",
+        "sqlType": 7
+      },
+      {
+        "type": "Parameter",
+        "identifier": "p3Unit",
+        "sqlType": 7
+      },
+      {
+        "type": "Parameter",
+        "identifier": "recipeId",
+        "sqlType": 2
+      },
+      {
+        "type": "Parameter",
+        "identifier": "recipeFunction",
+        "sqlType": 2
+      },
+      {
+        "type": "Parameter",
+        "identifier": "stepDescrip",
+        "sqlType": 7
+      },
+      {
+        "type": "Parameter",
+        "identifier": "recipeStep",
+        "sqlType": 2
+      },
+      {
+        "type": "Parameter",
+        "identifier": "pauseAction",
+        "sqlType": 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "base": {
+    "style": {}
+  },
+  "variants": [
+    {
+      "pseudo": "active",
+      "style": {
+        "backgroundImage": "linear-gradient(to left, var(--div-1) 0%, 50%, var(--div-16))",
+        "borderTopLeftRadius": "10px",
+        "borderTopRightRadius": "10px",
+        "borderBottomLeftRadius": "10px",
+        "borderBottomRightRadius": "10px"
+      }
+    },
+    {
+      "pseudo": "hover",
+      "style": {
+        "backgroundColor": "#FFFFFF00",
+        "backgroundImage": "var(--div-1)"
+      }
+    }
+  ]
+}

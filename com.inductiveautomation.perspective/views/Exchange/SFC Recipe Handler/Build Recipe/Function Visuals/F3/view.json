@@ -1,0 +1,258 @@
+{
+  "custom": {
+    "colorCode": "rgb(255,1,0)",
+    "nowSeconds": 258,
+    "percent": 0.00204735906551549,
+    "startdate": {
+      "$": [
+        "ts",
+        192,
+        1674129564333
+      ],
+      "$ts": 1674129564333
+    },
+    "totalSeconds": 126016
+  },
+  "params": {
+    "Start": {
+      "$": [
+        "ts",
+        192,
+        1671802131242
+      ],
+      "$ts": 1671803552000
+    },
+    "confirmed": false,
+    "id": "value",
+    "label": "value",
+    "p1": 35,
+    "p2": 0.25,
+    "p3": 1,
+    "t1": ""
+  },
+  "propConfig": {
+    "custom.colorCode": {
+      "binding": {
+        "config": {
+          "expression": "\"rgb(\"+\r\ntoint(if({view.custom.percent}\u003c\u003d0.5,255,((1-{view.custom.percent})*2)*255),0)+\",\"+\r\ntoint(if({view.custom.percent}\u003e\u003d0.5,255,(({view.custom.percent})*2)*255),0)+\",0)\""
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.nowSeconds": {
+      "binding": {
+        "config": {
+          "expression": "if(now()\u003c{view.custom.startdate},{view.custom.startdate},secondsBetween({view.custom.startdate},now()))"
+        },
+        "transforms": [
+          {
+            "code": "\tif value is None:\n\t\treturn 0\n\telse:\n\t\treturn value",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.percent": {
+      "binding": {
+        "config": {
+          "expression": "{view.custom.nowSeconds}/{view.custom.totalSeconds}"
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.startdate": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.Start}"
+        },
+        "transforms": [
+          {
+            "code": "\tif value is None:\n\t\treturn 0\n\telse:\n\t\ttry:\n\t\t\treturn system.date.parse(value, \"MMM dd, yyyy, h:mm:ss a\")\n\t\texcept:\n\t\t\treturn system.date.now()",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.totalSeconds": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.p1}*3600+{view.params.p2}*60+{view.params.p3}"
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "params.Start": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmed": {
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.id": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.label": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p1": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p2": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p3": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.t1": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 200,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "28px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.label"
+              },
+              "type": "property"
+            }
+          },
+          "props.textStyle.color": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.nowSeconds}\u003d{view.custom.totalSeconds},\"#FF0000\",\"#00FF00\")"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Gauge"
+        },
+        "position": {
+          "basis": "167px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.outerAxis.maxValue": {
+            "binding": {
+              "config": {
+                "path": "view.custom.totalSeconds"
+              },
+              "type": "property"
+            }
+          },
+          "props.outerAxis.ranges[0].color": {
+            "binding": {
+              "config": {
+                "path": "view.custom.colorCode"
+              },
+              "type": "property"
+            }
+          },
+          "props.outerAxis.ranges[0].end": {
+            "binding": {
+              "config": {
+                "path": "view.custom.totalSeconds"
+              },
+              "type": "property"
+            }
+          },
+          "props.value": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.nowSeconds}\u003e{view.custom.totalSeconds},{view.custom.totalSeconds},{view.custom.nowSeconds})"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "backgroundColor": "",
+          "endAngle": 405,
+          "innerAxis": {
+            "data": "secondaryValue",
+            "maxValue": 80,
+            "percentRadius": 85,
+            "show": false,
+            "width": 1
+          },
+          "outerAxis": {
+            "data": "value",
+            "percentRadius": 120,
+            "ranges": [
+              {
+                "start": 0,
+                "width": 10
+              }
+            ],
+            "show": true,
+            "tickMarks": {
+              "color": "#C0C0C000",
+              "length": 1,
+              "thickness": 10
+            },
+            "width": 3
+          },
+          "secondaryValue": 30,
+          "startAngle": 135,
+          "style": {
+            "classes": [],
+            "fontSize": 11
+          }
+        },
+        "type": "ia.chart.gauge"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "2px",
+        "margin": "3px",
+        "overflow": "visible"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

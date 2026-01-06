@@ -1,0 +1,145 @@
+{
+  "custom": {},
+  "params": {},
+  "props": {
+    "defaultSize": {
+      "height": 546,
+      "width": 512
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "props": {
+          "style": {
+            "margin": "5px",
+            "textAlign": "center"
+          },
+          "text": "Create \"exsrh_recipe_steps\" and \"exsrh_recipes\" Tables"
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Dropdown"
+        },
+        "position": {
+          "basis": "36px"
+        },
+        "propConfig": {
+          "props.value": {
+            "onChange": {
+              "enabled": null,
+              "script": "\t#change text field based on what was selected.\n\t\n\tif currentValue.value\u003d\u003d0:\n\t\tself.getSibling(\"TextArea\").props.text\u003dself.getSibling(\"TextArea\").custom.mysql\n\telif currentValue.value\u003d\u003d1:\n\t\tself.getSibling(\"TextArea\").props.text\u003dself.getSibling(\"TextArea\").custom.sqlserver\n\telif currentValue.value\u003d\u003d2:\n\t\tself.getSibling(\"TextArea\").props.text\u003dself.getSibling(\"TextArea\").custom.postgre\n"
+            }
+          }
+        },
+        "props": {
+          "options": [
+            {
+              "label": "MySQL",
+              "value": 0
+            },
+            {
+              "label": "SQL Server",
+              "value": 1
+            },
+            {
+              "label": "Postgre",
+              "value": 2
+            }
+          ],
+          "placeholder": {
+            "text": "Select DB Type..."
+          },
+          "style": {
+            "margin": "5px"
+          }
+        },
+        "type": "ia.input.dropdown"
+      },
+      {
+        "custom": {
+          "test": [
+            "scada_user_ex",
+            "sqlt_data_1_2022_12",
+            "recipes",
+            "recipe_steps",
+            "sqlth_drv",
+            "sqlth_scinfo",
+            "sqlth_sce",
+            "sqlt_data_1_2023_01",
+            "sqlth_te",
+            "sqlth_partitions",
+            "sqlth_annotations",
+            "sqlt_data_1_2022_10",
+            "sqlt_data_1_2022_11",
+            "scada_users",
+            "scada_roles",
+            "scada_user_rl",
+            "scada_user_ci",
+            "scada_user_sa"
+          ]
+        },
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#Run named query that creates a list of tables in the default schema\n\tdef getTables():\n\t\tdataTables\u003dsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Query Tables In Schema\")\n\t\tlistTables\u003d[]\n\t\tfor x in range(dataTables.getRowCount()):\n\t\t\tlistTables.append(dataTables.getValueAt(x,0))\n\t\treturn listTables\n\t\n\t\n\t#check if a DB type is selected\n\tif self.getSibling(\"Dropdown\").props.value !\u003d \"\":\n\t\t#default table names\n\t\tstepTableName\u003d\u0027exsrh_recipe_steps\u0027\n\t\trecipeTableName\u003d\u0027exsrh_recipes\u0027\n\t\t\n\t\t#retrieve list of all tables in schema\n\t\ttables\u003dgetTables()\n\t\t\n\t\t\t\t\n\t\t#check if default tables are in the current schema\n\t\tif stepTableName not in tables and recipeTableName not in tables:\n\t\t\t\n\t\t\t#check if MySQL is selected\n\t\t\tif self.getSibling(\"Dropdown\").props.value\u003d\u003d0:\n\t\t\t\t#try run query that creates tables\n\t\t\t\ttry:\n\t\t\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Create MySQL Table Recipes\")\n\t\t\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Create MySQL Table Steps\")\n\t\t\t\t\ttables\u003dgetTables()\n\t\t\t\t\tif stepTableName in tables and recipeTableName in tables:\n\t\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and %s Created Successfully.\u0027 %(stepTableName,recipeTableName)\n\t\t\t\t\telse:\n\t\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and \"%s\" NOT Created Successfully.\u0027 %(stepTableName,recipeTableName)\n\t\t\t\t#if unsuccessful post a not in the text field.\n\t\t\t\texcept:\n\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\"Error: DB Type Likely Incorrect\"\n\t\t\t\t\t\n\t\t\t#check if SQL Server is selected\n\t\t\telif self.getSibling(\"Dropdown\").props.value\u003d\u003d1:\n\t\t\t\t#try run query that creates tables\n\t\t\t\ttry:\n\t\t\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Create SQLServer Tables\")\n\t\t\t\t\ttables\u003dgetTables()\n\t\t\t\t\tif stepTableName in tables and recipeTableName in tables:\n\t\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and \"%s\" Created Successfully.\u0027 %(stepTableName,recipeTableName)\n\t\t\t\t\telse:\n\t\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and \"%s\" NOT Created Successfully.\u0027 %(stepTableName,recipeTableName)\n\t\t\t\t#if unsuccessful post a not in the text field.\n\t\t\t\texcept:\n\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\"Error: DB Type Likely Incorrect\"\n\t\t\t\n\t\t\t#check if PostgresSQL is selected\n\t\t\telif self.getSibling(\"Dropdown\").props.value\u003d\u003d2:\n\t\t\t\t#try run query that creates tables\n\t\t\t\ttry:\n\t\t\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Create Postgre Table\")\n\t\t\t\t\ttables\u003dgetTables()\n\t\t\t\t\tif stepTableName in tables and recipeTableName in tables:\n\t\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and \"%s\" Created Successfully.\u0027 %(stepTableName,recipeTableName)\n\t\t\t\t\telse:\n\t\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and \"%s\" NOT Created Successfully.\u0027 %(stepTableName,recipeTableName)\n\t\t\t\t#if unsuccessful post a not in the text field.\n\t\t\t\texcept:\n\t\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\"Error: DB Type Likely Incorrect\"\t\t\t\n\t\t\t\n\t\t#if tables already exist in schema post message in text field\n\t\telse:\n\t\t\tself.getSibling(\"Dropdown\").props.value\u003d\"\"\n\t\t\tif stepTableName in tables and recipeTableName in tables:\n\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" and \"%s\" are already exists in schema. Double check the tables are setup properly and designated to be utilized with this project.\u0027 %(stepTableName,recipeTableName)\n\t\t\telif stepTableName in tables:\n\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" is already exists in schema. Double check the table is setup properly and designated to be utilized with this project.\u0027 %(stepTableName)\n\t\t\telif recipeTableName in tables:\n\t\t\t\tself.getSibling(\"TextArea\").props.text\u003d\u0027\"%s\" is already exists in schema. Double check the table is setup properly and designated to be utilized with this project.\u0027 %(recipeTableName)\n\telse:\n\t\tself.getSibling(\"TextArea\").props.text\u003d\"Select DB Type\""
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "props": {
+          "primary": false,
+          "style": {
+            "margin": "5px"
+          },
+          "text": "Create Tables"
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "custom": {
+          "mysql": "QUERY #1:\n\nCREATE TABLE exsrh_recipe_steps(\n\tid int NOT NULL AUTO_INCREMENT,\n\trecipe_id int NOT NULL,\n\trecipe_step int NOT NULL,\n\tstep_descrip VARCHAR(255) NULL,\n\trecipe_function int NOT NULL,\n\tp1 float NULL,\n\tp2 float NULL,\n\tp3 float NULL,\n\tt1 varchar(255) NULL,\n\tpause_action int NULL,\n\tp1unit VARCHAR(255) NULL,\n\tp2unit VARCHAR(255) NULL,\n\tp3unit VARCHAR(255) NULL,\n\tPRIMARY KEY (id));\n\nQUERY #2:\n\nCREATE TABLE exsrh_recipes(\n\tid int NOT NULL AUTO_INCREMENT,\n\trecipe_name VARCHAR(255) NOT NULL,\n\tPRIMARY KEY (id));",
+          "postgre": "CREATE TABLE exsrh_recipe_steps(\n\tid serial,\n\trecipe_id int NOT NULL,\n\trecipe_step int NOT NULL,\n\tstep_descrip varchar(255) NULL,\n\trecipe_function int NOT NULL,\n\tp1 float NULL,\n\tp2 float NULL,\n\tp3 float NULL,\n\tt1 varchar(255) NULL,\n\tpause_action int NULL,\n\tp1unit varchar(255) NULL,\n\tp2unit varchar(255) NULL,\n\tp3unit varchar(255) NULL,\n\tPRIMARY KEY (id));\n\nCREATE TABLE exsrh_recipes(\n\tid serial,\n\trecipe_name varchar(255) NOT NULL,\n\tPRIMARY KEY (id));",
+          "sqlserver": "CREATE TABLE exsrh_recipe_steps(\n\tid int IDENTITY(1,1) NOT NULL PRIMARY KEY,\n\trecipe_id int NOT NULL,\n\trecipe_step int NOT NULL,\n\tstep_descrip varchar(255) NULL,\n\trecipe_function int NOT NULL,\n\tp1 float NULL,\n\tp2 float NULL,\n\tp3 float NULL,\n\tt1 varchar(255) NULL,\n\tpause_action int NULL,\n\tp1unit varchar(255) NULL,\n\tp2unit varchar(255) NULL,\n\tp3unit varchar(255) NULL\n\t);\n\nCREATE TABLE exsrh_recipes(\n\tid int IDENTITY(1,1) NOT NULL PRIMARY KEY,\n\trecipe_name varchar(255) NOT NULL);"
+        },
+        "meta": {
+          "name": "TextArea"
+        },
+        "position": {
+          "basis": "385px",
+          "grow": 1
+        },
+        "props": {
+          "style": {
+            "margin": "5px"
+          }
+        },
+        "type": "ia.input.text-area"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

@@ -1,0 +1,303 @@
+{
+  "custom": {
+    "show": false
+  },
+  "params": {
+    "outputTag": "[default]Sensor",
+    "tag": "[default]Sensor",
+    "tcount": 1
+  },
+  "propConfig": {
+    "custom.show": {
+      "persistent": true
+    },
+    "params.outputTag": {
+      "binding": {
+        "config": {
+          "expression": "{/root/FlexContainer Selected/Label Selected Tag.props.text}"
+        },
+        "type": "expr"
+      },
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.tag": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.tcount": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "props.defaultSize.height": {
+      "binding": {
+        "config": {
+          "expression": "if({view.custom.show},425+62,185+62)"
+        },
+        "type": "expr"
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 414
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "32px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "\"Tag #\"+{view.params.tcount}"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "textStyle": {
+            "fontWeight": "900",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label"
+            },
+            "position": {
+              "basis": "80px"
+            },
+            "props": {
+              "text": "Current Tag:",
+              "textStyle": {
+                "fontSize": 12,
+                "marginRight": 5,
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Label_CurrentTag"
+            },
+            "position": {
+              "basis": "60px",
+              "grow": 1,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.params.tag"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "alignVertical": "top",
+              "style": {
+                "borderStyle": "solid",
+                "borderWidth": 1,
+                "margin": "5px"
+              },
+              "textStyle": {
+                "fontSize": 12,
+                "lineHeight": "20px",
+                "textAlign": "left",
+                "whiteSpace": "pre-wrap",
+                "wordWrap": "break-word"
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer Current"
+        },
+        "position": {
+          "basis": "75px",
+          "shrink": 0
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label"
+            },
+            "position": {
+              "basis": "80px"
+            },
+            "props": {
+              "text": "Select Tag:",
+              "textStyle": {
+                "fontSize": 12,
+                "marginRight": 5,
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Label Selected Tag"
+            },
+            "position": {
+              "basis": "60px",
+              "grow": 1,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.style.borderColor": {
+                "binding": {
+                  "config": {
+                    "expression": "if({this.props.text}\u003d{view.params.tag},\"#FF8C00\",\"#00AC00\")"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "expression": "if({.../EmbeddedView.props.params.val}\u003d\"n/a\",{view.params.tag},{.../EmbeddedView.props.params.output}[0])"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.textStyle.color": {
+                "binding": {
+                  "config": {
+                    "expression": "if({this.props.text}\u003d{view.params.tag},\"#FF8C00\",\"#00AC00\")"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "alignVertical": "top",
+              "style": {
+                "borderStyle": "solid",
+                "margin": "5px"
+              },
+              "textStyle": {
+                "fontSize": 12,
+                "overflow": "visible",
+                "textAlign": "left",
+                "whiteSpace": "pre-wrap",
+                "wordWrap": "break-word"
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer Selected"
+        },
+        "position": {
+          "basis": "75px",
+          "shrink": 0
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#toggles the tag browser show/hide\n\tif self.view.custom.show:\n\t\tself.view.custom.show\u003dFalse\n\telse:\n\t\tself.view.custom.show\u003dTrue"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Browse Tags"
+        },
+        "position": {
+          "basis": "34px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.image.icon.path": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.show},\"material/vertical_align_top\",\"material/vertical_align_bottom\")"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "height": 28,
+            "icon": {},
+            "position": "center",
+            "width": 28
+          },
+          "primary": false,
+          "style": {
+            "margin": "5px"
+          },
+          "text": ""
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView"
+        },
+        "position": {
+          "basis": "249px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "view.custom.show"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "params": {
+            "output": [],
+            "val": "n/a"
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Tag Select"
+        },
+        "type": "ia.display.view"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderColor": "#808080",
+        "borderStyle": "solid",
+        "margin": "5px"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

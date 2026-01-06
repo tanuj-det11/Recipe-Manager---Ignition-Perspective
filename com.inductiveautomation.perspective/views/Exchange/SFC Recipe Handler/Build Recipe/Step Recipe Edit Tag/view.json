@@ -1,0 +1,85 @@
+{
+  "custom": {},
+  "params": {},
+  "props": {
+    "defaultSize": {
+      "height": 500,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "EmbeddedView"
+        },
+        "position": {
+          "basis": "320px",
+          "grow": 1
+        },
+        "props": {
+          "params": {
+            "output": [],
+            "val": "n/a"
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Tag Select"
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#sends message to the session if the number of paths selected is greater than 0 and closes popup\n\tpaths\u003dself.getSibling(\"EmbeddedView\").props.params.output\n\t\n\tif len(paths)\u003e0:\n\t\tsystem.perspective.sendMessage(\u0027assignTag\u0027,{\"output\":paths},\"session\")\n\n\tsystem.perspective.closePopup(\u0027tagSelect\u0027)\n"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "expression": "{../EmbeddedView.props.params.val}!\u003d\"n/a\""
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "color": "#00D900",
+              "path": "material/playlist_add"
+            }
+          },
+          "primary": false,
+          "style": {
+            "margin": "5px"
+          },
+          "text": "Set Path",
+          "textStyle": {
+            "color": "#00D900",
+            "textShadow": "#808080 1px 1px"
+          }
+        },
+        "type": "ia.input.button"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

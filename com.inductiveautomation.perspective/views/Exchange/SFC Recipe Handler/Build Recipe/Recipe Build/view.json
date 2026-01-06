@@ -1,0 +1,142 @@
+{
+  "custom": {},
+  "params": {
+    "addStep": false,
+    "modifyRecipe": false
+  },
+  "propConfig": {
+    "params.addStep": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.modifyRecipe": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 1141
+    },
+    "loading": {
+      "mode": "blocking"
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "EmbeddedView Step Config"
+        },
+        "position": {
+          "basis": "300px",
+          "display": false,
+          "shrink": 0
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "../EmbeddedView Recipe Config.props.params.addStep"
+              },
+              "type": "property"
+            },
+            "persistent": true
+          },
+          "props.params.selRowData": {
+            "binding": {
+              "config": {
+                "path": "../EmbeddedView Recipe Config.props.params.selRowData"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "loading": {
+            "order": "with-parent"
+          },
+          "params": {
+            "StepDescription": "Change Value",
+            "complete": true,
+            "function": 1,
+            "params": {
+              "p1": 0,
+              "p1Unit": "",
+              "p2": 0,
+              "p2Unit": "",
+              "p3": 0,
+              "p3Unit": "",
+              "pause": false,
+              "t1": ""
+            }
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Step Setup",
+          "useDefaultViewWidth": true
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView Recipe Config"
+        },
+        "position": {
+          "basis": "320px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.params.addStep": {
+            "binding": {
+              "config": {
+                "bidirectional": true,
+                "path": "view.params.addStep"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.modifyRecipe": {
+            "binding": {
+              "config": {
+                "path": "view.params.modifyRecipe"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.stepData": {
+            "binding": {
+              "config": {
+                "path": "../EmbeddedView Step Config.props.params"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "loading": {
+            "order": "with-parent"
+          },
+          "params": {
+            "selRowData": {
+              "Pause": "",
+              "p1": 0,
+              "p1Unit": "",
+              "p2": null,
+              "p2Unit": null,
+              "p3": null,
+              "p3Unit": null,
+              "recipe_function": 1,
+              "step_descrip": "Change Value",
+              "t1": ""
+            }
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Recipe View Table"
+        },
+        "type": "ia.display.view"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "type": "ia.container.flex"
+  }
+}

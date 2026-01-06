@@ -1,0 +1,219 @@
+{
+  "custom": {
+    "show": false
+  },
+  "params": {
+    "output": "",
+    "param": "t1"
+  },
+  "propConfig": {
+    "custom.show": {
+      "persistent": true
+    },
+    "params.output": {
+      "paramDirection": "inout",
+      "persistent": true
+    },
+    "params.param": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 60,
+      "width": 292
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label"
+            },
+            "position": {
+              "basis": "60px",
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "expression": "\"Set \"+{view.params.param}+\":\""
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "textStyle": {
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Dropdown"
+            },
+            "position": {
+              "basis": "256px",
+              "grow": 1
+            },
+            "propConfig": {
+              "custom.output": {
+                "binding": {
+                  "config": {
+                    "bidirectional": true,
+                    "path": "view.params.output"
+                  },
+                  "type": "property"
+                }
+              },
+              "props.value": {
+                "binding": {
+                  "config": {
+                    "bidirectional": true,
+                    "path": "view.params.output"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "fontSize": 12,
+                "marginBottom": "2px",
+                "marginLeft": "5px",
+                "marginRight": "2px",
+                "marginTop": "2px"
+              }
+            },
+            "scripts": {
+              "customMethods": [],
+              "extensionFunctions": null,
+              "messageHandlers": [
+                {
+                  "messageType": "assignTag",
+                  "pageScope": true,
+                  "script": "\t#gathers messagae\n\tpaths\u003dpayload[\"output\"]\n\t\n\t#assigns path to the first item in the list (should only ever have 1 item in the list)\n\tpath\u003dpaths[0]\n\t\n\t\n\tself.custom.output\u003dpath\n\t\n\t\n\toptions\u003dself.props.options\n\tsplits\u003dpath.split(\"/\")\n\t\n\t#shortens name of tag for dropdown so it is readable.\n\tif len(splits)\u003e2:\n\t\tlenopt\u003d\".../\"+splits[len(splits)-2]+\"/\"+splits[len(splits)-1]\n\telif len(splits)\u003e1:\n\t\tlenopt\u003d\".../\"+splits[len(splits)-1]\n\telse:\n\t\tlenopt\u003dpath\n\tlisted\u003dFalse\n\t\n\t#adds tag to dropdown if it is not already in the list\n\tif not listed:\n\t\toptions.append({\"label\":lenopt,\"value\":path})\n\t\tself.props.value\u003dpath\n\t",
+                  "sessionScope": true,
+                  "viewScope": false
+                }
+              ]
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "events": {
+              "dom": {
+                "onClick": {
+                  "config": {
+                    "draggable": true,
+                    "id": "tagSelect",
+                    "modal": true,
+                    "overlayDismiss": false,
+                    "position": {
+                      "relativeLocation": "top-right"
+                    },
+                    "positionType": "relative",
+                    "resizable": true,
+                    "showCloseIcon": true,
+                    "title": "Select Tag",
+                    "type": "open",
+                    "viewPath": "Exchange/SFC Recipe Handler/Build Recipe/Step Recipe Edit Tag",
+                    "viewportBound": true
+                  },
+                  "scope": "C",
+                  "type": "popup"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button"
+            },
+            "position": {
+              "basis": "34px",
+              "shrink": 0
+            },
+            "props": {
+              "image": {
+                "height": 34,
+                "icon": {
+                  "path": "material/pageview"
+                },
+                "position": "center",
+                "width": 30
+              },
+              "primary": false,
+              "style": {
+                "margin": "2px",
+                "marginRight": "5px"
+              },
+              "text": ""
+            },
+            "type": "ia.input.button"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer"
+        },
+        "position": {
+          "basis": "38px",
+          "shrink": 0
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "15px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.output"
+              },
+              "transforms": [
+                {
+                  "code": "\tlenopt\u003d\"\"\n\ttry:\n\t\tsplits\u003dvalue.split(\"/\")\n\t\tif len(splits)\u003e3:\n\t\t\t\tlenopt\u003d\".../\"+splits[len(splits)-3]+\"/\"+splits[len(splits)-2]+\"/\"+splits[len(splits)-1]\n\t\telif len(splits)\u003e2:\n\t\t\tlenopt\u003d\".../\"+splits[len(splits)-2]+\"/\"+splits[len(splits)-1]\n\t\telse:\n\t\t\tlenopt\u003dvalue\n\texcept:\n\t\tlenopt\u003d\"\"\n\t\n\treturn lenopt",
+                  "type": "script"
+                }
+              ],
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "overflow": "hidden"
+          },
+          "textStyle": {
+            "fontSize": 10,
+            "textAlign": "center",
+            "whiteSpace": "nowrap"
+          }
+        },
+        "type": "ia.display.label"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "margin": "2px"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

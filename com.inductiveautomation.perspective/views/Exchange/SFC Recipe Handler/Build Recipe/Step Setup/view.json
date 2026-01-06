@@ -1,0 +1,930 @@
+{
+  "custom": {
+    "Functions": [
+      {
+        "descrip": "Changes a tag value(t1) to a new value (p1)",
+        "name": "Change Value",
+        "num": 1,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": true
+          },
+          "p2": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p3": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": true
+          }
+        }
+      },
+      {
+        "descrip": "Ramps a tag value (t1) to a target (p1) at a rate (p2) per unit time (p3)",
+        "name": "Ramp Value",
+        "num": 2,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": true
+          },
+          "p2": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": true
+          },
+          "p3": {
+            "dropOptions": [
+              {
+                "label": "per hr.",
+                "value": 0
+              },
+              {
+                "label": "per min.",
+                "value": 1
+              },
+              {
+                "label": "per sec.",
+                "value": 2
+              }
+            ],
+            "enabled": true,
+            "unitSelect": true,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": true
+          }
+        }
+      },
+      {
+        "descrip": "Holds the current step for a set amount of time (HH:mm:ss) (p1:p2:p3)",
+        "name": "Soak Time",
+        "num": 3,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": true
+          },
+          "p2": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p3": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": false
+          }
+        }
+      },
+      {
+        "descrip": "Holds the current step until the value from tag (t1) maintains a target (p1) in a +/- range (p2) for a set number of minutes (p3)",
+        "name": "Guaranteed Soak",
+        "num": 4,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p2": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p3": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": true
+          }
+        }
+      },
+      {
+        "descrip": "Holds the current step until a tag value (t1) achieves a target (p1) with a condition (p2)",
+        "name": "Hold For Target",
+        "num": 5,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": true,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p2": {
+            "dropOptions": [
+              {
+                "label": "equals",
+                "value": 0
+              },
+              {
+                "label": "greater than or equal",
+                "value": 1
+              },
+              {
+                "label": "less than or equal",
+                "value": 2
+              }
+            ],
+            "enabled": true,
+            "unitSelect": true,
+            "unit_enabled": false
+          },
+          "p3": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": true
+          }
+        }
+      },
+      {
+        "descrip": "Pauses Recipe at Set Step",
+        "name": "Prescribed Pause",
+        "num": 6,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p2": {
+            "dropOptions": [
+              {
+                "label": "equals",
+                "value": 0
+              },
+              {
+                "label": "greater than or equal",
+                "value": 1
+              },
+              {
+                "label": "less than or equal",
+                "value": 2
+              }
+            ],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p3": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": false
+          }
+        }
+      },
+      {
+        "descrip": "Sets a string tag (t1) to a user defined text value. ",
+        "name": "Set String Value",
+        "num": 7,
+        "params": {
+          "p1": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p2": {
+            "dropOptions": [
+              {
+                "label": "equals",
+                "value": 0
+              },
+              {
+                "label": "greater than or equal",
+                "value": 1
+              },
+              {
+                "label": "less than or equal",
+                "value": 2
+              }
+            ],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "p3": {
+            "dropOptions": [],
+            "enabled": false,
+            "unitSelect": false,
+            "unit_enabled": false
+          },
+          "t1": {
+            "enabled": true
+          }
+        }
+      }
+    ],
+    "params": {
+      "p1": 0,
+      "p2": 0,
+      "p3": 0,
+      "t1": ""
+    },
+    "show": true
+  },
+  "params": {
+    "StepDescription": "Change Value",
+    "complete": true,
+    "function": 1,
+    "params": {
+      "p1": 0,
+      "p1Unit": "",
+      "p2": 0,
+      "p2Unit": "",
+      "p3": 0,
+      "p3Unit": "",
+      "pause": false,
+      "t1": ""
+    },
+    "selRowData": {
+      "Pause": 0,
+      "p1": 32,
+      "p1Unit": "C",
+      "p2": 0.25,
+      "p2Unit": "C",
+      "p3": 1,
+      "p3Unit": "min.",
+      "recipe_function": 4,
+      "step_descrip": "Guaranteed Soak",
+      "t1": "[default]Exchange/SFC_Setpoint_Control/SFC_PID_Control/PID Heating Process/Sensor/Sensor Input"
+    }
+  },
+  "propConfig": {
+    "custom.Functions": {
+      "persistent": true
+    },
+    "custom.dropdown": {
+      "binding": {
+        "config": {
+          "path": "/root/FlexContainer/Dropdown.props.value"
+        },
+        "overlayOptOut": true,
+        "type": "property"
+      },
+      "persistent": false
+    },
+    "custom.params": {
+      "persistent": true
+    },
+    "custom.params.p1": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView P1.props.params.output"
+        },
+        "transforms": [
+          {
+            "code": "\tindex\u003d0\n\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.p1.enabled:\n\t\treturn value\n\telse:\n\t\treturn 0",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      },
+      "persistent": true
+    },
+    "custom.params.p1Unit": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView P1.props.params.unit"
+        },
+        "transforms": [
+          {
+            "code": "\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.p1.enabled:\n\t\treturn value\n\telse:\n\t\treturn \"\"",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.params.p2": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView P2.props.params.output"
+        },
+        "transforms": [
+          {
+            "code": "\tindex\u003d0\n\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.p2.enabled:\n\t\treturn value\n\telse:\n\t\treturn 0",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      },
+      "persistent": true
+    },
+    "custom.params.p2Unit": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView P2.props.params.unit"
+        },
+        "transforms": [
+          {
+            "code": "\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.p2.enabled:\n\t\treturn value\n\telse:\n\t\treturn \"\"",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.params.p3": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView P3.props.params.output"
+        },
+        "transforms": [
+          {
+            "code": "\tindex\u003d0\n\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.p3.enabled:\n\t\treturn value\n\telse:\n\t\treturn 0",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      },
+      "persistent": true
+    },
+    "custom.params.p3Unit": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView P3.props.params.unit"
+        },
+        "transforms": [
+          {
+            "code": "\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.p3.enabled:\n\t\treturn value\n\telse:\n\t\treturn \"\"",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.params.pause": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView Pause.props.params.output"
+        },
+        "type": "property"
+      }
+    },
+    "custom.params.t1": {
+      "binding": {
+        "config": {
+          "path": "/root/EmbeddedView T1.props.params.output"
+        },
+        "transforms": [
+          {
+            "code": "\tindex\u003d0\n\tselectedFunction\u003dself.custom.dropdown\n\tif self.custom.Functions[selectedFunction].params.t1.enabled:\n\t\treturn value\n\telse:\n\t\treturn 0",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      },
+      "persistent": true
+    },
+    "custom.show": {
+      "persistent": true
+    },
+    "params.StepDescription": {
+      "binding": {
+        "config": {
+          "expression": "if({/root/TextArea.props.text}!\u003d\"\",{/root/TextArea.props.text},{view.custom.Functions}[{view.custom.dropdown}][\u0027name\u0027])"
+        },
+        "type": "expr"
+      },
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.complete": {
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.function": {
+      "binding": {
+        "config": {
+          "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"num\"]"
+        },
+        "type": "expr"
+      },
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.params": {
+      "binding": {
+        "config": {
+          "path": "view.custom.params"
+        },
+        "type": "property"
+      },
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.selRowData": {
+      "onChange": {
+        "enabled": null,
+        "script": "\t#incoming data copying into step setup to reduce time for replicating similar steps\n\tself.getChild(\"root\").getChild(\"FlexContainer\").getChild(\"Dropdown\").props.value\u003dself.params.selRowData.recipe_function-1\n\tself.getChild(\"root\").getChild(\"EmbeddedView P1\").props.params.output\u003dself.params.selRowData.p1\n\tself.getChild(\"root\").getChild(\"EmbeddedView P1\").props.params.unit\u003dself.params.selRowData.p1Unit\n\tself.getChild(\"root\").getChild(\"EmbeddedView P2\").props.params.output\u003dself.params.selRowData.p2\n\tself.getChild(\"root\").getChild(\"EmbeddedView P2\").props.params.unit\u003dself.params.selRowData.p2Unit\n\tself.getChild(\"root\").getChild(\"EmbeddedView P3\").props.params.output\u003dself.params.selRowData.p3\n\tself.getChild(\"root\").getChild(\"EmbeddedView P3\").props.params.unit\u003dself.params.selRowData.p3Unit\n\tself.getChild(\"root\").getChild(\"EmbeddedView T1\").props.params.output\u003dself.params.selRowData.t1"
+      },
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 806,
+      "width": 300
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "props": {
+          "text": "Define Recipe Step",
+          "textStyle": {
+            "fontWeight": "bold",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "TextArea"
+        },
+        "position": {
+          "basis": "40px"
+        },
+        "props": {
+          "placeholder": "Step Description....",
+          "style": {
+            "margin": "5px",
+            "marginBottom": "2px",
+            "marginTop": "2px"
+          }
+        },
+        "type": "ia.input.text-area"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Dropdown"
+            },
+            "position": {
+              "basis": "36px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.options[0].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[0].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.options[1].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[1].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.options[2].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[2].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.options[3].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[3].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.options[4].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[4].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.options[5].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[5].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.options[6].label": {
+                "binding": {
+                  "config": {
+                    "expression": "{view.custom.Functions[6].name}"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.value": {
+                "onChange": {
+                  "enabled": null,
+                  "script": "\t#Sets default values for parameters that are unused relative to the function selected.\n\tif currentValue.value in [1,2,3,4]:\n\t\tself.parent.parent.getChild(\"EmbeddedView P2\").props.params.output\u003d0\n\tif currentValue.value in [1,2,3]:\n\t\tself.parent.parent.getChild(\"EmbeddedView P3\").props.params.output\u003d0\n\tif currentValue.value\u003d\u003d5:\n\t\tself.parent.parent.getChild(\"EmbeddedView P1\").props.params.output\u003dNone\n\t\tself.parent.parent.getChild(\"EmbeddedView P2\").props.params.output\u003dNone\n\t\tself.parent.parent.getChild(\"EmbeddedView P3\").props.params.output\u003dNone\n\t\tself.parent.parent.getChild(\"EmbeddedView T1\").props.params.output\u003dNone\n\tself.parent.parent.getChild(\"EmbeddedView Pause\").props.params.output\u003dFalse\n\tself.parent.parent.getChild(\"TextArea\").props.text\u003d\"\""
+                },
+                "persistent": true
+              }
+            },
+            "props": {
+              "options": [
+                {
+                  "value": 0
+                },
+                {
+                  "value": 1
+                },
+                {
+                  "value": 2
+                },
+                {
+                  "value": 3
+                },
+                {
+                  "value": 4
+                },
+                {
+                  "value": 5
+                },
+                {
+                  "value": 6
+                }
+              ],
+              "placeholder": {
+                "text": "Select Recipe Function..."
+              },
+              "style": {
+                "margin": "5px"
+              },
+              "value": 0
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "events": {
+              "dom": {
+                "onClick": {
+                  "config": {
+                    "script": "\tif self.view.custom.show:\n\t\tself.view.custom.show\u003dFalse\n\telse:\n\t\tself.view.custom.show\u003dTrue"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Icon_0"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.path": {
+                "binding": {
+                  "config": {
+                    "expression": "if(!{view.custom.show},\"material/vertical_align_top\",\"material/vertical_align_bottom\")"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "type": "ia.display.icon"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer"
+        },
+        "position": {
+          "basis": "52px"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView"
+        },
+        "position": {
+          "basis": "180px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "view.custom.show"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.descrip": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"descrip\"]"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          },
+          "props.params.name": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"name\"]"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          },
+          "props.params.num": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"num\"]"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Function"
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView P1"
+        },
+        "position": {
+          "basis": "45px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\u0027params\u0027][\u0027p1\u0027][\u0027enabled\u0027]\r\n"
+              },
+              "type": "expr"
+            },
+            "onChange": {
+              "enabled": null,
+              "script": "\tif self.position.display\u003d\u003dFalse:\n\t\tself.props.params.output\u003dNone"
+            },
+            "persistent": true
+          },
+          "props.params.function": {
+            "binding": {
+              "config": {
+                "path": "view.params.function"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.params": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"params\"][\"p1\"]"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "params": {
+            "output": 0,
+            "param": "p1",
+            "unit": ""
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Parameter Change"
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView P2"
+        },
+        "position": {
+          "basis": "45px",
+          "display": false
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\u0027params\u0027][\u0027p2\u0027][\u0027enabled\u0027]\r\n"
+              },
+              "type": "expr"
+            },
+            "onChange": {
+              "enabled": null,
+              "script": "\tif self.position.display\u003d\u003dFalse:\n\t\tself.props.params.output\u003dNone"
+            },
+            "persistent": true
+          },
+          "props.params.function": {
+            "binding": {
+              "config": {
+                "path": "view.params.function"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.params": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"params\"][\"p2\"]"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "params": {
+            "output": null,
+            "param": "p2",
+            "unit": ""
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Parameter Change"
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView P3"
+        },
+        "position": {
+          "basis": "45px",
+          "display": false
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\u0027params\u0027][\u0027p3\u0027][\u0027enabled\u0027]\r\n"
+              },
+              "type": "expr"
+            },
+            "onChange": {
+              "enabled": null,
+              "script": "\tif self.position.display\u003d\u003dFalse:\n\t\tself.props.params.output\u003dNone"
+            },
+            "persistent": true
+          },
+          "props.params.function": {
+            "binding": {
+              "config": {
+                "path": "view.params.function"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.params": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\"params\"][\"p3\"]"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "params": {
+            "output": null,
+            "param": "p3",
+            "unit": ""
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Parameter Change"
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView T1",
+          "tooltip": {
+            "text": "Historized Tag Suggested for Full Functionality"
+          }
+        },
+        "position": {
+          "basis": "64px"
+        },
+        "propConfig": {
+          "meta.tooltip.enabled": {
+            "binding": {
+              "config": {
+                "expression": "case({../FlexContainer/Dropdown.props.value},\r\n0,//F1\r\ntrue,\r\n1,//F2\r\ntrue,\r\n2,//F3\r\nfalse,\r\n3,//F4\r\ntrue,\r\n4,//F5\r\ntrue,\r\n5,//F6\r\nfalse,\r\n6,//F7\r\nfalse,\r\nfalse)"
+              },
+              "type": "expr"
+            }
+          },
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.custom.dropdown}][\u0027params\u0027][\u0027t1\u0027][\u0027enabled\u0027]\r\n"
+              },
+              "type": "expr"
+            },
+            "onChange": {
+              "enabled": null,
+              "script": "\tif self.position.display\u003d\u003dFalse:\n\t\tself.props.params.output\u003d\"\""
+            },
+            "persistent": true
+          }
+        },
+        "props": {
+          "params": {
+            "output": "",
+            "param": "t1"
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Tag Change",
+          "useDefaultViewHeight": true
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView Pause"
+        },
+        "position": {
+          "basis": "45px",
+          "display": false
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.params.function}\u003d2||{view.params.function}\u003d3\r\n"
+              },
+              "type": "expr"
+            },
+            "onChange": {
+              "enabled": null,
+              "script": "\tif self.position.display\u003d\u003dFalse:\n\t\tself.props.params.output\u003d\"\""
+            },
+            "persistent": true
+          }
+        },
+        "props": {
+          "params": {
+            "output": false
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Pause Action"
+        },
+        "type": "ia.display.view"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

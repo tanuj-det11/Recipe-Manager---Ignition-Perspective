@@ -1,0 +1,219 @@
+{
+  "custom": {},
+  "params": {
+    "descrip": "",
+    "name": "",
+    "num": ""
+  },
+  "propConfig": {
+    "params.descrip": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.name": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.num": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 163,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label Number"
+            },
+            "position": {
+              "basis": "45px",
+              "grow": 1
+            },
+            "props": {
+              "text": "Function Number:",
+              "textStyle": {
+                "fontSize": 14,
+                "fontWeight": "bolder",
+                "marginRight": "5px",
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Number"
+            },
+            "position": {
+              "basis": "32px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.params.num"
+                  },
+                  "overlayOptOut": true,
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "textStyle": {
+                "fontSize": 14
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "Flex Container Num"
+        },
+        "position": {
+          "basis": "32px",
+          "shrink": 0
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label Name"
+            },
+            "position": {
+              "basis": "45px",
+              "grow": 1
+            },
+            "props": {
+              "text": "Function Name:",
+              "textStyle": {
+                "fontSize": 14,
+                "fontWeight": "bolder",
+                "marginRight": "5px",
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Name"
+            },
+            "position": {
+              "basis": "32px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.params.name"
+                  },
+                  "overlayOptOut": true,
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "textStyle": {
+                "fontSize": 14
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "Flex Container Name"
+        },
+        "position": {
+          "basis": "32px",
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "borderBottomStyle": "solid",
+            "borderBottomWidth": 1
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {
+          "name": "Label Descrip"
+        },
+        "position": {
+          "basis": "32px",
+          "shrink": 0
+        },
+        "props": {
+          "text": "Function Description",
+          "textStyle": {
+            "fontSize": 14,
+            "fontWeight": "bolder",
+            "marginRight": "5px",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Label Full Descrip"
+        },
+        "position": {
+          "basis": "50px",
+          "grow": 1,
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.descrip"
+              },
+              "overlayOptOut": true,
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "alignVertical": "top",
+          "style": {
+            "fontSize": 14,
+            "overflow": "visible"
+          },
+          "textStyle": {
+            "marginLeft": "10px",
+            "marginRight": "10px",
+            "textAlign": "center",
+            "whiteSpace": "pre-wrap"
+          }
+        },
+        "type": "ia.display.label"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "2px",
+        "margin": "3px",
+        "overflow": "visible"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

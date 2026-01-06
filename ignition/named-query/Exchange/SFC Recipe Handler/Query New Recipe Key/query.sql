@@ -1,0 +1,1 @@
+Select MAX(id) as MaxID from exsrh_recipes 

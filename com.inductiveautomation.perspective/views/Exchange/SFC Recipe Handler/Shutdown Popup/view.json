@@ -1,0 +1,172 @@
+{
+  "custom": {
+    "update": false
+  },
+  "params": {
+    "params": {
+      "SFCName": "Name",
+      "instanceId": "ID"
+    }
+  },
+  "propConfig": {
+    "custom.update": {
+      "binding": {
+        "config": {
+          "expression": "now(1000)"
+        },
+        "transforms": [
+          {
+            "code": "\tcharts\u003dsystem.sfc.getRunningCharts(\"Exchange/SFC Recipe Handler/SFC Recipe Handler\")\n\trunning\u003d[]\n\tfor chart in range(charts.getRowCount()):\n\t\trunning.append(charts.getValueAt(chart,\u0027keyParamValue\u0027))\n\tif self.view.params.params.SFCName not in running:\n\t\treturn False\n\telse:\n\t\treturn True",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "onChange": {
+        "enabled": null,
+        "script": "\tif currentValue.value\u003d\u003dFalse:\n\t\tsystem.perspective.closePopup(\"shutdown\")"
+      },
+      "persistent": true
+    },
+    "params.params": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 323,
+      "width": 325
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label Title"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "props": {
+          "text": "Shutting Down",
+          "textStyle": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Label Name"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.params.SFCName"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "textStyle": {
+            "fontSize": 23,
+            "fontWeight": "bolder",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Label Wait"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "props": {
+          "text": "Please Wait...",
+          "textStyle": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "custom": {
+          "increase": false,
+          "rotate": 1,
+          "translater": 0.30000000000000004
+        },
+        "meta": {
+          "name": "Icon"
+        },
+        "position": {
+          "basis": "30px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.style.transform": {
+            "binding": {
+              "config": {
+                "expression": "now(100)"
+              },
+              "transforms": [
+                {
+                  "code": "\tnewval\u003dself.custom.translater\n\tif newval\u003e\u003d0.9:\n\t\tself.custom.increase\u003dFalse\n\telif newval\u003c\u003d0.2:\n\t\tself.custom.increase\u003dTrue\n\tif self.custom.increase:\n\t\tnewval+\u003d0.1\n\telse:\n\t\tnewval-\u003d0.1\n\tself.custom.translater\u003dnewval\t\n\treturn \"scale(%s, 1)\"%newval",
+                  "type": "script"
+                }
+              ],
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "path": "material/hourglass_bottom",
+          "style": {
+            "overflow": "hidden",
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          }
+        },
+        "type": "ia.display.icon"
+      },
+      {
+        "meta": {
+          "name": "Label ID"
+        },
+        "position": {
+          "basis": "32px"
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.params.instanceId"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "textStyle": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

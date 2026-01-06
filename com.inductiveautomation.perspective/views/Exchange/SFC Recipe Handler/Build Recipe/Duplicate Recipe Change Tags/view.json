@@ -1,0 +1,102 @@
+{
+  "custom": {
+    "tags": []
+  },
+  "params": {
+    "complete": true,
+    "data": []
+  },
+  "propConfig": {
+    "custom.tags": {
+      "binding": {
+        "config": {
+          "path": "view.params.data"
+        },
+        "transforms": [
+          {
+            "code": "\t#when opened, iterate through the tags in the recipe, pull out unique tagPaths and create a list of dictionaries for instances in the flex repeater.\n\ttagCheck\u003d[]\n\ttags\u003d[]\n\ttcount\u003d1\n\tfor item in value:\n\t\tif item[\u0027t1\u0027] not in tagCheck and item[\u0027t1\u0027]!\u003d\"0\":\n\t\t\ttagCheck.append(item[\u0027t1\u0027])\n\t\t\ttags.append({\n\t\t\t  \"instanceStyle\": {\n\t\t\t    \"classes\": \"\"\n\t\t\t  },\n\t\t\t  \"instancePosition\": {},\n\t\t\t  \"tag\": item[\u0027t1\u0027],\n\t\t\t  \"tcount\":tcount,\n\t\t\t  \"outputTag\":item[\u0027t1\u0027]\n\t\t\t})\n\t\t\ttcount+\u003d1\n\treturn tags",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      },
+      "onChange": {
+        "enabled": null,
+        "script": "\tself.getChild(\"root\").getChild(\"FlexRepeater\").props.instances\u003dcurrentValue.value"
+      },
+      "persistent": true
+    },
+    "params.complete": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.data": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 568,
+      "width": 370
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "FlexRepeater"
+        },
+        "position": {
+          "basis": "107px",
+          "grow": 1
+        },
+        "props": {
+          "direction": "column",
+          "elementPosition": {
+            "basis": 200,
+            "grow": 0
+          },
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Dup Tag To Change",
+          "useDefaultViewWidth": false
+        },
+        "type": "ia.display.flex-repeater"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t\n\t#replace/change tag path addresses.\n\tif len(self.view.custom.tags)\u003e0:\n\t\ttry:\n\t\t\tdata\u003dself.view.params.data\n\t\t\tinstances\u003dself.getSibling(\"FlexRepeater\").props.instances\n\t\t\t#loops through all of the tags (instances) and replaces the old tag path with the new tag path\n\t\t\tfor instance in instances: \n\t\t\t\tnew\u003dinstance[\"outputTag\"]\n\t\t\t\toriganal\u003dinstance[\"tag\"]\n\t\t\t\t#assigns new tag path for all paths with the origanal path address\n\t\t\t\tfor row in data:\n\t\t\t\t\tif row[\"t1\"]\u003d\u003doriganal:\n\t\t\t\t\t\trow[\"t1\"]\u003dnew\n\t\t\tself.view.params.complete\u003dTrue\n\t\texcept:\n\t\t\tself.view.params.complete\u003dFalse\n\t\n\t\n\tproject\u003dsystem.util.getProjectName()\n\t\n\t#sends a message to the current session for updating the full dataset (recipe) with new tagPaths\n\tsystem.perspective.sendMessage(\u0027updatedPaths\u0027,{\"data\":self.view.params.data},\"session\")\n\n\tsystem.perspective.closePopup(\u0027swapTags\u0027)"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button"
+        },
+        "position": {
+          "basis": "34px",
+          "shrink": 0
+        },
+        "props": {
+          "primary": false,
+          "style": {
+            "margin": "5px"
+          },
+          "text": "Confirm / Update Changes"
+        },
+        "type": "ia.input.button"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

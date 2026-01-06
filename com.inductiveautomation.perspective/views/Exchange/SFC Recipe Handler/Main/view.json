@@ -1,0 +1,1129 @@
+{
+  "custom": {
+    "enableEdits": true
+  },
+  "params": {},
+  "propConfig": {
+    "custom.enableEdits": {
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 986
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Embedded View"
+        },
+        "position": {
+          "basis": "55px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.params.Title": {
+            "binding": {
+              "config": {
+                "expression": "{../Tab Container.props.tabs}[{../Tab Container.props.currentTabIndex}][\u0027text\u0027]"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "path": "Exchange/SFC Recipe Handler/Header",
+          "useDefaultViewHeight": true
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Embedded Recipe Presets"
+            },
+            "props": {
+              "path": "Exchange/SFC Recipe Handler/Recipe Presets"
+            },
+            "type": "ia.display.view"
+          },
+          {
+            "meta": {
+              "name": "Embedded Run"
+            },
+            "position": {
+              "tabIndex": 1
+            },
+            "props": {
+              "path": "Exchange/SFC Recipe Handler/View Running Recipe"
+            },
+            "type": "ia.display.view"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Embedded Large"
+                },
+                "position": {
+                  "size": "large"
+                },
+                "props": {
+                  "params": {
+                    "addStep": true,
+                    "modifyRecipe": false
+                  },
+                  "path": "Exchange/SFC Recipe Handler/Build Recipe/Recipe Build"
+                },
+                "type": "ia.display.view"
+              },
+              {
+                "meta": {
+                  "name": "Embedded Small"
+                },
+                "props": {
+                  "params": {
+                    "addStep": false,
+                    "modifyRecipe": false
+                  },
+                  "path": "Exchange/SFC Recipe Handler/Build Recipe/Recipe Build (Small)"
+                },
+                "type": "ia.display.view"
+              }
+            ],
+            "meta": {
+              "name": "Breakpoint Create"
+            },
+            "position": {
+              "tabIndex": 2
+            },
+            "type": "ia.container.breakpt"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Embedded Large"
+                },
+                "position": {
+                  "size": "large"
+                },
+                "props": {
+                  "params": {
+                    "addStep": false,
+                    "modifyRecipe": true
+                  },
+                  "path": "Exchange/SFC Recipe Handler/Build Recipe/Recipe Build"
+                },
+                "type": "ia.display.view"
+              },
+              {
+                "meta": {
+                  "name": "Embedded Small"
+                },
+                "props": {
+                  "params": {
+                    "addStep": false,
+                    "modifyRecipe": true
+                  },
+                  "path": "Exchange/SFC Recipe Handler/Build Recipe/Recipe Build (Small)"
+                },
+                "type": "ia.display.view"
+              }
+            ],
+            "meta": {
+              "name": "Breakpoint Modify"
+            },
+            "position": {
+              "tabIndex": 3
+            },
+            "type": "ia.container.breakpt"
+          },
+          {
+            "meta": {
+              "name": "Embedded Batch History"
+            },
+            "position": {
+              "tabIndex": 4
+            },
+            "props": {
+              "path": "Exchange/SFC Recipe Handler/Batch History"
+            },
+            "type": "ia.display.view"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Label Title"
+                    },
+                    "props": {
+                      "style": {
+                        "fontSize": 20,
+                        "fontWeight": "bolder",
+                        "marginLeft": "5px"
+                      },
+                      "text": "Description:"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Label Descrip"
+                    },
+                    "props": {
+                      "text": "SFC Recipe Execution",
+                      "textStyle": {
+                        "borderBottomStyle": "solid",
+                        "borderBottomWidth": 1,
+                        "borderTopWidth": 1,
+                        "fontSize": 16,
+                        "fontWeight": "bold",
+                        "paddingLeft": "10px",
+                        "whiteSpace": "pre-wrap"
+                      }
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "HeaderSection"
+                },
+                "position": {
+                  "basis": "80px",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "borderBottom": "2px solid #6ECEB2",
+                    "padding": "15px 20px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Version"
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#AAAAAA",
+                        "fontSize": "14px"
+                      },
+                      "text": "Version: 1.0.0"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "BuiltWith"
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#888888",
+                        "fontSize": "12px",
+                        "marginTop": "5px"
+                      },
+                      "text": "Built with: Inductive Automation Ignition  |  Module: SFC Recipe Handler"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "VersionInfo"
+                },
+                "position": {
+                  "basis": "50px",
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "direction": "column",
+                  "style": {
+                    "borderBottom": "1px solid rgba(110, 206, 178, 0.3)",
+                    "padding": "10px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "OverviewTitle"
+                    },
+                    "position": {
+                      "basis": "30px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#6ECEB2",
+                        "fontSize": "16px",
+                        "fontWeight": "bold",
+                        "letterSpacing": "1px",
+                        "marginBottom": "15px"
+                      },
+                      "text": "SYSTEM OVERVIEW"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "OverviewText"
+                    },
+                    "position": {
+                      "grow": 1
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#CCCCCC",
+                        "fontSize": "13px",
+                        "lineHeight": "1.6",
+                        "whiteSpace": "pre-wrap"
+                      },
+                      "text": "This application manages fermentation recipes for Balter Brewing operations.\n\nFeatures include:\n\n• Recipe Creation \u0026 Management\n    - Build step-by-step fermentation recipes\n    - 7 function types: Set, Ramp, Timer, Hold, Check, Pause, Confirm\n    - Tag-based integration with PLCs\n\n• Recipe Execution\n    - Sequential Function Chart (SFC) execution engine\n    - Real-time monitoring and control\n    - Pause/Resume/Stop capabilities\n\n• Recipe Presets\n    - Database-driven recipe library (Recipe_Manager)\n    - Quick-load fermentation profiles"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "SystemOverview"
+                },
+                "position": {
+                  "basis": "240px",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "borderBottom": "1px solid rgba(110, 206, 178, 0.3)",
+                    "padding": "20px 25px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "FunctionsTitle"
+                    },
+                    "position": {
+                      "basis": "35px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#6ECEB2",
+                        "fontSize": "16px",
+                        "fontWeight": "bold",
+                        "letterSpacing": "1px",
+                        "marginBottom": "15px"
+                      },
+                      "text": "QUICK REFERENCE - FERMENTATION FUNCTIONS"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "H1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "10px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "Code"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "H2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "10px 5px"
+                              },
+                              "text": "Function"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "H3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "10px 5px"
+                              },
+                              "text": "Description"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "TableHeader"
+                        },
+                        "position": {
+                          "basis": "35px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "#003E69",
+                            "borderRadius": "8px 8px 0 0"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F1"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "SET VALUE"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Write value directly to tag"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row1"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "transparent"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F2"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "RAMP"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Linear ramp from current to target over time"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row2"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "rgba(110, 206, 178, 0.05)"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F3"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "TIMER"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Wait for specified duration"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row3"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "transparent"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F4"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "GRADIENT HOLD"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Maintain value within tolerance band"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row4"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "rgba(110, 206, 178, 0.05)"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F5"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "CONDITIONAL CHECK"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Verify tag reached target"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row5"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "transparent"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F6"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "PAUSE"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Programmatic pause for operator intervention"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row6"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "rgba(110, 206, 178, 0.05)"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "C1"
+                            },
+                            "position": {
+                              "basis": "60px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#6ECEB2",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px",
+                                "textAlign": "center"
+                              },
+                              "text": "F7"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C2"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#FFFFFF",
+                                "fontSize": "12px",
+                                "fontWeight": "bold",
+                                "padding": "8px 5px"
+                              },
+                              "text": "CONFIRM"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "C3"
+                            },
+                            "position": {
+                              "grow": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#CCCCCC",
+                                "fontSize": "12px",
+                                "padding": "8px 5px"
+                              },
+                              "text": "Write value with operator confirmation"
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Row7"
+                        },
+                        "position": {
+                          "basis": "32px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "backgroundColor": "transparent",
+                            "borderRadius": "0 0 8px 8px"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      }
+                    ],
+                    "meta": {
+                      "name": "FunctionsContainer"
+                    },
+                    "position": {
+                      "grow": 1
+                    },
+                    "props": {
+                      "direction": "column",
+                      "style": {
+                        "backgroundColor": "#1C1C1E",
+                        "border": "1px solid rgba(110, 206, 178, 0.3)",
+                        "borderRadius": "8px",
+                        "padding": "0"
+                      }
+                    },
+                    "type": "ia.container.flex"
+                  }
+                ],
+                "meta": {
+                  "name": "FunctionsReference"
+                },
+                "position": {
+                  "basis": "320px",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "borderBottom": "1px solid rgba(110, 206, 178, 0.3)",
+                    "padding": "20px 25px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "SupportTitle"
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#6ECEB2",
+                        "fontSize": "12px",
+                        "fontWeight": "bold",
+                        "letterSpacing": "1px",
+                        "marginBottom": "8px"
+                      },
+                      "text": "SUPPORT"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "DevelopedBy"
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#AAAAAA",
+                        "fontSize": "11px"
+                      },
+                      "text": "Developed by: Detron  |  Contact: support@detron.com.au"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Copyright"
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#666666",
+                        "fontSize": "10px",
+                        "marginTop": "8px"
+                      },
+                      "text": "© 2025 Balter Brewing Co. All rights reserved."
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "SupportSection"
+                },
+                "position": {
+                  "basis": "80px",
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "direction": "column",
+                  "justify": "center",
+                  "style": {
+                    "backgroundColor": "#0a0a0a",
+                    "padding": "15px"
+                  }
+                },
+                "type": "ia.container.flex"
+              }
+            ],
+            "meta": {
+              "name": "FlexContainer About"
+            },
+            "position": {
+              "tabIndex": 5
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#121212"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Tab Container"
+        },
+        "position": {
+          "basis": "745px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.tabs[2].disabled": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.enableEdits}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.tabs[3].disabled": {
+            "binding": {
+              "config": {
+                "expression": "!{view.custom.enableEdits}"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "allowNew": false,
+          "menuStyle": {
+            "whiteSpace": "pre-wrap"
+          },
+          "style": {
+            "margin": "5px",
+            "paddingTop": "5px"
+          },
+          "tabSize": {
+            "height": 40,
+            "width": 130
+          },
+          "tabStyle": {
+            "active": {
+              "color": "#6ECEB2",
+              "fontWeight": "bolder",
+              "textShadow": "#6ECEB2 0px 0px 10px",
+              "whiteSpace": "pre-wrap"
+            },
+            "inactive": {
+              "whiteSpace": "pre-wrap"
+            }
+          },
+          "tabs": [
+            {
+              "disabled": false,
+              "text": "Recipe Presets"
+            },
+            {
+              "disabled": false,
+              "runWhileHidden": false,
+              "text": "Run Recipe"
+            },
+            {
+              "runWhileHidden": false,
+              "text": "Create Recipe"
+            },
+            {
+              "runWhileHidden": false,
+              "text": "Modify Recipe"
+            },
+            {
+              "disabled": false,
+              "text": "Batch History"
+            },
+            {
+              "disabled": false,
+              "text": "About"
+            }
+          ]
+        },
+        "type": "ia.container.tab"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

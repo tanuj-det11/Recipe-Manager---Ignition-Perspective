@@ -1,0 +1,925 @@
+/* --- Neon sweep/glow for the LEFT dock toggle --- */
+:root {
+  --dock-accent: #1BFD9C;
+  --dock-accent-soft: rgba(27, 253, 156, 0.10);
+}
+
+.toggle-wrapper.wrapper-left > div {
+  /* your existing sizing */
+  width: 32px !important;
+  height: 72px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* neon button vibes */
+  position: relative !important;
+  overflow: hidden !important;
+  border: 2px solid var(--dock-accent) !important;
+  background:
+    linear-gradient(to right,
+      var(--dock-accent-soft) 1%,
+      transparent 40%,
+      transparent 60%,
+      var(--dock-accent-soft) 100%
+    ),
+    #6ECEB2 !important; /* your base color */
+  color: var(--dock-accent) !important;
+  box-shadow:
+    inset 0 0 10px rgba(27, 253, 156, 0.4),
+    0 0 9px 3px rgba(27, 253, 156, 0.1) !important;
+  transition: box-shadow .3s ease, color .3s ease !important;
+
+  /* corner-specific radii */
+  border-top-right-radius:    5px !important;
+  border-bottom-right-radius: 5px !important;
+  border-top-left-radius:     0    !important;
+  border-bottom-left-radius:  0    !important;
+
+  cursor: pointer !important;
+}
+
+/* moving sheen like your button's ::before */
+.toggle-wrapper.wrapper-left > div::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -60%;
+  width: 60%;
+  transform: skewX(-18deg);
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(27, 253, 156, 0.22) 40%,
+    rgba(27, 253, 156, 0.22) 60%,
+    transparent 100%
+  );
+  transition: transform .45s ease-in-out;
+  pointer-events: none;
+}
+
+.toggle-wrapper.wrapper-left > div:hover {
+  color: #82ffc9 !important;
+  box-shadow:
+    inset 0 0 10px rgba(27, 253, 156, 0.6),
+    0 0 9px 3px rgba(27, 253, 156, 0.2) !important;
+}
+
+.toggle-wrapper.wrapper-left > div:hover::before {
+  transform: translateX(220%) skewX(-18deg);
+}
+
+/* Icon sizing + color, synced with hover */
+.toggle-wrapper.wrapper-left svg {
+  width: 30px !important;
+  height: 30px !important;
+  position: relative; /* keeps it above the sheen */
+  z-index: 1;
+  fill: #000 !important;
+  stroke: #000 !important;
+  transition: fill .3s ease, stroke .3s ease, transform .3s ease;
+}
+
+.toggle-wrapper.wrapper-left > div:hover svg {
+  fill: #82ffc9 !important;
+  stroke: #82ffc9 !important;
+}
+
+/* Optional: rotate arrow when open (adjust class to your DOM) */
+.toggle-wrapper.wrapper-left.is-open svg {
+  transform: rotate(180deg);
+}
+/* ===========================
+   Header Theme Dropdown (mint)
+   =========================== */
+.psc-headerdropdown{
+  --accent:#6ECEB2;
+  --bg:#000;
+  --ring:rgba(110,206,178,.28);
+  --hover:rgba(110,206,178,.10);
+  --border:rgba(110,206,178,.28);
+}
+
+/* Button/combobox shell (robust: matches the inner clickable element) */
+.psc-headerdropdown [role="combobox"],
+.psc-headerdropdown button,
+.psc-headerdropdown .ia_inputDropdown__display { /* fallback class */
+  display:flex; align-items:center; gap:.5rem;
+  min-height: 34px;
+  padding: 6px 12px;
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(110,206,178,.18);
+  transition: background .18s ease, box-shadow .18s ease, transform .18s ease;
+  cursor:pointer;
+}
+
+/* Hover/open */
+.psc-headerdropdown [role="combobox"]:hover,
+.psc-headerdropdown button:hover,
+.psc-headerdropdown [aria-expanded="true"],
+.psc-headerdropdown .ia_inputDropdown--open .ia_inputDropdown__display{
+  background: rgba(0,0,0,.9);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35), 0 0 18px var(--ring);
+}
+
+/* Focus */
+.psc-headerdropdown :is([role="combobox"],button):focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+
+/* Caret/icon (keeps your icon if present; just tints + rotates when open) */
+.psc-headerdropdown svg{
+  width: 16px; height: 16px;
+  fill: var(--accent) !important; stroke: var(--accent) !important;
+  transition: transform .18s ease;
+}
+.psc-headerdropdown [aria-expanded="true"] svg,
+.psc-headerdropdown .ia_inputDropdown--open svg{
+  transform: rotate(180deg);
+}
+
+/* Panel / listbox */
+.psc-headerdropdown [role="listbox"],
+.psc-headerdropdown .ia_inputDropdown__menu{
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45), 0 0 24px rgba(110,206,178,.2);
+  overflow: hidden;
+}
+
+/* Scrollbar */
+.psc-headerdropdown [role="listbox"]::-webkit-scrollbar { width: 10px; }
+.psc-headerdropdown [role="listbox"]::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+.psc-headerdropdown [role="listbox"]::-webkit-scrollbar-track { background: #000; }
+
+/* ===========================
+   Option rows (you set: headerdropdown2)
+   =========================== */
+.psc-headerdropdown2,
+.psc-headerdropdown [role="option"]{
+  display:flex; align-items:center; gap:.5rem;
+  padding: 8px 12px; margin: 4px;
+  border-radius: 8px;
+  color: var(--accent);
+  background: transparent;
+  transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+/* Hover */
+.psc-headerdropdown2:hover,
+.psc-headerdropdown [role="option"]:hover{
+  background: var(--hover);
+  transform: translateX(4px);
+  box-shadow: 0 0 10px rgba(110,206,178,.28);
+}
+
+/* Selected */
+.psc-headerdropdown2[aria-selected="true"],
+.psc-headerdropdown [role="option"][aria-selected="true"]{
+  background: rgba(110,206,178,.16);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 14px rgba(110,206,178,.25);
+}
+
+/* Disabled */
+.psc-headerdropdown :is([aria-disabled="true"],:disabled){
+  opacity:.6; filter: grayscale(.2); cursor:not-allowed;
+}
+
+/* Size tweaks (optional): add 'small' or 'large' to style.classes alongside headerdropdown */
+.psc-headerdropdown.small   [role="combobox"],
+.psc-headerdropdown.small   .ia_inputDropdown__display{ min-height:28px; padding:4px 10px; }
+.psc-headerdropdown.large   [role="combobox"],
+.psc-headerdropdown.large   .ia_inputDropdown__display{ min-height:40px; padding:8px 14px; }
+
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce){
+  .psc-headerdropdown *{ transition: none !important; }
+}
+/* ====== THEME DROPDOWN PATCH ====== */
+/* kill default blue focus + keep mint (or change to white if you prefer) */
+.psc-headerdropdown :is([role="combobox"],button):focus,
+.psc-headerdropdown :is([role="combobox"],button):focus-visible{
+  outline: 2px solid #6ECEB2 !important;   /* not blue */
+  outline-offset: 2px;
+}
+
+/* Options panel rows = pill + white text */
+.psc-headerdropdown2,
+.psc-headerdropdown [role="option"]{
+  border-radius: 999px !important;         /* pill */
+  color: #fff !important;                   /* force white text */
+  background: transparent !important;       /* no gray/blue fill by default */
+  padding: 8px 12px; margin: 4px;           /* comfy spacing */
+  transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+/* Hover/active states (neutral, no blue) */
+.psc-headerdropdown2:hover,
+.psc-headerdropdown [role="option"]:hover{
+  background: rgba(255,255,255,.08) !important;
+  transform: translateX(4px);
+  box-shadow: 0 0 10px rgba(255,255,255,.18);
+}
+.psc-headerdropdown2[aria-selected="true"],
+.psc-headerdropdown [role="option"][aria-selected="true"]{
+  background: rgba(255,255,255,.16) !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  box-shadow: 0 0 14px rgba(255,255,255,.22);
+}
+
+/* If any nested label node exists, make sure it's white too */
+.psc-headerdropdown2 :is(span,div)[class*="label"],
+.psc-headerdropdown [role="option"] :is(span,div)[class*="label"]{
+  color: #fff !important;
+}
+
+/* Optional: also make the control itself a pill (keeps your current colors) */
+.psc-headerdropdown [role="combobox"],
+.psc-headerdropdown .ia_inputDropdown__display{
+  border-radius: 999px !important;
+}
+/* ===== Time label: black pill + mint glow ===== */
+.psc-headtime{
+  --accent:#6ECEB2;
+  --bg:#000;
+  --ring: rgba(110,206,178,.28);
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+
+  /* typography */
+  color: var(--accent);
+  white-space: nowrap;                 /* keep date+time on one line */
+  letter-spacing: .03em;
+  text-shadow: 0 0 10px rgba(110,206,178,.45);
+
+  /* crisp, consistent digits */
+  font-variant-numeric: tabular-nums;  /* equal-width numbers */
+  font-feature-settings: "tnum" 1;
+}
+
+/* Most Perspective Labels render the text in a child span — catch it too */
+.psc-headtime > span,
+.psc-headtime > div{
+  color: inherit !important;
+}
+
+/* subtle sheen on hover (no color changes) */
+.psc-headtime::after{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:999px;
+  background: linear-gradient(120deg, rgba(255,255,255,.12), transparent 40%);
+  opacity: 0; transform: translateX(-15%) skewX(-12deg);
+  transition: opacity .25s ease, transform .35s ease;
+  pointer-events:none;
+}
+.psc-headtime:hover::after{
+  opacity:.5; transform: translateX(10%) skewX(-12deg);
+}
+
+/* optional: compact/large size variants (add the class in Style Classes if you want) */
+.psc-headtime.compact { padding: 4px 10px; font-size: 0.9rem; }
+.psc-headtime.large   { padding: 8px 16px; font-size: 1.15rem; }
+
+
+/* only the glow (no transform here) */
+.logo{
+  overflow: visible !important;     /* let the halo show */
+  animation: detron-glow 2.2s ease-in-out infinite alternate;
+  will-change: filter;
+}
+
+@keyframes detron-glow{
+  from{
+    filter: drop-shadow(0 0 10px rgba(72,194,199,.6))
+            drop-shadow(0 0 20px rgba(72,194,199,.4))
+            drop-shadow(0 0 30px rgba(255,255,255,.25));
+  }
+  to{
+    filter: drop-shadow(0 0 24px rgba(72,194,199,1))
+            drop-shadow(0 0 48px rgba(72,194,199,.8))
+            drop-shadow(0 0 72px rgba(255,255,255,.5));
+  }
+}
+.logo.debug { outline: 2px dashed magenta !important; background: rgba(255,0,0,.08) !important; }
+
+
+.ia_equipmentScheduleComponent__headerCell p {
+  display: none !important;
+}
+
+.ia_equipmentScheduleComponent__headerCell {
+  border: 1px solid #000000 !important;   /* Full black border */
+  box-sizing: border-box !important;
+}
+
+.ia_equipmentScheduleComponent__actionBar__dropdown {
+  display: none !important;
+}
+
+
+.ia_equipmentScheduleComponent__spacer.spacer {
+  background-color: #000000 !important;
+
+}
+
+
+/* Apply Poppins globally to your styled areas */
+.psc-DME70Ms, .DME70Ms,
+.psc-DME70bs, .DME70bs,
+.psc-DME70rs, .DME70rs,
+.psc-DME70phs, .DME70phs,
+.psc-DME70shs, .DME70shs,
+.psc-DME70ths, .DME70ths,
+.ia_equipment-schedule-tooltip,
+.ia_equipment-schedule-event-drag-preview {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.schedule-grid-cell,
+.ia_equipmentScheduleComponent__gridSpace__gridCell {
+  background-color: #000000 !important;  /* true black */
+}
+
+
+/* Root background + glow text */
+.psc-DME70Ms, .DME70Ms,
+.psc-DME70bs, .DME70bs {
+  background-color: #000000 !important;
+  color: #6ECEB2 !important;
+  font-family: 'Roboto Mono', monospace;
+  text-shadow: 0 0 4px #6ECEB2; /* glow effect */
+}
+
+/* Header rows (primary, secondary, tertiary) */
+.psc-DME70phs, .DME70phs,
+.psc-DME70shs, .DME70shs,
+.psc-DME70ths, .DME70ths {
+  background: #000 !important;
+  color: #6ECEB2 !important;
+  font-weight: bold;
+  text-shadow: 0 0 4px #6ECEB2;
+  border-bottom: 1px solid #6ECEB2;
+}
+
+/* Row styling */
+.psc-DME70rs, .DME70rs {
+  background-color: #000 !important;
+  border-bottom: 1px solid rgba(110, 206, 178, 0.25); /* faint line */
+  color: #6ECEB2 !important;
+  text-shadow: 0 0 3px #6ECEB2;
+  transition: background-color 0.3s ease;
+}
+
+.psc-DME70rs:hover, .DME70rs:hover {
+  background-color: #111 !important;
+}
+
+/* Selected event box outline */
+.psc-DME70ses, .DME70ses {
+  background-color: rgba(110, 206, 178, 0.3);
+  border: 2px solid #6ECEB2;
+  color: #6ECEB2;
+  font-weight: bold;
+  color: #FFFFFF !important;
+}
+
+/* Progress bar */
+.psc-DME70prbs, .DME70prbs {
+  background: linear-gradient(90deg, #6ECEB2 0%, #004422 100%);
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* Time indicator */
+.ia_equipment-schedule-time-indicator {
+  background-color: #6ECEB2 !important;
+}
+
+.ia_equipment-schedule-tooltip {
+  background-color: #111 !important;
+  border: 1px solid #6ECEB2;
+  color: #6ECEB2;
+  font-size: 0.85rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  text-shadow: 0 0 3px #6ECEB2;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.scroll-buffer.right {
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.2)); /* smooth fade */
+  width: 24px; /* subtle width */
+  pointer-events: none !important;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+}
+
+/* Base Style for the Delete Button */
+.psc-deleteDME70hl {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 4px !important;
+  border-radius: 6px !important;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Red Icon by Default */
+.psc-deleteDME70hl svg {
+  fill: #FF4C4C !important; /* vivid red */
+}
+
+/* Hover Background and Scale */
+.psc-deleteDME70hl:hover {
+  background-color: rgba(255, 76, 76, 0.15) !important;
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Slightly Brighter Red on Hover */
+.psc-deleteDME70hl:hover svg {
+  fill: #FF6666 !important;
+}
+
+/* Base Style for the Delete Button */
+.psc-addDME70hl {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 4px !important;
+  border-radius: 6px !important;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Icon Coloring */
+.psc-addDME70hl svg {
+  fill: #6ECEB2 !important;
+}
+
+/* Hover Effect */
+.psc-addDME70hl:hover {
+  background-color: rgba(110, 206, 178, 0.15) !important;
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Brighter on Hover */
+.psc-addDME70hl:hover svg {
+  fill: #8EF2CE !important;
+}
+/* Base Style for Edit Button */
+.psc-editDME70hl {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 4px !important;
+  border-radius: 6px !important;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Yellow Icon by Default */
+.psc-editDME70hl svg {
+  fill: #FFD700 !important; /* gold/yellow */
+}
+
+/* Hover Background and Scale */
+.psc-editDME70hl:hover {
+  background-color: rgba(255, 215, 0, 0.15) !important; /* faint yellow glow */
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Slightly Brighter Yellow on Hover */
+.psc-editDME70hl:hover svg {
+  fill: #FFEB3B !important; /* brighter yellow */
+}
+
+/* Chrome, Safari, Opera */
+.psc-DME70hlscroll::-webkit-scrollbar {
+  display: none !important;
+}
+/* Match whatever the current text color is */
+.psc-glowlabel {
+  /* Soft inner glow + stronger outer glow */
+  text-shadow:
+    0 0 2px currentColor,
+    0 0 30px currentColor;
+}
+
+/* Target only your header toggle */
+.psc-headertoggle .ia_toggleSwitch__thumb {
+  background-color: transparent !important;
+  position: relative !important;
+}
+
+/* Insert a moon inside the thumb when selected */
+.psc-headertoggle .ia_toggleSwitch__thumb--selected::before {
+  content: "🌙";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  color: #6ECEB2 !important;
+  pointer-events: none;
+}
+
+/* And swap to a sun when un-selected */
+.psc-headertoggle .ia_toggleSwitch__thumb:not(.ia_toggleSwitch__thumb--selected)::before {
+  content: "☀️";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  color: #F6FF00 !important;
+  pointer-events: none;
+}
+.psc-EventUpdateButton {
+  /* your accent color */
+  --green: #6BC5A5;
+
+  position: relative;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+  border-radius: 0.6em;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  /* border & background glow */
+  border: 2px solid var(--green) !important;
+  background:
+    linear-gradient(
+      to right,
+      rgba(107, 197, 165, 0.1) 1%,
+      transparent 40%,
+      transparent 60%,
+      rgba(107, 197, 165, 0.1) 100%
+    ) !important;
+  color: var(--green) !important;
+  box-shadow:
+    inset 0 0 10px rgba(107, 197, 165, 0.4),
+    0 0 9px 3px rgba(107, 197, 165, 0.1) !important;
+}
+
+.psc-EventUpdateButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -4em;
+  width: 4em;
+  height: 100%;
+  background:
+    linear-gradient(
+      to right,
+      transparent 1%,
+      rgba(107, 197, 165, 0.1) 40%,
+      rgba(107, 197, 165, 0.1) 60%,
+      transparent 100%
+    );
+  transition: transform 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+.psc-EventUpdateButton:hover {
+  color: #82FFC9 !important;
+  box-shadow:
+    inset 0 0 10px rgba(107, 197, 165, 0.6),
+    0 0 9px 3px rgba(107, 197, 165, 0.2) !important;
+}
+
+.psc-EventUpdateButton:hover::before {
+  transform: translateX(15em);
+}
+.psc-EventUpdateButton2 {
+  /* your accent color */
+  --red: #E74C3C;
+
+  position: relative;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+  border-radius: 0.6em;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  /* border & background glow */
+  border: 2px solid var(--red) !important;
+  background:
+    linear-gradient(
+      to right,
+      rgba(231, 76, 60, 0.1) 1%,
+      transparent 40%,
+      transparent 60%,
+      rgba(231, 76, 60, 0.1) 100%
+    ) !important;
+  color: var(--red) !important;
+  box-shadow:
+    inset 0 0 10px rgba(231, 76, 60, 0.4),
+    0 0 9px 3px rgba(231, 76, 60, 0.1) !important;
+}
+
+.psc-EventUpdateButton2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -4em;
+  width: 4em;
+  height: 100%;
+  background:
+    linear-gradient(
+      to right,
+      transparent 1%,
+      rgba(107, 197, 165, 0.1) 40%,
+      rgba(107, 197, 165, 0.1) 60%,
+      transparent 100%
+    );
+  transition: transform 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+.psc-EventUpdateButton2:hover {
+  color: #82FFC9 !important;
+  box-shadow:
+    inset 0 0 10px rgba(107, 197, 165, 0.6),
+    0 0 9px 3px rgba(107, 197, 165, 0.2) !important;
+}
+
+.psc-EventUpdateButton2:hover::before {
+  transform: translateX(15em);
+}
+.popup.ia_popup {
+    border-radius: 7px !important;
+    border: none !important;
+    overflow: hidden;
+}
+
+/* ===========================
+   Priority Column Styling
+   =========================== */
+
+/* Priority High - Red with glow */
+.psc-priority-high {
+  background-color: #F44336 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  text-align: center !important;
+  text-shadow: 0 0 4px rgba(244, 67, 54, 0.8) !important;
+  box-shadow:
+    inset 0 0 10px rgba(244, 67, 54, 0.4),
+    0 0 8px rgba(244, 67, 54, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Priority Medium - Orange with glow */
+.psc-priority-medium {
+  background-color: #FF9800 !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  text-align: center !important;
+  text-shadow: 0 0 4px rgba(255, 152, 0, 0.6) !important;
+  box-shadow:
+    inset 0 0 10px rgba(255, 152, 0, 0.3),
+    0 0 8px rgba(255, 152, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Priority Low - Green with glow */
+.psc-priority-low {
+  background-color: #4CAF50 !important;
+  color: #FFFFFF !important;
+  font-weight: 400 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  text-align: center !important;
+  text-shadow: 0 0 4px rgba(76, 175, 80, 0.8) !important;
+  box-shadow:
+    inset 0 0 10px rgba(76, 175, 80, 0.4),
+    0 0 8px rgba(76, 175, 80, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Target priority classes when applied to table cells */
+.ia_table__cell.psc-priority-high .content,
+.ia_table__cell.psc-priority-medium .content,
+.ia_table__cell.psc-priority-low .content {
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  text-align: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ia_table__cell.psc-priority-high .content {
+  background-color: #F44336 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 4px rgba(244, 67, 54, 0.8) !important;
+  box-shadow:
+    inset 0 0 10px rgba(244, 67, 54, 0.4),
+    0 0 8px rgba(244, 67, 54, 0.2) !important;
+}
+
+.ia_table__cell.psc-priority-medium .content {
+  background-color: #FF9800 !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 4px rgba(255, 152, 0, 0.6) !important;
+  box-shadow:
+    inset 0 0 10px rgba(255, 152, 0, 0.3),
+    0 0 8px rgba(255, 152, 0, 0.15) !important;
+}
+
+.ia_table__cell.psc-priority-low .content {
+  background-color: #4CAF50 !important;
+  color: #FFFFFF !important;
+  font-weight: 400 !important;
+  text-shadow: 0 0 4px rgba(76, 175, 80, 0.8) !important;
+  box-shadow:
+    inset 0 0 10px rgba(76, 175, 80, 0.4),
+    0 0 8px rgba(76, 175, 80, 0.2) !important;
+}
+
+/* --- Active Day Sheet - Modern App-like Styling --- */
+
+/* Row hover effects */
+.ia-container-flex[data-component-name="root"] {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.ia-container-flex[data-component-name="root"]:hover {
+  background-color: #F8F9FA !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Input field focus states */
+.ia-input-numeric-entry-field input,
+.ia-input-numeric-entry-field {
+  transition: all 0.2s ease !important;
+}
+
+.ia-input-numeric-entry-field:focus-within,
+.ia-input-numeric-entry-field input:focus {
+  background-color: #FFFFFF !important;
+  border-color: #6ECEB2 !important;
+  box-shadow: 0 0 0 3px rgba(110, 206, 178, 0.1) !important;
+  outline: none !important;
+}
+
+/* Better contrast for priority rows */
+.ia-container-flex[style*="background-color: rgb(244, 67, 54)"] {
+  box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2) !important;
+}
+
+.ia-container-flex[style*="background-color: rgb(255, 152, 0)"] {
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2) !important;
+}
+
+.ia-container-flex[style*="background-color: rgb(76, 175, 80)"] {
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2) !important;
+}
+
+/* Smooth scrolling for the card container */
+.ia-container-flex[data-component-name="DaySheetCard"] {
+  scroll-behavior: smooth !important;
+}
+
+/* Input field styling improvements */
+.ia-input-numeric-entry-field input {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* Label text improvements */
+.ia-display-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  letter-spacing: -0.01em !important;
+}
+
+
+/* --- Balter Theme 2.2 (Strict Append: Apple-like Definitions) --- */
+:root {
+    --balter-bg-dark: #121212;
+    --balter-bg-card: #1C1C1E; /* Apple System Gray 6 (Dark) */
+    --balter-accent: #6ECEB2; /* Mint Green */
+    --balter-text-primary: #FFFFFF;
+    --balter-text-secondary: #8E8E93; /* Apple System Gray */
+    --gap-standard: 1rem;
+    --radius-standard: 14px; /* Modern radius */
+    --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 15px rgba(110, 206, 178, 0.15);
+}
+
+/* Utility Class for Accent Color Text */
+.text-accent {
+    color: var(--balter-accent) !important;
+}
+
+/* Glassmorphism Background Class */
+.bg-glass {
+    background: rgba(28, 28, 30, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Minimalist Card Implementation (v2.2) */
+.card-minimal {
+    background-color: var(--balter-bg-card) !important;
+    border-radius: var(--radius-standard);
+    box-shadow: var(--shadow-soft);
+    border: 2px solid #6ECEB2 !important; /* DEBUG: High visibility Mint border */
+    transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.card-minimal:hover {
+    background-color: #2C2C2E !important; /* Lighter on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+    border-color: var(--balter-accent) !important;
+}
+
+/* Glass Popup Container (v2.2) */
+.popup-glass {
+    background-color: #1C1C1E !important;
+    border: 1px solid var(--balter-accent) !important;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    border-radius: var(--radius-standard) !important;
+}
+
+/* Input Fields - Modern Dark (v2.2) */
+.ia-input-numeric-entry-field input {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    color: #FFF !important;
+    padding: 4px 8px !important;
+    transition: all 0.2s ease;
+}
+
+.ia-input-numeric-entry-field input:focus {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--balter-accent) !important;
+    outline: none !important;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translate3d(0, 15px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.animate-entry {
+    animation-name: fadeInUp;
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.2, 0.0, 0.2, 1);
+    animation-fill-mode: both;
+}
+
+.status-active {
+    animation: none; /* Removed pulse for cleaner look, can re-add if requested */
+}
+
+/* Typography Overrides */
+.psc-header-title {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.psc-data-label {
+    font-family: "SF Mono", "Roboto Mono", monospace !important;
+    color: var(--balter-text-secondary);
+    font-size: 0.85rem;
+}
+
+.psc-data-value {
+    font-family: "SF Mono", "Roboto Mono", monospace !important;
+    font-weight: 600;
+    color: var(--balter-text-primary);
+}

@@ -1,0 +1,109 @@
+{
+  "custom": {},
+  "params": {
+    "Start": "Dec 23, 2022, 10:12:32 AM",
+    "confirmed": false,
+    "id": "value",
+    "label": "Prescribed Pause",
+    "p1": 27.75,
+    "p2": 1,
+    "p3": 0,
+    "t1": ""
+  },
+  "propConfig": {
+    "params.Start": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmed": {
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.id": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.label": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p1": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p2": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p3": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.t1": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 200,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "28px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.label"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Icon"
+        },
+        "position": {
+          "basis": "30px",
+          "grow": 1
+        },
+        "props": {
+          "color": "#FFFF00",
+          "path": "material/pause_circle_filled"
+        },
+        "type": "ia.display.icon"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "2px",
+        "margin": "3px",
+        "overflow": "visible"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

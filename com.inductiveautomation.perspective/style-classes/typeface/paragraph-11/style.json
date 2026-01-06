@@ -1,0 +1,10 @@
+{
+  "base": {
+    "style": {
+      "fontFamily": "Montserrat",
+      "fontSize": "11px",
+      "fontWeight": "200",
+      "lineHeight": "19px"
+    }
+  }
+}

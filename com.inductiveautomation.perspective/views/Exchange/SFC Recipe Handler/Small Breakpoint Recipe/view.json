@@ -1,0 +1,392 @@
+{
+  "custom": {
+    "Functions": [
+      {
+        "name": "Change Value",
+        "num": 1
+      },
+      {
+        "name": "Ramp Value",
+        "num": 2
+      },
+      {
+        "name": "Soak Time",
+        "num": 3
+      },
+      {
+        "name": "Guaranteed Soak",
+        "num": 4
+      },
+      {
+        "name": "Set Value with Target",
+        "num": 5
+      },
+      {
+        "descrip": "Pauses Recipe at Current Step",
+        "name": "Prescribed Pause",
+        "num": 6
+      },
+      {
+        "descrip": "Sets \"Tag Path\"  to a user defined text value. ",
+        "name": "Set String Value",
+        "num": 7
+      }
+    ]
+  },
+  "params": {
+    "chartId": "d3c7cafc-2c90-4ab1-95c1-07db81fe34f1",
+    "currentFunction": 2,
+    "data": {
+      "Start": "Jan 11, 2023, 5:50:11 AM",
+      "id": 33,
+      "p1": 30,
+      "p1unit": "C",
+      "p2": 1,
+      "p2unit": "C",
+      "p3": 1,
+      "p3unit": "/min.",
+      "pause_action": 0,
+      "recipe_function": 2,
+      "recipe_id": 12,
+      "recipe_step": 2,
+      "step_descrip": "Ramp Value",
+      "t1": "[default]Sensor"
+    },
+    "step": 1
+  },
+  "propConfig": {
+    "custom.Functions": {
+      "persistent": true
+    },
+    "custom.Functions[0].descrip": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.data.recipe_step}"
+        },
+        "overlayOptOut": true,
+        "transforms": [
+          {
+            "code": "\treturn \u0027Changes \"Tag Path\" value to (%s)\u0027 %(self.params.data.p1)\n",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      }
+    },
+    "custom.Functions[1].descrip": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.data.recipe_step}"
+        },
+        "transforms": [
+          {
+            "code": "\tunitVar\u003dself.params.data.p3\n\tif unitVar\u003d\u003d0:\n\t\ttimeUnit\u003d\"Hour\"\n\telif  unitVar\u003d\u003d1:\n\t\ttimeUnit\u003d\"Minute\"\n\telif  unitVar\u003d\u003d2:\n\t\ttimeUnit\u003d\"Second\"\n\telse:\n\t\ttimeUnit\u003d\"?\"\t\t\n\treturn \u0027Ramps \"Tag Path\" value to (%s) at a rate of (%s) per (%s)\u0027 %(self.params.data.p1,self.params.data.p2,timeUnit)",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      }
+    },
+    "custom.Functions[2].descrip": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.data.recipe_step}"
+        },
+        "transforms": [
+          {
+            "code": "\thours\u003d\"%02d\" %self.params.data.p1\n\tminutes\u003d\"%02d\" %self.params.data.p2\n\tseconds\u003d\"%02d\" %self.params.data.p3\n\n\treturn \u0027Holds in the current Step for  %s hour(s), %s minute(s), and %s second(s) \\n (%s:%s:%s)\u0027 %(hours,minutes,seconds,hours,minutes,seconds)",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      }
+    },
+    "custom.Functions[3].descrip": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.data.recipe_step}"
+        },
+        "transforms": [
+          {
+            "code": "\tt1\u003dself.params.data.t1\n\tp1\u003dself.params.data.p1\n\tp2\u003dself.params.data.p2\n\tp3\u003dself.params.data.p3\n\t#Holds the current step until the value from tag (t1) maintains a target (p1) in a +/- range (p2) for a set number of minutes (p3)\n\treturn \u0027Holds in the current Step until value of \"Tag Path\" maintains (%s) in a range of +/-(%s) for (%s) minutes\u0027 %(p1,p2,p3)",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      }
+    },
+    "custom.Functions[4].descrip": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.data.recipe_step}"
+        },
+        "transforms": [
+          {
+            "code": "\tt1\u003dself.params.data.t1\n\tp1\u003dself.params.data.p1\n\tp2\u003dself.params.data.p2\n\t\n\tif p2\u003d\u003d0:\n\t\tstringv\u003d\"is equal to\"\n\telif p2\u003d\u003d1:\n\t\tstringv\u003d\"is greater than\"\n\telif p2\u003d\u003d2:\n\t\tstringv\u003d\"is less than\"\n\telse:\n\t\tstringv\u003d\"Wrong Function\"\n\t#Holds the current step until a tag value (t1) achieves a target (p1) with a condition (exact: p2\u003d0, greater than: p2\u003d1, less than: p2\u003d-1)\n\treturn \u0027Holds the current step until value of \"Tag Path\" %s (%s)\u0027 %(stringv, p1)",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      }
+    },
+    "params.chartId": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.currentFunction": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.data": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.step": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 467,
+      "width": 503
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Descript"
+        },
+        "position": {
+          "basis": "32px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "\"Step: \"+{view.params.data.recipe_step}+\"  - \"+{view.params.data.step_descrip}"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          },
+          "props.textStyle.borderColor": {
+            "binding": {
+              "config": {
+                "expression": "if({view.params.step}+1\u003d{view.params.data.recipe_step},\"#00FF00\",\"\")"
+              },
+              "overlayOptOut": true,
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "textStyle": {
+            "borderStyle": "solid",
+            "margin": "2px",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Label Path"
+        },
+        "position": {
+          "basis": "40px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "if({view.params.data.t1}\u003d\"0\" || {view.params.data.t1}\u003dNull,\"Tag Path: N/A\",\r\n\"Tag Path: \"+ {view.params.data.t1})"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "fontSize": "10px",
+            "fontWeight": "bolder",
+            "marginLeft": "10px",
+            "whiteSpace": "pre-wrap",
+            "wordWrap": "break-word"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Label Value"
+        },
+        "position": {
+          "basis": "20px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "tag({view.params.data.t1})"
+              },
+              "overlayOptOut": true,
+              "transforms": [
+                {
+                  "code": "\tif self.view.params.data.t1 is None:\n\t\treturn \"Tag Value: N/A\"\n\telif self.view.params.data.recipe_function!\u003d 7:\n\t\treturn \"Tag Value: %s\" %round(value,3)\n\telif self.view.params.data.recipe_function\u003d\u003d3:\n\t\treturn \"Tag Value: \"\n\telse:\n\t\treturn \"Tag Value: %s\" %system.tag.readBlocking([self.view.params.data.t1])[0].value\n\t\t",
+                  "type": "script"
+                }
+              ],
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "fontSize": "10px",
+            "fontWeight": "bolder",
+            "marginLeft": "10px",
+            "whiteSpace": "pre-wrap",
+            "wordWrap": "break-word"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView Func"
+        },
+        "position": {
+          "basis": "175px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.params.descrip": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.params.data.recipe_function}-1][\"descrip\"]"
+              },
+              "type": "expr"
+            }
+          },
+          "props.params.name": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.params.data.recipe_function}-1][\"name\"]"
+              },
+              "type": "expr"
+            }
+          },
+          "props.params.num": {
+            "binding": {
+              "config": {
+                "expression": "{view.custom.Functions}[{view.params.data.recipe_function}-1][\"num\"]"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "path": "Exchange/SFC Recipe Handler/Build Recipe/Function"
+        },
+        "type": "ia.display.view"
+      },
+      {
+        "meta": {
+          "name": "EmbeddedView Graphic"
+        },
+        "position": {
+          "basis": "150px",
+          "grow": 1,
+          "shrink": 0
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.params.currentFunction}\u003d{view.params.data.recipe_function}\u0026\u0026{view.params.step}+1\u003d{view.params.data.recipe_step}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.params.Start": {
+            "binding": {
+              "config": {
+                "path": "view.params.data.Start"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.id": {
+            "binding": {
+              "config": {
+                "path": "view.params.chartId"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.label": {
+            "binding": {
+              "config": {
+                "path": "view.params.data.step_descrip"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.p1": {
+            "binding": {
+              "config": {
+                "path": "view.params.data.p1"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.p2": {
+            "binding": {
+              "config": {
+                "path": "view.params.data.p2"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.p3": {
+            "binding": {
+              "config": {
+                "path": "view.params.data.p3"
+              },
+              "type": "property"
+            }
+          },
+          "props.params.t1": {
+            "binding": {
+              "config": {
+                "path": "view.params.data.t1"
+              },
+              "type": "property"
+            }
+          },
+          "props.path": {
+            "binding": {
+              "config": {
+                "expression": "\"Exchange/SFC Recipe Handler/Build Recipe/Function Visuals/F\"+{view.params.data.recipe_function}"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "type": "ia.display.view"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

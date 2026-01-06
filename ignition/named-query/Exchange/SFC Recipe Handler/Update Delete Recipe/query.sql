@@ -1,0 +1,1 @@
+DELETE FROM  exsrh_recipes  WHERE  id =:id;

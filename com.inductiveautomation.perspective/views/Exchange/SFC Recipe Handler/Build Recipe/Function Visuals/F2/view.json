@@ -1,0 +1,240 @@
+{
+  "custom": {
+    "endTimeEst": {
+      "$": [
+        "ts",
+        192,
+        1674129521048
+      ],
+      "$ts": 1673425211000
+    },
+    "seconds": 1800,
+    "startDate": {
+      "$": [
+        "ts",
+        192,
+        1674129521048
+      ],
+      "$ts": 1673423411000
+    },
+    "startValue": 0
+  },
+  "params": {
+    "Start": "Jan 11, 2023, 2:50:11 AM",
+    "confirmed": false,
+    "id": "5e4606ac-d640-467f-b010-836dd1f5fcf4",
+    "label": "Ramp Value",
+    "p1": 30,
+    "p2": 1,
+    "p3": 1,
+    "t1": ""
+  },
+  "propConfig": {
+    "custom.endTimeEst": {
+      "persistent": true
+    },
+    "custom.seconds": {
+      "persistent": true
+    },
+    "custom.startDate": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.Start}"
+        },
+        "overlayOptOut": true,
+        "transforms": [
+          {
+            "code": "\tif value is None:\n\t\treturn 0\n\telse:\n\t\tstartdate\u003dsystem.date.parse(value, \"MMM dd, yyyy, h:mm:ss a\")\n\t\tif self.params.t1!\u003d\"\":\n\t\t\tdata\u003dsystem.tag.queryTagCalculations(paths\u003d[self.params.t1], calculations\u003d[\"LastValue\"], startDate\u003dsystem.date.addSeconds(startdate, -60), endDate\u003dstartdate)\n\t\t\tstartVal\u003ddata.getValueAt(0,1)\n\t\telse:\n\t\t\tstartVal\u003d0\n\t\tself.custom.startValue\u003dstartVal\n\t\taddseconds\u003d(self.params.p1-startVal)/self.params.p2\n\t\tif self.params.p3\u003d\u003d0:\n\t\t\taddseconds\u003daddseconds*3600\n\t\telif self.params.p3\u003d\u003d1:\n\t\t\taddseconds\u003daddseconds*60\n\t\telif self.params.p3\u003d\u003d2:\n\t\t\taddseconds\u003daddseconds*1\n\t\tself.custom.endTimeEst\u003dsystem.date.addSeconds(startdate, int(addseconds))\n\t\tself.custom.seconds\u003dsystem.date.secondsBetween(startdate, self.custom.endTimeEst)\n\t\treturn startdate",
+            "type": "script"
+          }
+        ],
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.startValue": {
+      "persistent": true
+    },
+    "params.Start": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmed": {
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.id": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.label": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p1": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p2": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p3": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.t1": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 200,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "28px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.label"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "textAlign": "center"
+          },
+          "textStyle": {
+            "color": "#00FF00"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Sparkline"
+        },
+        "position": {
+          "basis": "100px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.desired.high": {
+            "binding": {
+              "config": {
+                "expression": "max(tag({view.params.t1}),{view.custom.startValue})"
+              },
+              "type": "expr"
+            }
+          },
+          "props.desired.low": {
+            "binding": {
+              "config": {
+                "expression": "min(tag({view.params.t1}),{view.custom.startValue})"
+              },
+              "type": "expr"
+            }
+          },
+          "props.points": {
+            "binding": {
+              "config": {
+                "path": "view.custom.seconds"
+              },
+              "transforms": [
+                {
+                  "code": "\t#convert all params into per seconds\t\n\tif self.view.params.p3\u003d\u003d0:\n\t\ttconst\u003d3600.0\n\telif self.view.params.p3\u003d\u003d1:\n\t\ttconst\u003d60.0\n\telif self.view.params.p3\u003d\u003d2:\n\t\ttconst\u003d1.0\t\n\tstartrate\u003dself.view.params.p2\n\trate\u003dstartrate/tconst\n\t\n\tpoints\u003d[]\n\tp1\u003dself.view.params.p1\n\t\n\t#create a list of points replicating the ramp\n\tfor x in range(int(value)):\n\t\tpoint\u003dfloat(self.view.custom.startValue)+((x+1.0)*rate)\n\t\tpoints.append(point)\n\treturn points",
+                  "type": "script"
+                }
+              ],
+              "type": "property"
+            }
+          },
+          "props.range.high": {
+            "binding": {
+              "config": {
+                "expression": "max({view.params.p1},{view.custom.startValue})+abs({view.params.p1}-{view.custom.startValue})*0.1"
+              },
+              "type": "expr"
+            }
+          },
+          "props.range.low": {
+            "binding": {
+              "config": {
+                "expression": "min({view.params.p1},{view.custom.startValue})-abs({view.params.p1}-{view.custom.startValue})*0.1"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "desired": {
+            "fill": {
+              "color": "#00FF00"
+            },
+            "stroke": {
+              "color": "#00AC00"
+            }
+          },
+          "marker": {
+            "first": {
+              "fill": {
+                "color": "#FF0000"
+              }
+            },
+            "high": {
+              "fill": {
+                "opacity": 0
+              },
+              "stroke": {
+                "opacity": 0
+              }
+            },
+            "last": {
+              "fill": {
+                "color": "#008000"
+              }
+            },
+            "low": {
+              "fill": {
+                "opacity": 0
+              },
+              "stroke": {
+                "opacity": 0
+              }
+            }
+          },
+          "range": {},
+          "width": 1
+        },
+        "type": "ia.display.sparkline"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "2px",
+        "margin": "3px",
+        "overflow": "visible"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

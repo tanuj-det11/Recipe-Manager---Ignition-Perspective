@@ -1,0 +1,527 @@
+{
+  "custom": {
+    "selectedRecipe": "",
+    "selectedRecipeId": null,
+    "recipeList": [],
+    "selectedData": {
+      "name": "",
+      "totalDays": 0,
+      "stepCount": 0,
+      "description": "",
+      "stepList": []
+    }
+  },
+  "params": {},
+  "propConfig": {
+    "custom.selectedRecipe": {
+      "persistent": true
+    },
+    "custom.selectedRecipeId": {
+      "persistent": true
+    },
+    "custom.recipeList": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Recipe_Manager/GetAllRecipes",
+          "pollRate": 5000,
+          "parameters": {}
+        }
+      }
+    },
+    "custom.selectedData.stepList": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Recipe_Manager/GetRecipeSteps",
+          "pollRate": 0,
+          "parameters": {
+            "recipeId": "{view.custom.selectedRecipeId}"
+          }
+        }
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 768,
+      "width": 1024
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Header"
+        },
+        "position": {
+          "basis": "60px",
+          "shrink": 0
+        },
+        "children": [
+          {
+            "meta": {
+              "name": "BackButton"
+            },
+            "position": {
+              "basis": "120px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "< Back",
+              "style": {
+                "backgroundColor": "transparent",
+                "color": "#6ECEB2",
+                "fontSize": "14px",
+                "fontWeight": "bold",
+                "border": "1px solid #6ECEB2",
+                "borderRadius": "6px",
+                "marginLeft": "15px"
+              }
+            },
+            "type": "ia.input.button",
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "system.perspective.navigate('Exchange/SFC Recipe Handler/Main')"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            }
+          },
+          {
+            "meta": {
+              "name": "Title"
+            },
+            "position": {
+              "grow": 1
+            },
+            "props": {
+              "text": "Fermentation Recipe Presets",
+              "style": {
+                "fontSize": "24px",
+                "fontWeight": "bold",
+                "color": "#FFFFFF",
+                "textAlign": "center"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Spacer"
+            },
+            "position": {
+              "basis": "120px",
+              "shrink": 0
+            },
+            "props": {},
+            "type": "ia.display.label"
+          }
+        ],
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#003E69",
+            "borderBottom": "2px solid #6ECEB2",
+            "paddingRight": "15px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {
+          "name": "MainContent"
+        },
+        "position": {
+          "grow": 1
+        },
+        "children": [
+          {
+            "meta": {
+              "name": "RecipeList"
+            },
+            "position": {
+              "basis": "420px",
+              "shrink": 0
+            },
+            "children": [
+              {
+                "meta": {
+                  "name": "SectionTitle"
+                },
+                "position": {
+                  "basis": "40px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Select a Recipe",
+                  "style": {
+                    "fontSize": "18px",
+                    "fontWeight": "bold",
+                    "color": "#6ECEB2",
+                    "marginBottom": "10px",
+                    "marginLeft": "20px",
+                    "marginTop": "15px"
+                  }
+                },
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {
+                  "name": "RecipeTable"
+                },
+                "position": {
+                  "grow": 1
+                },
+                "propConfig": {
+                  "props.data": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.recipeList"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "columns": [
+                    {"field": "recipe_name", "header": {"title": "Recipe"}, "width": 150, "style": {"color": "#FFFFFF", "fontWeight": "bold", "fontSize": "14px"}},
+                    {"field": "total_days", "header": {"title": "Days"}, "width": 60, "justify": "center", "style": {"color": "#6ECEB2", "fontWeight": "bold"}},
+                    {"field": "step_count", "header": {"title": "Steps"}, "width": 60, "justify": "center", "style": {"color": "#888888"}},
+                    {"field": "description", "header": {"title": "Description"}, "width": 140, "style": {"color": "#AAAAAA", "fontSize": "12px"}}
+                  ],
+                  "data": [],
+                  "selection": {
+                    "selectedColumn": 0,
+                    "selectedRow": 0,
+                    "enableRowSelection": true,
+                    "enableColumnSelection": false
+                  },
+                  "pager": {"show": false},
+                  "style": {"backgroundColor": "transparent", "margin": "10px 15px"},
+                  "header": {"style": {"backgroundColor": "#003E69", "color": "#FFFFFF", "fontWeight": "600", "fontSize": "11px", "textTransform": "uppercase", "height": "36px"}},
+                  "rows": {"style": {"backgroundColor": "rgba(40, 40, 40, 0.5)", "borderBottom": "1px solid rgba(255, 255, 255, 0.08)", "height": "45px", "cursor": "pointer"}}
+                },
+                "type": "ia.display.table",
+                "events": {
+                  "component": {
+                    "onSelectionChange": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "row = self.props.selection.data[0] if self.props.selection.data else None\nif row:\n\tself.view.custom.selectedRecipe = row['recipe_name']\n\tself.view.custom.selectedRecipeId = row['recipe_id']\n\tself.view.custom.selectedData.name = row['recipe_name']\n\tself.view.custom.selectedData.description = row['description']\n\tself.view.custom.selectedData.totalDays = row['total_days']\n\tself.view.custom.selectedData.stepCount = row['step_count']"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "meta": {"name": "Legend"},
+                "position": {"basis": "70px", "shrink": 0},
+                "props": {
+                  "direction": "column",
+                  "style": {"padding": "10px 15px", "borderTop": "1px solid rgba(110, 206, 178, 0.3)"}
+                },
+                "children": [
+                  {"meta": {"name": "LegendTitle"}, "props": {"text": "Action Legend:", "style": {"fontSize": "11px", "fontWeight": "bold", "color": "#888888", "marginBottom": "6px"}}, "type": "ia.display.label"},
+                  {
+                    "meta": {"name": "LegendItems"},
+                    "props": {"direction": "row", "wrap": "wrap", "style": {"gap": "5px"}},
+                    "children": [
+                      {"meta": {"name": "L1"}, "props": {"text": "Knock Out", "style": {"fontSize": "9px", "color": "#4CAF50", "backgroundColor": "rgba(76, 175, 80, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L2"}, "props": {"text": "Chill", "style": {"fontSize": "9px", "color": "#2196F3", "backgroundColor": "rgba(33, 150, 243, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L3"}, "props": {"text": "Yeast Off", "style": {"fontSize": "9px", "color": "#FF9800", "backgroundColor": "rgba(255, 152, 0, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L4"}, "props": {"text": "Dry Hop", "style": {"fontSize": "9px", "color": "#8BC34A", "backgroundColor": "rgba(139, 195, 74, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L5"}, "props": {"text": "Lockup", "style": {"fontSize": "9px", "color": "#9C27B0", "backgroundColor": "rgba(156, 39, 176, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L6"}, "props": {"text": "Transfer", "style": {"fontSize": "9px", "color": "#F44336", "backgroundColor": "rgba(244, 67, 54, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L7"}, "props": {"text": "Raise/Hold", "style": {"fontSize": "9px", "color": "#FFEB3B", "backgroundColor": "rgba(255, 235, 59, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"},
+                      {"meta": {"name": "L8"}, "props": {"text": "Diacetyl", "style": {"fontSize": "9px", "color": "#FF5722", "backgroundColor": "rgba(255, 87, 34, 0.2)", "padding": "2px 5px", "borderRadius": "3px"}}, "type": "ia.display.label"}
+                    ],
+                    "type": "ia.container.flex"
+                  }
+                ],
+                "type": "ia.container.flex"
+              }
+            ],
+            "props": {
+              "direction": "column",
+              "style": {"borderRight": "1px solid rgba(110, 206, 178, 0.3)"}
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "meta": {
+              "name": "DetailPanel"
+            },
+            "position": {
+              "grow": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {"backgroundColor": "#121212", "overflow": "auto"}
+            },
+            "children": [
+              {
+                "meta": {"name": "NoSelectionMessage", "visible": true},
+                "propConfig": {
+                  "meta.visible": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len({view.custom.selectedRecipe}) = 0"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "direction": "column",
+                  "justify": "center",
+                  "alignItems": "center",
+                  "style": {"height": "100%"}
+                },
+                "children": [
+                  {
+                    "meta": {"name": "Icon"},
+                    "props": {
+                      "path": "material/description",
+                      "style": {"fontSize": "180px", "color": "rgba(110, 206, 178, 0.3)"}
+                    },
+                    "type": "ia.display.icon"
+                  },
+                  {
+                    "meta": {"name": "Message"},
+                    "props": {
+                      "text": "Select a recipe to view details",
+                      "style": {"fontSize": "16px", "color": "#666666", "marginTop": "15px"}
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {"name": "RecipeDetails", "visible": false},
+                "propConfig": {
+                  "meta.visible": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len({view.custom.selectedRecipe}) > 0"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {"padding": "20px"}
+                },
+                "children": [
+                  {
+                    "meta": {"name": "RecipeHeader"},
+                    "position": {"basis": "auto", "shrink": 0},
+                    "props": {
+                      "direction": "column",
+                      "style": {"borderBottom": "1px solid rgba(110, 206, 178, 0.3)", "paddingBottom": "15px", "marginBottom": "15px"}
+                    },
+                    "children": [
+                      {
+                        "meta": {"name": "RecipeName"},
+                        "propConfig": {
+                          "props.text": {
+                            "binding": {
+                              "type": "property",
+                              "config": {
+                                "path": "view.custom.selectedData.name"
+                              }
+                            }
+                          }
+                        },
+                        "props": {"text": "", "style": {"fontSize": "28px", "fontWeight": "bold", "color": "#6ECEB2", "marginBottom": "8px"}},
+                        "type": "ia.display.label"
+                      },
+                      {
+                        "meta": {"name": "RecipeStats"},
+                        "props": {
+                          "direction": "row",
+                          "style": {"gap": "20px", "marginBottom": "8px"}
+                        },
+                        "children": [
+                          {
+                            "meta": {"name": "TotalDays"},
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "toString({view.custom.selectedData.totalDays}) + ' Days'"
+                                  }
+                                }
+                              }
+                            },
+                            "props": {"text": "", "style": {"fontSize": "14px", "color": "#FFFFFF", "fontWeight": "bold"}},
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {"name": "StepCount"},
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "toString({view.custom.selectedData.stepCount}) + ' Steps'"
+                                  }
+                                }
+                              }
+                            },
+                            "props": {"text": "", "style": {"fontSize": "14px", "color": "#888888"}},
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "meta": {"name": "RecipeDescription"},
+                        "propConfig": {
+                          "props.text": {
+                            "binding": {
+                              "type": "property",
+                              "config": {
+                                "path": "view.custom.selectedData.description"
+                              }
+                            }
+                          }
+                        },
+                        "props": {"text": "", "style": {"fontSize": "13px", "color": "#AAAAAA", "fontStyle": "italic"}},
+                        "type": "ia.display.label"
+                      },
+                      {
+                        "meta": {"name": "SpecialNotes", "visible": false},
+                        "propConfig": {
+                          "meta.visible": {
+                            "binding": {
+                              "type": "expr",
+                              "config": {
+                                "expression": "{view.custom.selectedRecipe} = 'IPA'"
+                              }
+                            }
+                          }
+                        },
+                        "props": {"text": "Note: Yeast off if in storage at 28 days", "style": {"fontSize": "12px", "color": "#FFD700", "marginTop": "8px", "backgroundColor": "rgba(255, 215, 0, 0.1)", "padding": "6px 10px", "borderRadius": "4px", "border": "1px solid rgba(255, 215, 0, 0.3)"}},
+                        "type": "ia.display.label"
+                      }
+                    ],
+                    "type": "ia.container.flex"
+                  },
+                  {
+                    "meta": {"name": "StepsTitle"},
+                    "position": {"basis": "30px", "shrink": 0},
+                    "props": {"text": "FERMENTATION SCHEDULE", "style": {"fontSize": "12px", "fontWeight": "bold", "color": "#888888", "letterSpacing": "1px", "marginBottom": "10px"}},
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {"name": "StepsTable"},
+                    "position": {"grow": 1},
+                    "propConfig": {
+                      "props.data": {
+                        "binding": {
+                          "type": "property",
+                          "config": {
+                            "path": "view.custom.selectedData.stepList"
+                          }
+                        }
+                      }
+                    },
+                    "props": {
+                      "columns": [
+                        {"field": "day", "header": {"title": "Day"}, "width": 55, "justify": "center", "style": {"color": "#6ECEB2", "fontWeight": "bold", "fontSize": "13px"}},
+                        {"field": "action", "header": {"title": "Action"}, "width": 200, "style": {"color": "#FFFFFF", "fontSize": "13px"}},
+                        {"field": "temperature", "header": {"title": "Temp"}, "width": 80, "justify": "center", "style": {"color": "#82FFC9", "fontWeight": "bold", "fontSize": "13px"}},
+                        {"field": "notes", "header": {"title": "Notes"}, "width": 90, "justify": "center", "style": {"color": "#FFD700", "fontSize": "12px"}}
+                      ],
+                      "data": [],
+                      "pager": {"show": false},
+                      "style": {"backgroundColor": "transparent"},
+                      "header": {"style": {"backgroundColor": "#003E69", "color": "#FFFFFF", "fontWeight": "600", "fontSize": "11px", "textTransform": "uppercase", "height": "36px"}},
+                      "rows": {"style": {"backgroundColor": "rgba(40, 40, 40, 0.5)", "borderBottom": "1px solid rgba(255, 255, 255, 0.08)", "height": "38px"}}
+                    },
+                    "type": "ia.display.table"
+                  },
+                  {
+                    "meta": {"name": "ActionButtons"},
+                    "position": {"basis": "60px", "shrink": 0},
+                    "props": {
+                      "direction": "row",
+                      "justify": "center",
+                      "style": {"gap": "15px", "marginTop": "20px", "paddingTop": "15px", "borderTop": "1px solid rgba(110, 206, 178, 0.3)"}
+                    },
+                    "children": [
+                      {
+                        "meta": {"name": "LoadButton"},
+                        "props": {
+                          "text": "Load to Run Recipe",
+                          "style": {"backgroundColor": "#6ECEB2", "color": "#000000", "fontWeight": "bold", "borderRadius": "6px", "paddingLeft": "30px", "paddingRight": "30px", "fontSize": "14px"}
+                        },
+                        "type": "ia.input.button",
+                        "events": {
+                          "component": {
+                            "onActionPerformed": {
+                              "type": "script",
+                              "scope": "G",
+                              "config": {
+                                "script": "recipe = self.view.custom.selectedRecipe\nsystem.perspective.print('Loading preset recipe: ' + str(recipe))"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "meta": {"name": "ClearButton"},
+                        "props": {
+                          "text": "Clear Selection",
+                          "style": {"backgroundColor": "transparent", "color": "#888888", "border": "1px solid #555555", "borderRadius": "6px", "paddingLeft": "20px", "paddingRight": "20px"}
+                        },
+                        "type": "ia.input.button",
+                        "events": {
+                          "component": {
+                            "onActionPerformed": {
+                              "type": "script",
+                              "scope": "G",
+                              "config": {
+                                "script": "self.view.custom.selectedRecipe = ''\nself.view.custom.selectedRecipeId = None\nself.view.custom.selectedData = {'name': '', 'totalDays': 0, 'stepCount': 0, 'description': '', 'stepList': []}"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "type": "ia.container.flex"
+                  }
+                ],
+                "type": "ia.container.flex"
+              }
+            ],
+            "type": "ia.container.flex"
+          }
+        ],
+        "props": {
+          "direction": "row",
+          "style": {"backgroundColor": "#121212"}
+        },
+        "type": "ia.container.flex"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {"backgroundColor": "#121212"}
+    },
+    "type": "ia.container.flex"
+  }
+}

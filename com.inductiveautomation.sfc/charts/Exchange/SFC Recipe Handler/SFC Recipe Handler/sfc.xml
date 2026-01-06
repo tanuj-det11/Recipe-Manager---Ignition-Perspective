@@ -1,0 +1,613 @@
+<?xml version="1.0" ?>
+<sfc zoom="0.6999999" canvas="19 13" execution-mode="Callable" hot-editable="false" persist-state="true" redundant-sync="false">
+	<step id="610e35ed-7c02-4d3f-a789-faed61f80feb" location="0 3" name="__begin" factory-id="begin-step">
+<parameters>
+	<parameter><name>function</name><expression>1</expression></parameter>
+	<parameter><name>param1</name><expression>0</expression></parameter>
+	<parameter><name>param2</name><expression>0</expression></parameter>
+	<parameter><name>param3</name><expression>0</expression></parameter>
+	<parameter key="true"><name>SFCName</name><expression>"Instance Name"</expression></parameter>
+	<parameter><name>EStop</name><expression>0</expression></parameter>
+	<parameter><name>targetPath1</name><expression>0</expression></parameter>
+	<parameter><name>targetPath2</name><expression>0</expression></parameter>
+	<parameter><name>stepComplete</name><expression>false</expression></parameter>
+	<parameter><name>stepNum</name><expression>1</expression></parameter>
+	<parameter><name>paused</name><expression>false</expression></parameter>
+	<parameter><name>pausedTime</name><expression>0</expression></parameter>
+	<parameter><name>pauseAction</name><expression>0</expression></parameter>
+	<parameter><name>stepStartValue</name><expression>null </expression></parameter>
+	<parameter><name>stepStartTime</name><expression>now()</expression></parameter>
+	<parameter><name>totalSteps</name><expression>100</expression></parameter>
+	<parameter><name>endOfRecipe</name><expression>false</expression></parameter>
+	<parameter><name>recipeId</name><expression>11</expression></parameter>
+	<parameter><name>pauseStart</name><expression>now()</expression></parameter>
+	<parameter><name>tagReturn</name><expression>0</expression></parameter>
+	<parameter><name>gHoldStart</name><expression>false</expression></parameter>
+	<parameter><name>gHoldActive</name><expression>false</expression></parameter>
+	<parameter><name>estEndTime</name><expression>0</expression></parameter>
+	<parameter><name>startStops</name><expression>0
+</expression></parameter>
+	<parameter><name>stepTotalPause</name><expression>0</expression></parameter>
+	<parameter><name>prescribedPause</name><expression>false</expression></parameter>
+	<parameter><name>writeString</name><expression>null </expression></parameter>
+	<parameter><name>f7Message</name><expression>false</expression></parameter>
+</parameters>
+	</step>
+	<step id="f31f66cd-c632-4fda-a6a5-2cb0b4942985" location="0 4" name="CheckTags" factory-id="action-step">
+	</step>
+	<step id="7822171d-d4af-4c0b-91dc-d3e230630b5a" location="1 4" name="PausePause" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	
+	chart.stepTotalPause+=chart.pausedTime
+	chart.pausedTime=0
+	chart.pauseStart=system.date.now()
+</start-script>
+	</step>
+	<step id="1d9027f0-cf4a-476a-a805-72ee202d06a2" location="2 4" name="PauseTicker" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	nowTime=system.date.now()
+	chart.pausedTime=system.date.secondsBetween(chart.pauseStart, nowTime)
+	chart.estEndTime=0</start-script>
+	</step>
+	<step id="4b9f43ea-0e4f-4c31-9155-c4558b81f249" location="4 3" name="F1" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	
+	#write to tag and check to see if value was written
+	p1=chart.param1
+	t1=chart.targetPath1
+	system.tag.writeBlocking([t1], [p1])
+	val=system.tag.readBlocking([t1])[0].value
+	if val==p1:
+		chart.stepComplete=True</start-script>
+	</step>
+	<step id="59b8f0f6-ff8d-4253-966b-65347940fb8a" location="6 3" name="F2" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	
+	
+	p1=chart.param1
+	p2=chart.param2
+	p3=chart.param3
+	tagPath=chart.targetPath1
+	if chart.stepStartValue is None:
+		chart.stepStartValue=system.tag.readBlocking([tagPath])[0].value
+		
+	StepStartValue=chart.stepStartValue
+	StepStartTime=chart.stepStartTime
+	pause=chart.stepTotalPause
+	pauseAction=chart.pauseAction
+
+	#0=maintain
+	#1=hold	
+	currentValue=system.tag.readBlocking([tagPath])[0].value
+
+	base=0	
+	
+	if pauseAction==1:
+		StepStartTime=system.date.addSeconds(StepStartTime,pause)
+	#determine the direction of the ramp up or down
+	if p2&gt;=0:
+		rampup=True
+	else:
+		rampup=False
+	
+	#time right now
+	nowTime=system.date.now()
+	
+	#time between now and stepStart
+	elapseSeconds=system.date.secondsBetween(StepStartTime,nowTime)
+	
+	#change base rate to seconds so it updates the ramping value every second
+	if p3==0:
+		base=3600
+	elif p3==1:
+		base=60
+	elif p3==2:
+		base=1
+	
+	#converts set ramp rate to x per second
+	rampSeconds=p2/base
+	
+	#determines what the value should be now
+	value=elapseSeconds*rampSeconds+StepStartValue
+	totalTime=abs(1/rampSeconds)*abs(chart.stepStartValue-p1)
+	#if the ramp is upwards, return target if new value is greater than the target, otherwise return the new value
+	
+	if rampup:
+		if value&gt;=p1:
+			output=p1
+		else:
+			output=value
+	#if the ramp is downwards, return target if new value is less than the target, otherwise return the new value
+	else:
+		if value&lt;=p1:
+			output=p1
+		else:
+			output=value
+			
+	system.tag.writeBlocking([tagPath], [output])
+	chart.estEndTime=system.date.addSeconds(StepStartTime,int(totalTime))</start-script>
+	</step>
+	<step id="733c4fd0-6c37-4936-b8bd-e41b85869cb6" location="6 4" name="F2Check" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	p1=chart.param1
+	p2=chart.param2
+	p3=chart.param3
+	tagPath=chart.targetPath1
+
+	'''Checks to see if the target ramp value has been achieved'''
+	tagVal=system.tag.readBlocking([tagPath])[0].value
+	#determine the direction of the ramp up or down
+	if p2&gt;=0:
+		rampup=True
+	else:
+		rampup=False
+
+	#if the ramp is upwards, return target if new value is greater than the target, otherwise return the new value
+	
+	if rampup:
+		
+		if round(tagVal,4)&gt;=p1:
+			chart.stepComplete=True
+	
+	#if the ramp is downwards, return target if new value is less than the target, otherwise return the new calculated instantantanious ramp value
+	else:
+		if round(tagVal,4)&lt;=p1:
+			chart.stepComplete=True</start-script>
+	</step>
+	<step id="84c68fb4-54c7-4dad-8028-d8ffe28f4368" location="8 3" name="F3" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	p1=int(chart.param1)
+	p2=int(chart.param2)
+	p3=int(chart.param3)
+	
+	#check time in step that has been paused and what happens during a pause
+	StepStartTime=chart.stepStartTime
+	pause=chart.stepTotalPause
+	pauseAction=chart.pauseAction
+	
+	
+	#add all "times" together"
+	StepStartTime=system.date.addSeconds(StepStartTime,pause)
+	timePlusHours=system.date.addHours(StepStartTime,p1)
+	timePlusMinutes=system.date.addMinutes(timePlusHours,p2)
+	endTime=system.date.addSeconds(timePlusMinutes,p3)
+	nowTime=system.date.now()
+	#check if now is after added time
+	if system.date.isAfter(nowTime, endTime):
+		chart.stepComplete=True
+	chart.estEndTime=endTime</start-script>
+	</step>
+	<step id="ddca07a6-8d49-4f47-bcd9-594a81dde62d" location="5 7" name="F1Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<step id="9795154b-313a-4e18-af86-8d8e0eff2a76" location="7 7" name="F2Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<step id="156b9227-3e8b-4245-9492-2482b43b972c" location="10 3" name="F4" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	p1=chart.param1
+	p2=chart.param2
+	p3=chart.param3
+	tagPath=chart.targetPath1
+	HoldStartTime=chart.stepStartTime
+
+	
+	currentValue=system.tag.readBlocking([tagPath])[0].value
+	upperbound=p1+p2
+	lowerbound=p1-p2
+	targetAchieved=False
+	#check if the temperature is within the desired range
+	if currentValue&gt;=lowerbound and currentValue&lt;=upperbound:
+		status= True
+	else:
+		status= False
+	
+	#if in temp range begin hold timer
+	if status and chart.gHoldStart==0:
+		chart.gHoldStart=system.date.now()
+		chart.estEndTime=system.date.addMinutes(system.date.now(), int(p3))
+		chart.gHoldActive=True
+	
+	
+	elif status==False:
+		chart.gHoldStart=0
+		chart.gHoldActive=False
+		chart.estEndTime=0</start-script>
+	</step>
+	<step id="44edf52d-fd92-4f02-a6dc-593236381012" location="10 4" name="F4Check" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	#check if hold timer has elapse
+	p3=chart.param3
+	if chart.gHoldActive:
+		targetSec=int(p3)*60
+		nowTime=system.date.now()
+		endTime=system.date.addSeconds(chart.gHoldStart,targetSec)
+		if nowTime&gt;=endTime:
+			chart.stepComplete= True</start-script>
+	</step>
+	<step id="fff24b28-0396-448a-b8f8-77cb4a467070" location="2 11" name="sendShutdown" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	chart.project=system.util.getProjectName()
+	payload={"instanceId":chart.instanceId,
+			"SFCName": chart.SFCName}
+	system.util.sendMessage(project=chart.project, messageHandler='shutdownGW', payload=payload)
+	
+	</start-script>
+	</step>
+	<step id="7f68ea75-065c-4d7d-80cb-4ebe0a09c173" location="9 7" name="F3Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<step id="7b91c73d-6749-475d-9fd0-799eee01f694" location="2 12" name="__end1" factory-id="end-step">	</step>
+	<step id="824b805d-3206-49f0-a79d-224471f9f12f" location="12 3" name="F5" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	#check if tag value has achieved a target
+	p1=chart.param1
+	p2=chart.param2
+	tagPath=chart.targetPath1
+
+	currentValue=system.tag.readBlocking([tagPath])[0].value
+	
+	if (p2==0 and currentValue==p1) or (p2==1 and currentValue&gt;=p1) or (p2==2 and currentValue&lt;=p1):
+		chart.stepComplete=True
+	chart.estEndTime=0</start-script>
+	</step>
+	<step id="45012bdd-9159-449b-8909-eb78140f57c6" location="11 7" name="F4Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<step id="01730b88-3c99-4cdd-88d7-ae421e4716f0" location="14 3" name="F6" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	#programmatically pause the recipe
+	if chart.prescribedPause==False:
+		chart.paused=True
+		chart.prescribedPause=True
+	elif chart.prescribedPause==True and chart.paused==False:
+		chart.stepComplete=True</start-script>
+	</step>
+	<step id="8f8a5a41-05bc-45ac-8872-a86a650f84fc" location="13 7" name="F5Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<step id="6e05495b-6f7c-4c26-8791-7c4fd27f70be" location="16 3" name="F7" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	#write a string to a tag
+	if chart.writeString is not None:
+		tagPath=chart.targetPath1
+		system.tag.writeBlocking([tagPath], [chart.writeString])
+		val=system.tag.readBlocking([tagPath])[0].value
+		if val==chart.writeString:
+			chart.stepComplete=True
+	if chart.f7Message==False:
+		chart.f7Message=True
+		</start-script>
+	</step>
+	<step id="66401acb-9092-4284-b659-6434162d3658" location="15 7" name="F6Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+		
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<step id="b85a11e4-4fc7-4704-9b7e-41ade52f62d4" location="17 7" name="F7Complete" factory-id="action-step">
+		<start-script>def onStart(chart, step): # WARNING: This resource was generated in a newer version of Ignition. For the best editing experience, recreate it in the current version.
+	if chart.stepNum==len(chart.startStops):
+		chart.startStops.append(system.date.now())
+	else:
+		chart.startStops[chart.stepNum]=system.date.now()
+		
+	chart.stepNum=chart.stepNum+1
+	if chart.stepNum&gt;chart.totalSteps:
+		chart.endOfRecipe=True
+	else:
+		#run a named query to get next step parameters
+		params={"recipeId":chart.recipeId, "recipeStep":chart.stepNum}
+		stepData=system.db.runNamedQuery("Exchange/SFC Recipe Handler/Query Recipe Step by Recipe",params)
+		if stepData.getRowCount()==0:
+			chart.endOfRecipe=True
+		else:
+			chart.function=stepData.getValueAt(0,"recipe_function")
+			chart.param1=stepData.getValueAt(0,"p1")
+			chart.param2=stepData.getValueAt(0,"p2")
+			chart.param3=stepData.getValueAt(0,"p3")
+			chart.targetPath1=stepData.getValueAt(0,"t1")
+			chart.pauseAction=stepData.getValueAt(0,"pause_action")
+			chart.stepStartTime=system.date.now()
+			chart.stepTotalPause=0
+			chart.stepComplete=False
+			chart.pausedTime=0
+			chart.stepStartValue=None
+			chart.gHoldStart=0
+			chart.gHoldActive=False
+			chart.estEndTime=0
+			chart.prescribedPause=False
+			chart.writeString=None
+			chart.f7Message=False</start-script>
+	</step>
+	<transition id="9cd97270-c238-4bd1-8268-0fd437f1045f" location="1 3">!{chart.paused}</transition>
+	<transition id="707493ef-c871-4bdd-b6bc-02f1a7149adf" location="2 3">{chart.paused}</transition>
+	<transition id="f683e7f1-502a-48d0-a5d8-65d7f1ded563" location="4 2">{chart.function}=1</transition>
+	<transition id="6e06fae6-bebf-4863-b654-9b26b1c4a4e2" location="0 5">true</transition>
+	<transition id="ff6ab762-2a00-4037-b208-bba8e865898d" location="6 2">{chart.function}=2</transition>
+	<transition id="2141a431-a151-4f16-aa57-ede7d55fc387" location="4 6">!{chart.stepComplete}</transition>
+	<transition id="54f2d85d-7b07-4bf8-9c53-acc657febe42" location="5 6">{chart.stepComplete}</transition>
+	<transition id="bc8fcbff-6a6a-4d62-a35e-9d3cf1d6eaff" location="8 2">{chart.function}=3</transition>
+	<transition id="d8be4955-dd9b-4e6e-8fe2-cab111035e50" location="6 6">!{chart.stepComplete}</transition>
+	<transition id="8ed8e522-daee-44c2-ab7d-cbed8378c41e" location="7 6">{chart.stepComplete}</transition>
+	<transition id="09319d63-c3fc-4948-a4af-df48bcd840a4" location="8 6">!{chart.stepComplete}</transition>
+	<transition id="c524284a-e6a7-4868-9304-cbc1a429c936" location="1 10">!{chart.endOfRecipe}</transition>
+	<transition id="54cb5a72-8f1c-40af-ad82-585dc158b71e" location="10 2">{chart.function}=4</transition>
+	<transition id="e621af2b-e83d-4894-836d-5fb77a849dbb" location="2 10">{chart.endOfRecipe}</transition>
+	<transition id="d67a04ea-7eee-431e-b92b-ab9613b3726f" location="9 6">{chart.stepComplete}</transition>
+	<transition id="6691c0f6-8e47-487e-8f7b-5374225312e3" location="10 6">!{chart.stepComplete}</transition>
+	<transition id="0e5f8420-adc2-4cc3-bf47-2fcdf365b697" location="12 2">{chart.function}=5</transition>
+	<transition id="19a6f6b5-e878-4fe2-9d25-5a370bd83855" location="11 6">{chart.stepComplete}</transition>
+	<transition id="832bc710-294a-46c3-ad86-153967cf80f7" location="12 6">!{chart.stepComplete}</transition>
+	<transition id="74e65607-f34a-4c7d-8773-b66b487df3f3" location="14 2">{chart.function}=6</transition>
+	<transition id="3c8febb0-6c8b-4aab-8080-234ada97576a" location="13 6">{chart.stepComplete}</transition>
+	<transition id="abebfa96-1749-4077-a91d-975cb8856edf" location="14 6">!{chart.stepComplete}</transition>
+	<transition id="cde15575-5445-4b2c-b376-1002a297ce85" location="16 2">{chart.function}=7</transition>
+	<transition id="25845a2c-3d75-46b0-b2c9-bace1018de87" location="15 6">{chart.stepComplete}</transition>
+	<transition id="f39975fb-4010-4661-a4e4-f7fe9baf23e1" location="16 6">!{chart.stepComplete}</transition>
+	<transition id="1152cd52-bcb1-47a5-a78b-4fa25c323f14" location="17 6">{chart.stepComplete}</transition>
+	<jump id="d1c81c84-6980-4893-99ff-5f1ee06edbbc" location="2 6">B</jump>
+	<jump id="d8c08536-c307-4567-9372-d4ae6bb2fc2b" location="4 9">B</jump>
+	<jump id="23e3f0a0-5afb-42e8-8aac-abca52e4c10a" location="1 11">A</jump>
+	<anchor id="6e6d08e8-616c-465f-a9ec-dffc76ac3d96" location="1 0">A</anchor>
+	<anchor id="a2987698-19e9-4579-9bee-835cd17bd2c3" location="1 8">B</anchor>
+	<link id="68ec32de-c68b-44a4-91b3-f1ee1782b6ac" location="1 1"><up/><down/></link>
+	<link id="c148c202-cfd9-48de-9d5f-1ec849c5d0f6" location="1 2"><up/><down/><right/></link>
+	<link id="c7b1f156-5c1a-4d50-a4c4-474ffeeb858f" location="2 2"><up/><left/><down/><right/></link>
+	<link id="46f305ca-c6e0-42f9-9b95-10530f7e8642" location="3 0"><up/><down/><right/></link>
+	<link id="59b5db43-8cbc-44e2-8855-7d74ce427408" location="3 1"><up/><down/></link>
+	<link id="ceedee2f-ec3d-4418-a6b6-239eeb3affa5" location="3 2"><up/><down/></link>
+	<link id="1f88875c-57e7-4f8c-856a-7d416c6a1f9f" location="4 0"><left/><down/><right/></link>
+	<link id="125acffe-4226-4122-b49c-2de4f6239f32" location="4 1"><up/><down/><right/></link>
+	<link id="f01c2eb1-b0dc-4952-bf5d-faa3d47a018f" location="3 3"><up/><down/></link>
+	<link id="15f929a3-2f7e-4b2d-8b1f-db8cc7761a34" location="3 4"><up/><down/></link>
+	<link id="3197e14a-99ea-4452-8e7b-ade81a0151bf" location="1 5"><up/><down/><right/></link>
+	<link id="1a054eba-d9c0-4d4e-beca-e88dda64bb50" location="5 1"><left/><right/></link>
+	<link id="2d4e7117-c06c-4036-94d2-f1894d5e1cca" location="2 5"><up/><down/></link>
+	<link id="8bcd62cb-d96b-4dd0-9558-f85a6822d897" location="4 4"><up/><down/></link>
+	<link id="46f25eb5-d691-4189-8225-9e0f1a7c19b5" location="3 5"><up/><down/></link>
+	<link id="4fb5bd86-7c21-44a6-ac7f-d500ca2d6da8" location="0 6"><up/><down/><right/></link>
+	<link id="7152412f-9639-4a97-b44b-eeff4556b40e" location="6 1"><up/><left/><down/><right/></link>
+	<link id="e6aae789-bdbc-4f2a-bb95-4e63f69df62f" location="1 6"><up/><left/><down/></link>
+	<link id="e5b21925-31a1-4ace-89b7-038668688137" location="4 5"><up/><down/><right/></link>
+	<link id="2cb1d1c3-0083-4e98-8fdf-2963c96f8379" location="3 6"><up/><down/></link>
+	<link id="121f4bba-f723-44bb-8a3d-391d8903f4da" location="0 7"><up/><down/><right/></link>
+	<link id="3b557cd7-b2f8-4f7e-91ca-120f91871d65" location="7 1"><left/><right/></link>
+	<link id="2e8e98e6-fad8-441e-b655-bb73d577f1a9" location="5 5"><up/><left/><down/></link>
+	<link id="1333522b-9fa9-406d-ba6c-c262ebc2a0ca" location="1 7"><left/><right/></link>
+	<link id="4e51ce22-348f-4d13-9a07-b75da638598d" location="2 7"><left/><right/></link>
+	<link id="bb4f1ed1-2a30-43d8-b89b-ac5400dbdf9d" location="3 7"><up/><left/><right/></link>
+	<link id="a761f11d-72bf-4cb2-80e1-1bada3248789" location="6 5"><up/><down/><right/></link>
+	<link id="585a59b3-d920-4a42-94a2-ffbabe99e03a" location="8 1"><up/><left/><down/><right/></link>
+	<link id="13deab05-e4dd-49d6-a4a7-ae73a0322e91" location="4 7"><up/><down/></link>
+	<link id="88053175-0db2-4f21-8d7c-a16911c23279" location="7 5"><up/><left/><down/></link>
+	<link id="87d5cca7-feeb-4ed1-897f-855cd25e23c7" location="8 4"><up/><down/></link>
+	<link id="3d328b01-20e8-4c3e-8b79-97ba97b9895e" location="4 8"><up/><down/><right/></link>
+	<link id="f92aeda6-ae93-46d8-b7ae-3d51b6cd57e9" location="9 1"><left/><right/></link>
+	<link id="67afeade-2cc4-473d-8ade-71fedaecf3af" location="1 9"><up/><left/><down/><right/></link>
+	<link id="70ab51a3-2be7-47f1-b2f5-3029d59f4ab2" location="6 7"><up/><down/></link>
+	<link id="2e4d4ecf-b69a-4711-aa4b-a185db2cb417" location="2 9"><left/><down/><right/></link>
+	<link id="72550315-c1ee-49d0-a279-f903e5f573e5" location="8 5"><up/><down/><right/></link>
+	<link id="30b0e4b4-e0e3-45e0-9d00-28b6c200ffd6" location="5 8"><up/><left/><down/><right/></link>
+	<link id="58f75ccc-9d49-45c6-ad14-063fd7b0c736" location="6 8"><up/><left/><down/><right/></link>
+	<link id="a381713c-0ed2-4812-af1e-3da7c19d1e8c" location="10 1"><up/><left/><down/><right/></link>
+	<link id="b095208c-1329-4b98-b1a3-55461330b968" location="9 5"><up/><left/><down/></link>
+	<link id="0b6743c2-83c4-49a7-8193-7d1e6f3bfc31" location="8 7"><up/><down/></link>
+	<link id="21d8c2c0-71bc-4646-b2a8-d505840f1130" location="7 8"><up/><left/><down/><right/></link>
+	<link id="3bdde371-f4e6-40a3-aaf6-7d50cf9d1e46" location="11 1"><left/><right/></link>
+	<link id="d2cdaf72-2169-4d09-989f-23dc02504092" location="10 5"><up/><down/><right/></link>
+	<link id="33975d93-dc02-4740-9fb3-fc5fd4108bec" location="8 8"><up/><left/><down/><right/></link>
+	<link id="d82cce3e-7c00-4fff-a5ee-1ffe2e84d0a0" location="12 1"><left/><down/><right/></link>
+	<link id="ec54e770-cec0-4486-8204-cce8f7177e1c" location="9 8"><up/><left/><down/><right/></link>
+	<link id="6031f927-10f1-4a94-98d2-2992dd88126c" location="11 5"><up/><left/><down/></link>
+	<link id="1df4a3c3-398b-4809-891b-15f6857b04a2" location="10 7"><up/><down/></link>
+	<link id="6c96d93c-4878-486d-9beb-a730a2dbd892" location="12 4"><up/><down/></link>
+	<link id="17cf2a66-a1fd-4f50-8ace-2d8247c10fe6" location="10 8"><up/><left/><down/><right/></link>
+	<link id="6f9afb3e-80c5-4594-bb3e-ca016b2d4de6" location="12 5"><up/><down/><right/></link>
+	<link id="90f1cdea-246d-4f9a-8704-129fc5726dab" location="13 1"><left/><right/></link>
+	<link id="5ca31884-fc15-4fe1-9629-b80799aaf1ed" location="11 8"><up/><left/><down/><right/></link>
+	<link id="6b370bb6-78ab-4204-acaa-ee10084bae3b" location="12 7"><up/><down/></link>
+	<link id="26065441-9fc3-4f41-ac2c-53adbc84fa3d" location="13 5"><up/><left/><down/></link>
+	<link id="d5aaf01d-f5c1-43a7-9550-d1cd511dbf9f" location="14 1"><left/><down/><right/></link>
+	<link id="e8c80dec-c1f5-44da-b30d-bb35f34230fa" location="12 8"><up/><left/><down/><right/></link>
+	<link id="6907721e-c268-4efb-9bd3-11d3c26c5be3" location="14 4"><up/><down/></link>
+	<link id="c9a54910-f1b7-44cd-8d2b-df8a1ede27c9" location="14 5"><up/><down/><right/></link>
+	<link id="9b2cbd33-5c07-4961-b283-3fd966e4b879" location="15 1"><left/><right/></link>
+	<link id="ff0ca127-0c45-43c6-9031-a0c83b9fa4c9" location="13 8"><up/><left/><down/><right/></link>
+	<link id="cfa640b1-9d95-4927-8bdb-35ae89dcfd27" location="14 7"><up/><down/></link>
+	<link id="7cf1f707-c2dc-4989-b4c3-505de1ee919e" location="15 5"><up/><left/><down/></link>
+	<link id="3316779f-9d0c-4b48-93c3-0430bc97aa4b" location="16 1"><left/><down/><right/></link>
+	<link id="9c1b8d13-bd50-40c8-963b-cc7fd80ea06d" location="14 8"><up/><left/><down/><right/></link>
+	<link id="c7066a1c-5345-420a-b06d-ab36bba13309" location="16 4"><up/><down/></link>
+	<link id="1a14e2cc-3f09-4816-9700-9b8850d2de45" location="16 5"><up/><down/><right/></link>
+	<link id="a74f154a-ef47-4175-b8e3-4d85963525e1" location="15 8"><up/><left/><down/><right/></link>
+	<link id="51d6a39b-4f6b-42e0-8d85-62f19a636c30" location="16 7"><up/><down/></link>
+	<link id="e3eaa5f0-e21e-4770-898c-5c1f69a5cec0" location="17 5"><up/><left/><down/></link>
+	<link id="6d9a17b5-d76c-4bb2-8b23-d69d937ef94b" location="16 8"><up/><left/><down/><right/></link>
+	<link id="add9b8f1-066a-4aa0-9de7-049e99dbf869" location="17 8"><up/><left/><down/><right/></link>
+
+</sfc>

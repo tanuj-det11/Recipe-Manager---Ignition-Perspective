@@ -1,0 +1,2 @@
+INSERT INTO  exsrh_recipe_steps ( recipe_id ,  recipe_step, recipe_function,  step_descrip , p1 , p2, p3, t1,p1unit ,p2unit ,p3unit, pause_action )
+VALUES (:recipeId , :recipeStep , :recipeFunction, :stepDescrip , :p1 , :p2, :p3, :t1, :p1Unit ,:p2Unit ,:p3Unit, :pauseAction)

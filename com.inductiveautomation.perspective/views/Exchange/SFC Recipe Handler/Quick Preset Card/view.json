@@ -1,0 +1,114 @@
+{
+  "custom": {},
+  "params": {
+    "recipe_id": null,
+    "recipe_name": "",
+    "total_days": 0,
+    "step_count": 0
+  },
+  "propConfig": {
+    "params.recipe_id": {
+      "paramDirection": "input"
+    },
+    "params.recipe_name": {
+      "paramDirection": "input"
+    },
+    "params.total_days": {
+      "paramDirection": "input"
+    },
+    "params.step_count": {
+      "paramDirection": "input"
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 60,
+      "width": 120
+    }
+  },
+  "root": {
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "justify": "center",
+      "alignItems": "center",
+      "style": {
+        "backgroundColor": "rgba(110, 206, 178, 0.15)",
+        "border": "1px solid rgba(110, 206, 178, 0.4)",
+        "borderRadius": "8px",
+        "padding": "10px 8px",
+        "cursor": "pointer",
+        "minHeight": "60px"
+      }
+    },
+    "children": [
+      {
+        "meta": {"name": "Name"},
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.params.recipe_name"
+              }
+            }
+          },
+          "props.style.fontSize": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if(len({view.params.recipe_name}) > 10, '11px', '14px')"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "fontSize": "14px",
+            "fontWeight": "bold",
+            "color": "#FFFFFF",
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {"name": "Info"},
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "toString({view.params.total_days}) + ' Days / ' + toString({view.params.step_count}) + ' Steps'"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "fontSize": "10px",
+            "color": "#6ECEB2",
+            "marginTop": "2px"
+          }
+        },
+        "type": "ia.display.label"
+      }
+    ],
+    "type": "ia.container.flex",
+    "events": {
+      "component": {
+        "onClick": {
+          "type": "script",
+          "scope": "G",
+          "config": {
+            "script": "recipe_name = self.view.params.recipe_name\nparentView = self.parent.parent.parent.parent.parent\n\nfor recipe in parentView.custom.allRecipes:\n\tif recipe['label'] == recipe_name:\n\t\tparentView.getChild('root').getChild('FlexContainer Select').getChild('Dropdown').props.value = recipe['value']\n\t\tbreak\n\nparentView.custom.showPresets = False"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "base": {
+    "style": {
+      "fontWeight": "bold",
+      "overflowWrap": "break-word",
+      "paddingLeft": "10px",
+      "whiteSpace": "normal"
+    }
+  }
+}

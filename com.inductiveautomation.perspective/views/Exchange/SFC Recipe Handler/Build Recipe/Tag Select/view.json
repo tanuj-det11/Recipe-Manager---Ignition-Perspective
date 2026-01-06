@@ -1,0 +1,247 @@
+{
+  "custom": {
+    "currentType": "n/a",
+    "currentValue": "n/a"
+  },
+  "events": {
+    "system": {
+      "onStartup": {
+        "config": {
+          "script": "\t#generates a list of all tag providers hooked to ignition currently\t\n\tconfig \u003d system.tag.browse(\u0027\u0027)\n\tprovider\u003d[]\n\tfor x in config:\n\t\tprovider.append({\u0027value\u0027:x[\u0027fullPath\u0027],\u0027label\u0027:x[\u0027fullPath\u0027]})\n\tself.getChild(\"root\").getChild(\"Dropdown\").props.options\u003dprovider "
+        },
+        "scope": "G",
+        "type": "script"
+      }
+    }
+  },
+  "params": {
+    "output": [],
+    "param": "",
+    "val": "n/a"
+  },
+  "propConfig": {
+    "custom.currentType": {
+      "persistent": true
+    },
+    "custom.currentValue": {
+      "persistent": true
+    },
+    "params.output": {
+      "onChange": {
+        "enabled": null,
+        "script": "\tpath\u003dself.params.output\n\t\n\t#pulls selected tag value and type\n\tif len(path)\u003e0:\n\t\tval\u003dsystem.tag.readBlocking(path)[0].value\n\t\tsystem.perspective.print(\"Read: %s\"%val)\n\t\t\n\t\tif val is None:\n\t\t\tself.custom.currentValue\u003d \"n/a\"\n\t\t\tself.custom.currentType\u003d \"n/a\"\n\t\telse:\n\t\t\tconfig \u003d system.tag.getConfiguration(path[0], False)[0]\n\t\t\tif \"typeId\" not in config.keys():\n\t\t\t\tif \"dataType\" in config.keys():\n\t\t\t\t\tdataType\u003dconfig[\"dataType\"]\n\t\t\t\telse:\n\t\t\t\t\tdataType\u003d\"Int4\"\n\t\t\t\tself.custom.currentValue\u003d val\n\t\t\t\tself.custom.currentType\u003d dataType\n\t\t\telse:\n\t\t\t\tself.custom.currentValue\u003d \"n/a\"\n\t\t\t\tself.custom.currentType\u003d \"n/a\"\n\t\t\t\t"
+      },
+      "paramDirection": "inout",
+      "persistent": true
+    },
+    "params.param": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.val": {
+      "binding": {
+        "config": {
+          "path": "view.custom.currentValue"
+        },
+        "type": "property"
+      },
+      "paramDirection": "output",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 383,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "custom": {
+          "key": []
+        },
+        "meta": {
+          "name": "Dropdown"
+        },
+        "position": {
+          "basis": "30px",
+          "shrink": 0
+        },
+        "props": {
+          "dropdownOptionStyle": {
+            "fontSize": 14
+          },
+          "options": [
+            {
+              "label": "[default]",
+              "value": "[default]"
+            },
+            {
+              "label": "[System]",
+              "value": "[System]"
+            },
+            {
+              "label": "[Test]",
+              "value": "[Test]"
+            },
+            {
+              "label": "[MQTT Engine]",
+              "value": "[MQTT Engine]"
+            }
+          ],
+          "placeholder": {
+            "text": "Select Tag Provider..."
+          },
+          "style": {
+            "fontSize": 14,
+            "marginBottom": "1px",
+            "marginTop": "1px"
+          },
+          "textAlign": "center",
+          "value": "[default]"
+        },
+        "type": "ia.input.dropdown"
+      },
+      {
+        "custom": {
+          "key": "value"
+        },
+        "meta": {
+          "name": "TagBrowseTree"
+        },
+        "position": {
+          "basis": "200px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.root.path": {
+            "binding": {
+              "config": {
+                "expression": "{../Dropdown.props.value}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.selection.values": {
+            "binding": {
+              "config": {
+                "bidirectional": true,
+                "path": "view.params.output"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "display": {
+            "refreshIcon": {
+              "style": {
+                "fontSize": 12
+              }
+            }
+          },
+          "root": {
+            "style": {}
+          },
+          "selection": {
+            "mode": "single"
+          },
+          "style": {
+            "fontSize": 12,
+            "marginBottom": "1px",
+            "marginTop": "1px"
+          }
+        },
+        "type": "ia.display.tag-browse-tree"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label"
+            },
+            "position": {
+              "basis": "32px",
+              "grow": 1
+            },
+            "props": {
+              "text": "Current Value:",
+              "textStyle": {
+                "fontSize": 12,
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Label_0"
+            },
+            "position": {
+              "basis": "32px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.currentValue"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "textStyle": {
+                "fontSize": 12,
+                "textAlign": "center"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Label_1"
+            },
+            "position": {
+              "basis": "32px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.currentType"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "textStyle": {
+                "fontSize": 12,
+                "textAlign": "center"
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer"
+        },
+        "type": "ia.container.flex"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "margin": "2px"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

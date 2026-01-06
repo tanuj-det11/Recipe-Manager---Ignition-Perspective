@@ -1,0 +1,435 @@
+{
+  "custom": {
+    "currentValue": -1,
+    "lowerLimit": 34.75,
+    "tag": [
+      {
+        "aggregate": "MinMax",
+        "alias": "Value"
+      }
+    ],
+    "upperLimit": 35.25
+  },
+  "params": {
+    "Start": "value",
+    "confirmed": false,
+    "id": "value",
+    "label": "value",
+    "p1": 35,
+    "p2": 0.25,
+    "p3": 1,
+    "t1": ""
+  },
+  "propConfig": {
+    "custom.currentValue": {
+      "binding": {
+        "config": {
+          "expression": "tag({view.params.t1})"
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.lowerLimit": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.p1}-{view.params.p2}"
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "custom.tag": {
+      "persistent": true
+    },
+    "custom.tag[0].path": {
+      "binding": {
+        "config": {
+          "path": "view.params.t1"
+        },
+        "type": "property"
+      }
+    },
+    "custom.upperLimit": {
+      "binding": {
+        "config": {
+          "expression": "{view.params.p1}+{view.params.p2}"
+        },
+        "type": "expr"
+      },
+      "persistent": true
+    },
+    "params.Start": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmed": {
+      "paramDirection": "output",
+      "persistent": true
+    },
+    "params.id": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.label": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p1": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p2": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.p3": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.t1": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 200,
+      "width": 320
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "basis": "28px",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.label"
+              },
+              "type": "property"
+            }
+          },
+          "props.textStyle.color": {
+            "binding": {
+              "config": {
+                "path": "../TimeSeriesChart.props.defaultStyles.colors[0]"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "custom": {
+          "max": 28.75,
+          "min": 28.560006328223878
+        },
+        "meta": {
+          "name": "TimeSeriesChart"
+        },
+        "position": {
+          "basis": "400px",
+          "grow": 1
+        },
+        "propConfig": {
+          "props.defaultStyles.colors[0]": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.currentValue}\u003e{view.custom.upperLimit}||{view.custom.currentValue}\u003c{view.custom.lowerLimit},\"#FF0000\",\"#00FF00\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.plots[0].axes[0].max": {
+            "binding": {
+              "config": {
+                "expression": "max({this.custom.max},{view.custom.upperLimit})+({view.custom.upperLimit}-{view.custom.lowerLimit})*0.10"
+              },
+              "type": "expr"
+            }
+          },
+          "props.plots[0].axes[0].min": {
+            "binding": {
+              "config": {
+                "expression": "min({this.custom.min},{view.custom.lowerLimit})-({view.custom.upperLimit}-{view.custom.lowerLimit})*0.10"
+              },
+              "type": "expr"
+            }
+          },
+          "props.plots[0].markers[0].line.color": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.currentValue}\u003e{view.custom.upperLimit}||{view.custom.currentValue}\u003c{view.custom.lowerLimit},\"#FF0000\",\"#00FF00\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.plots[0].markers[0].value": {
+            "binding": {
+              "config": {
+                "path": "view.custom.upperLimit"
+              },
+              "type": "property"
+            }
+          },
+          "props.plots[0].markers[1].line.color": {
+            "binding": {
+              "config": {
+                "expression": "if({view.custom.currentValue}\u003e{view.custom.upperLimit}||{view.custom.currentValue}\u003c{view.custom.lowerLimit},\"#FF0000\",\"#00FF00\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.plots[0].markers[1].value": {
+            "binding": {
+              "config": {
+                "path": "view.custom.lowerLimit"
+              },
+              "type": "property"
+            }
+          },
+          "props.plots[0].markers[2].value": {
+            "binding": {
+              "config": {
+                "path": "view.params.p1"
+              },
+              "type": "property"
+            }
+          },
+          "props.series[0].data": {
+            "binding": {
+              "config": {
+                "aggregate": "MinMax",
+                "avoidScanClassValidation": true,
+                "dateRange": {
+                  "mostRecent": "{view.params.p3}",
+                  "mostRecentUnits": "MIN"
+                },
+                "enableValueCache": true,
+                "ignoreBadQuality": false,
+                "polling": {
+                  "enabled": true,
+                  "rate": "2"
+                },
+                "preventInterpolation": false,
+                "returnFormat": "Wide",
+                "returnSize": {
+                  "numRows": "200*{view.params.p3}",
+                  "type": "FIXED"
+                },
+                "tags": "{view.custom.tag}",
+                "valueFormat": "DOCUMENT"
+              },
+              "transforms": [
+                {
+                  "code": "\tnewdate\u003d[]\n\tpoints\u003d[]\n\t#creates an array of dictionaries that reformats the tag history pulled above, and calculates the min and max.\n\tfor x in value:\n\t\tnewdate.append({\"time\":x[\"t_stamp\"],\"value\":x[\"Value\"]})\n\t\tpoints.append(x[\"Value\"])\n\t\t\n\tself.custom.max\u003dmax(points)\n\tself.custom.min\u003dmin(points)\n\treturn newdate",
+                  "type": "script"
+                }
+              ],
+              "type": "tag-history"
+            }
+          }
+        },
+        "props": {
+          "defaultStyles": {
+            "colorScheme": "BuGn",
+            "colors": [
+              null
+            ],
+            "normal": {
+              "stroke": {
+                "width": 3
+              }
+            }
+          },
+          "enablePanZoom": false,
+          "legend": {
+            "position": "right"
+          },
+          "plots": [
+            {
+              "axes": [
+                {
+                  "alignment": "left",
+                  "grid": {
+                    "color": "",
+                    "dashArray": 0,
+                    "opacity": 0.9,
+                    "style": {
+                      "classes": ""
+                    },
+                    "visible": false
+                  },
+                  "label": {
+                    "font": {
+                      "color": "",
+                      "size": 10
+                    },
+                    "offset": 0,
+                    "style": {
+                      "classes": ""
+                    },
+                    "text": "",
+                    "visible": true
+                  },
+                  "name": "Chart",
+                  "style": {
+                    "classes": ""
+                  },
+                  "tick": {
+                    "color": "",
+                    "count": "Auto",
+                    "label": {
+                      "font": {
+                        "color": "",
+                        "size": 10
+                      },
+                      "format": "Auto",
+                      "style": {
+                        "classes": ""
+                      }
+                    },
+                    "style": {
+                      "classes": ""
+                    }
+                  },
+                  "width": 60
+                }
+              ],
+              "markers": [
+                {
+                  "axis": "Chart",
+                  "line": {
+                    "dashArray": 0,
+                    "label": {
+                      "font": {
+                        "color": "",
+                        "size": 10
+                      },
+                      "position": "left",
+                      "style": {
+                        "classes": ""
+                      },
+                      "text": "Upper Limit"
+                    },
+                    "opacity": 0.5,
+                    "style": {
+                      "classes": ""
+                    },
+                    "width": 2
+                  },
+                  "type": "line",
+                  "visible": true
+                },
+                {
+                  "axis": "Chart",
+                  "line": {
+                    "dashArray": 0,
+                    "label": {
+                      "font": {
+                        "color": "",
+                        "size": 10
+                      },
+                      "position": "left",
+                      "style": {
+                        "classes": ""
+                      },
+                      "text": "Lower Limit"
+                    },
+                    "opacity": 0.5,
+                    "style": {
+                      "classes": ""
+                    },
+                    "width": 2
+                  },
+                  "type": "line",
+                  "visible": true
+                },
+                {
+                  "axis": "Chart",
+                  "line": {
+                    "color": "#00AC00",
+                    "dashArray": "5 5",
+                    "label": {
+                      "font": {
+                        "color": "",
+                        "size": 10
+                      },
+                      "position": "right",
+                      "style": {
+                        "classes": ""
+                      },
+                      "text": ""
+                    },
+                    "opacity": 1,
+                    "style": {
+                      "classes": ""
+                    },
+                    "width": 2
+                  },
+                  "type": "line",
+                  "visible": true
+                }
+              ],
+              "relativeWeight": 1,
+              "trends": [
+                {
+                  "axis": "Chart",
+                  "baselines": [],
+                  "breakLine": true,
+                  "columns": [],
+                  "interpolation": "curveLinear",
+                  "radius": 2,
+                  "series": "Values",
+                  "stack": true,
+                  "type": "line",
+                  "visible": true
+                }
+              ]
+            }
+          ],
+          "series": [
+            {
+              "name": "Values"
+            }
+          ],
+          "timeAxis": {
+            "tickCount": 6,
+            "visible": false
+          },
+          "timeRange": {
+            "visible": false
+          }
+        },
+        "type": "ia.chart.timeseries"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderStyle": "solid",
+        "borderWidth": "2px",
+        "margin": "3px",
+        "overflow": "visible"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "custom": {},
+  "params": {
+    "step": "value",
+    "value": "value"
+  },
+  "propConfig": {
+    "params.step": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.value": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 28,
+      "width": 82
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Label"
+        },
+        "position": {
+          "grow": 1
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.value"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "fontSize": 12
+          },
+          "textStyle": {
+            "textAlign": "center"
+          }
+        },
+        "type": "ia.display.label"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "propConfig": {
+      "props.style.borderStyle": {
+        "binding": {
+          "config": {
+            "expression": "if({view.params.step}\u003dnull,\"none\",if({view.params.value}\u003d{view.params.step}+1,\"solid\",\"none\"))"
+          },
+          "type": "expr"
+        }
+      }
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "borderColor": "#00FF00",
+        "borderWidth": 3,
+        "marginRight": "5px"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

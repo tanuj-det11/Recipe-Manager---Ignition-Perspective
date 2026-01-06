@@ -1,0 +1,2239 @@
+{
+  "custom": {},
+  "params": {
+    "addStep": true,
+    "modifyRecipe": true,
+    "selRowData": {
+      "Pause": 0,
+      "p1": 25,
+      "p1Unit": "",
+      "p2": 2,
+      "p2Unit": "",
+      "p3": null,
+      "p3Unit": "",
+      "recipe_function": 5,
+      "step_descrip": "Hold For Target",
+      "t1": "[default]Exchange/SFC_Setpoint_Control/SFC_PID_Control/PID Heating Process/Sensor/Sensor Input"
+    },
+    "stepData": {
+      "StepDescription": "Change Value",
+      "complete": true,
+      "function": 1,
+      "params": {
+        "p1": 30,
+        "p1Unit": "°C",
+        "p2": 0,
+        "p2Unit": "",
+        "p3": 0,
+        "p3Unit": "",
+        "t1": "[default]Exchange/SFC_Setpoint_Control/SFC_PID_Control/PID Heating Process/Setup/Setpoint"
+      }
+    },
+    "tagSwap": "value"
+  },
+  "propConfig": {
+    "params.addStep": {
+      "paramDirection": "inout",
+      "persistent": true
+    },
+    "params.modifyRecipe": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.selRowData": {
+      "paramDirection": "output"
+    },
+    "params.stepData": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.tagSwap": {
+      "paramDirection": "inout",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 809
+    },
+    "loading": {
+      "mode": "blocking"
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\tstate\u003dself.custom.state\n\tif state:\n\t\tself.custom.state\u003dFalse\n\telse:\n\t\tself.custom.state\u003dTrue"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Add Step Button"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "custom.state": {
+            "binding": {
+              "config": {
+                "bidirectional": true,
+                "path": "view.params.addStep"
+              },
+              "type": "property"
+            }
+          },
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{view.params.modifyRecipe}\u0026\u0026!{this.custom.state}"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "path": "material/post_add"
+            }
+          },
+          "justify": "start",
+          "primary": false,
+          "style": {
+            "margin": "3px"
+          },
+          "text": "Configure New Step"
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#inserts the configured step in the recipe (at the bottom)\n\t\n\t#pulls step data from the setData configuration and assign variables\n\tdata\u003dself.view.params.stepData\n\tdescrip\u003ddata[\"StepDescription\"]\n\tfunction\u003ddata[\"function\"]\n\tp1\u003ddata[\"params\"][\"p1\"]\n\tp2\u003ddata[\"params\"][\"p2\"]\n\tp3\u003ddata[\"params\"][\"p3\"]\n\tp1Unit\u003ddata[\"params\"][\"p1Unit\"]\n\tp2Unit\u003ddata[\"params\"][\"p2Unit\"]\n\tp3Unit\u003ddata[\"params\"][\"p3Unit\"]\n\tpause\u003ddata[\"params\"][\"pause\"]\n\tt1\u003ddata[\"params\"][\"t1\"]\n\t#function specific assignments where no value should bbe present\n\tif function\u003d\u003d1:\n\t\tp2\u003dNone\n\t\tp3\u003dNone\n\t\tp2Unit\u003dNone\n\t\tp3Unit\u003dNone\n\telif function\u003d\u003d5:\n\t\tp3\u003dNone\n\t\tp3Unit\u003dNone\n\telif function\u003d\u003d6 or function\u003d\u003d7:\n\t\tp1\u003dNone\n\t\tp2\u003dNone\n\t\tp3\u003dNone\n\t\tp1Unit\u003dNone\n\t\tp2Unit\u003dNone\n\t\tp3Unit\u003dNone\n\tif function\u003d\u003d3 or function\u003d\u003d6:\n\t\tt1\u003dNone\n\t\t\n\n\t\n\t#create dictionary (ROW) of data for the table\n\titem\u003d{\"step_descrip\":descrip,\n\t\t\"recipe_function\":function,\n\t\t\"p1\":p1,\n\t\t\"p2\":p2,\n\t\t\"p3\":p3,\n\t\t\"t1\":t1,\n\t\t\"p1Unit\":p1Unit,\n\t\t\"p2Unit\":p2Unit,\n\t\t\"p3Unit\":p3Unit,\n\t\t\"Pause\":pause}\n\t\n\t#insert the row into the table\n\tself.getSibling(\"Table\").props.data.append(item)\n\t\n\t#clear all errors checked in the recipe (require recheck)\n\tself.getSibling(\"Button Error Check\").custom.errors\u003d0\n\tself.getSibling(\"Button Error Check\").custom.nameErrorOnly\u003dFalse\n\tself.getSibling(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\tself.getSibling(\"Button Error Check\").props.text\u003d\"Error Check Recipe\"\n\t\n\t#if modifying recipe default back to adding a new step and not currently configured step\n\tif self.view.params.modifyRecipe:\n\t\tself.view.params.addStep\u003dFalse"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Add Step"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "!{view.params.modifyRecipe}||{../Add Step Button.custom.state}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "path": "view.params.stepData.complete"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "path": "material/double_arrow"
+            }
+          },
+          "justify": "start",
+          "primary": false,
+          "style": {
+            "marginBottom": "3px",
+            "marginLeft": "3px",
+            "marginRight": "3px",
+            "marginTop": "3px"
+          },
+          "text": "Add Step To Recipe",
+          "textStyle": {
+            "textAlign": "left"
+          }
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Label"
+            },
+            "position": {
+              "basis": "111px",
+              "shrink": 0
+            },
+            "props": {
+              "style": {
+                "marginRight": "5px"
+              },
+              "text": "Recipe:",
+              "textStyle": {
+                "textAlign": "right"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Dropdown"
+            },
+            "position": {
+              "basis": "250px"
+            },
+            "propConfig": {
+              "custom.recipeData": {
+                "binding": {
+                  "config": {
+                    "parameters": {
+                      "recipeId": "{this.props.value}"
+                    },
+                    "polling": {
+                      "enabled": true,
+                      "rate": "30"
+                    },
+                    "queryPath": "Exchange/SFC Recipe Handler/Query Recipe Steps by Recipe",
+                    "returnFormat": "json"
+                  },
+                  "overlayOptOut": true,
+                  "type": "query"
+                }
+              },
+              "custom.selectRunning": {
+                "binding": {
+                  "config": {
+                    "path": "this.props.value"
+                  },
+                  "transforms": [
+                    {
+                      "code": "\toptions\u003dself.props.options\n\tres \u003d next((sub for sub in options if sub[\u0027value\u0027] \u003d\u003d value), None)\n\tif res is not None:\n\t\trecipeName\u003dres[\u0027label\u0027]\n\t\trunningData\u003dsystem.sfc.getRunningCharts(\"Exchange/SFC Recipe Handler/SFC Recipe Handler\")\n\t\trunning\u003d[]\n\t\tfor row in range(runningData.rowCount):\n\t\t\trunningChartId \u003d runningData.getValueAt(row, \"instanceId\")\n\t\t\trunningChartName \u003d runningData.getValueAt(row, \"keyParamValue\")\n\t\t\trunning.append(runningChartName)\n\t\tif recipeName in running:\n\t\t\treturn True\n\t\telse:\n\t\t\treturn False\n\telse:\n\t\treturn False",
+                      "type": "script"
+                    }
+                  ],
+                  "type": "property"
+                }
+              },
+              "props.options": {
+                "binding": {
+                  "config": {
+                    "queryPath": "Exchange/SFC Recipe Handler/Query All Recipes(Dropdown)",
+                    "returnFormat": "json"
+                  },
+                  "type": "query"
+                }
+              },
+              "props.value": {
+                "onChange": {
+                  "enabled": null,
+                  "script": "\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\tself.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                }
+              }
+            },
+            "type": "ia.input.dropdown"
+          },
+          {
+            "events": {
+              "dom": {
+                "onClick": {
+                  "config": {
+                    "script": "\t#refreshes list of recipes and clears all items\n\tself.getSibling(\"Dropdown\").refreshBinding(\"props.options\")\n\tself.getSibling(\"Dropdown\").props.value\u003d\"\"\n\tself.parent.parent.getChild(\"Table\").props.data\u003d[]\n\tself.parent.parent.getChild(\"Button Error Check\").custom.nameError\u003d0\n\tself.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse\n\tself.parent.parent.getChild(\"Button Error Check\").custom.errors\u003d0\n\tself.parent.parent.getChild(\"Button Error Check\").custom.errorList\u003d[]\n\tself.parent.parent.getChild(\"Button Error Check\").custom.runningError\u003dFalse"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                },
+                "onMouseOut": {
+                  "config": {
+                    "script": "\tself.props.style.backgroundColor\u003d\"\""
+                  },
+                  "scope": "G",
+                  "type": "script"
+                },
+                "onMouseOver": {
+                  "config": {
+                    "script": "\tself.props.style.backgroundColor\u003d\"#808080\"\n"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Refresh"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "image": {
+                "height": 30,
+                "icon": {
+                  "path": "material/refresh"
+                },
+                "width": 30
+              },
+              "justify": "start",
+              "primary": false,
+              "style": {
+                "backgroundColor": "",
+                "marginLeft": "2px"
+              },
+              "text": ""
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\t#loads the selected recipe into the table from the query run in the dropdown.\n\t\n\t\n\tdata\u003dself.getSibling(\"Dropdown\").custom.recipeData\n\tif len(data)!\u003d0:\n\t\tself.parent.parent.getChild(\"Table\").props.data\u003d[]\n\t\t#loop through rows (items in the list)\n\t\tfor x in data:\n\t\t\t\n\t\t\t#assign variables from list\n\t\t\tdescrip\u003dx[\"step_descrip\"]\n\t\t\tfunction\u003dx[\"recipe_function\"]\n\t\t\tp1\u003dx[\"p1\"]\n\t\t\tp2\u003dx[\"p2\"]\n\t\t\tp3\u003dx[\"p3\"]\n\t\t\tt1\u003dx[\"t1\"]\n\t\t\tp1unit\u003dx[\"p1unit\"]\n\t\t\tp2unit\u003dx[\"p2unit\"]\n\t\t\tp3unit\u003dx[\"p3unit\"]\n\t\t\tpause\u003dx[\"pause_action\"]\n\t\t\t\n\t\t\t#creates a new list\n\t\t\titem\u003d{\"step_descrip\":descrip,\n\t\t\t\t\"recipe_function\":function,\n\t\t\t\t\"p1\":p1,\n\t\t\t\t\"p2\":p2,\n\t\t\t\t\"p3\":p3,\n\t\t\t\t\"t1\":t1,\n\t\t\t\t\"p1Unit\":p1unit,\n\t\t\t\t\"p2Unit\":p2unit,\n\t\t\t\t\"p3Unit\":p3unit,\n\t\t\t\t\"Pause\":pause}\n\t\t\t\n\t\t\t#append the new list (row) to the table\t\n\t\t\tself.parent.parent.getChild(\"Table\").props.data.append(item)\n\t\tself.parent.parent.getChild(\"Button Error Check\").custom.errors\u003d0\n\t\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Load"
+            },
+            "position": {
+              "basis": "120px"
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "if(({../Dropdown.props.value}\u003d\"\" || {../Dropdown.props.value}\u003dnull || {../Dropdown.props.value}\u003d-1),false,true)"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "path": "material/import_export"
+                }
+              },
+              "justify": "start",
+              "primary": false,
+              "style": {
+                "marginLeft": "15px"
+              },
+              "text": "Load Recipe"
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "meta": {
+              "name": "OneShotButton"
+            },
+            "position": {
+              "basis": "140px"
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "if({../Dropdown.props.value}\u003d\"\" || {../Dropdown.props.value}\u003dnull || {../Dropdown.props.value}\u003d-1,false,true)"
+                  },
+                  "type": "expr"
+                }
+              },
+              "props.value": {
+                "onChange": {
+                  "enabled": null,
+                  "script": "\t#deletes the recipe from the database if confirmed delete selected\n\t\n\tif currentValue.value\u003d\u003d1:\n\t\trecipe_id\u003dself.getSibling(\"Dropdown\").props.value\n\t\tif recipe_id is not None:\n\t\t\t#deletes recipe steps from step table\n\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Delete Recipe Steps by Recipe\",{\"recipeId\":recipe_id})\n\t\t\t#deletes recipe from recipe table\n\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Delete Recipe\",{\"id\":recipe_id})\n\t\t\t\n\t\t\t#refreshes all bindings and error checker\n\t\t\tself.getSibling(\"Dropdown\").refreshBinding(\"props.options\")\n\t\t\tself.getSibling(\"Dropdown\").props.value\u003dNone\n\t\t\tself.parent.parent.getChild(\"Table\").props.data\u003d[]\n\t\t\tself.parent.parent.getChild(\"Button Error Check\").custom.errors\u003d0\n\t\t\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\t\t\tself.props.value\u003d0"
+                }
+              }
+            },
+            "props": {
+              "confirm": {
+                "enabled": true,
+                "text": "Permanently Delete?"
+              },
+              "primary": false,
+              "readyState": {
+                "icon": {
+                  "color": "#FF0000",
+                  "path": "material/delete_forever",
+                  "style": {
+                    "height": "24px",
+                    "width": "2rem"
+                  }
+                },
+                "style": {
+                  "color": "#FF0000",
+                  "marginLeft": "2px"
+                },
+                "text": "Delete Recipe"
+              },
+              "style": {
+                "color": "#FF0000",
+                "marginLeft": "5px"
+              },
+              "writingState": {
+                "icon": {
+                  "path": "material/hourglass_empty",
+                  "style": {
+                    "height": "24px",
+                    "width": "2rem"
+                  }
+                },
+                "style": {
+                  "color": "#FF0000",
+                  "marginLeft": "2px"
+                },
+                "text": "Writing..."
+              }
+            },
+            "type": "ia.input.oneshotbutton"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer Modify"
+        },
+        "position": {
+          "basis": "35px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "view.params.modifyRecipe"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "marginBottom": "5px",
+            "marginTop": "5px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "custom": {
+          "uniqueName": true
+        },
+        "meta": {
+          "name": "TextField"
+        },
+        "position": {
+          "basis": "46px"
+        },
+        "propConfig": {
+          "props.style.backgroundColor": {
+            "binding": {
+              "config": {
+                "expression": "if(if(!{view.params.modifyRecipe},\r\n({../TextField.props.text}!\u003d\"\" \u0026\u0026 \r\n{../TextField.custom.uniqueName}),\r\n{../FlexContainer Modify/Dropdown.props.value} !\u003dNull \u0026\u0026 len({../Table.props.data})\u003e0),\"\",\"#FFCCCC\")\r\n"
+              },
+              "type": "expr"
+            }
+          },
+          "props.text": {
+            "onChange": {
+              "enabled": null,
+              "script": "\t#checks to see if the recipe name is unique and assigns that to a variable to creating a new recipe.\n\tif currentValue.value is not None:\n\t\tdata\u003dsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Query Recipe by Name\",{\"recipeName\":self.props.text})\n\t\tif data.getRowCount()\u003e0:\n\t\t\tself.custom.uniqueName\u003dFalse\n\t\telse:\n\t\t\tself.custom.uniqueName\u003dTrue\n\telse:\n\t\tself.custom.uniqueName\u003dFalse"
+            }
+          }
+        },
+        "props": {
+          "placeholder": "Define Recipe Name....",
+          "rejectUpdatesWhileFocused": false,
+          "style": {
+            "margin": "3px"
+          }
+        },
+        "type": "ia.input.text-field"
+      },
+      {
+        "events": {
+          "component": {
+            "onRowClick": {
+              "config": {
+                "script": "\tself.view.params.selRowData\u003dself.props.data[event.row]"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Table"
+        },
+        "position": {
+          "basis": "400px",
+          "grow": 1
+        },
+        "props": {
+          "columns": [
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "recipe_function",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": "Func."
+              },
+              "justify": "center",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 80
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": true,
+              "field": "step_descrip",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": "Descrip."
+              },
+              "justify": "left",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 120
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": true,
+              "field": "p1",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "justify": "center",
+              "number": "value",
+              "numberFormat": "0,0.###",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 50
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "p1Unit",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": " "
+              },
+              "justify": "left",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 45
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": true,
+              "field": "p2",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "justify": "center",
+              "number": "value",
+              "numberFormat": "0,0.###",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 50
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "p2Unit",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": " "
+              },
+              "justify": "left",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 45
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": true,
+              "field": "p3",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "justify": "auto",
+              "number": "value",
+              "numberFormat": "0,0.###",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 50
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "p3Unit",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": " "
+              },
+              "justify": "left",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": 45
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "t1",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "justify": "auto",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": false,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": ""
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "Pause",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": "Pause Wait"
+              },
+              "justify": "left",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "boolean",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": false,
+              "style": {
+                "classes": "",
+                "fontSize": 12
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": ""
+            }
+          ],
+          "style": {
+            "marginBottom": "3px",
+            "marginLeft": "3px",
+            "marginRight": "3px",
+            "marginTop": "3px"
+          }
+        },
+        "scripts": {
+          "customMethods": [],
+          "extensionFunctions": null,
+          "messageHandlers": [
+            {
+              "messageType": "updatedPaths",
+              "pageScope": true,
+              "script": "\t# implement your handler here\n\tself.props.data\u003dpayload[\"data\"]",
+              "sessionScope": true,
+              "viewScope": false
+            }
+          ]
+        },
+        "type": "ia.display.table"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "events": {
+                  "component": {
+                    "onActionPerformed": {
+                      "config": {
+                        "script": "\t#moves the selected row up if it is not already on top and clears error checker\n\t\n\tselectRow\u003dself.parent.parent.parent.getChild(\"Table\").props.selection.selectedRow\n\tl\u003dself.parent.parent.parent.getChild(\"Table\").props.data\n\tif selectRow\u003e0:\n\t\tl.insert(selectRow-1,l.pop(selectRow))\n\t\tself.parent.parent.parent.getChild(\"Table\").props.selection.selectedRow\u003dselectRow-1\n\t\tself.parent.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\t\tself.parent.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                      },
+                      "scope": "G",
+                      "type": "script"
+                    }
+                  }
+                },
+                "meta": {
+                  "name": "Button Move Up"
+                },
+                "position": {
+                  "basis": "34px"
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "config": {
+                        "expression": "if({..../Table.props.selection.selectedRow}\u003dnull,false,({..../Table.props.selection.selectedRow}\u003e0 \u0026\u0026 len({..../Table.props.data})\u003e0))"
+                      },
+                      "type": "expr"
+                    }
+                  }
+                },
+                "props": {
+                  "image": {
+                    "icon": {
+                      "path": "material/arrow_drop_up"
+                    }
+                  },
+                  "primary": false,
+                  "style": {
+                    "fontSize": 13,
+                    "marginBottom": "1px"
+                  },
+                  "text": "Move Up"
+                },
+                "type": "ia.input.button"
+              },
+              {
+                "events": {
+                  "component": {
+                    "onActionPerformed": {
+                      "config": {
+                        "script": "\t#moves the selected row down if it is not already on bottom and clears error checker\n\tselectRow\u003dself.parent.parent.parent.getChild(\"Table\").props.selection.selectedRow\n\tl\u003dself.parent.parent.parent.getChild(\"Table\").props.data\n\tlength\u003dlen(l)\n\tif selectRow\u003clength:\n\t\tl.insert(selectRow+1,l.pop(selectRow))\n\t\tself.parent.parent.parent.getChild(\"Table\").props.selection.selectedRow\u003dselectRow+1\n\t\tself.parent.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\t\tself.parent.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                      },
+                      "scope": "G",
+                      "type": "script"
+                    }
+                  }
+                },
+                "meta": {
+                  "name": "Button Move Down"
+                },
+                "position": {
+                  "basis": "34px"
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "config": {
+                        "expression": "if({..../Table.props.selection.selectedRow}\u003dnull,false,(len({..../Table.props.data})-1\u003e{..../Table.props.selection.selectedRow}))"
+                      },
+                      "type": "expr"
+                    }
+                  }
+                },
+                "props": {
+                  "image": {
+                    "icon": {
+                      "path": "material/arrow_drop_down"
+                    }
+                  },
+                  "primary": false,
+                  "style": {
+                    "fontSize": 13,
+                    "marginTop": "1px"
+                  },
+                  "text": "Move Down"
+                },
+                "type": "ia.input.button"
+              }
+            ],
+            "meta": {
+              "name": "FlexContainer"
+            },
+            "position": {
+              "basis": "160px",
+              "grow": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "marginLeft": "2px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\t#duplicates the selected row and inserts step below the current step.\n\tselectRow\u003dself.parent.parent.getChild(\"Table\").props.selection.selectedRow\n\tl\u003dself.parent.parent.getChild(\"Table\").props.data\n\tif selectRow\u003e\u003d0:\n\t\tl.insert(selectRow+1, l[selectRow])\n\t\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\t\tself.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Duplicate"
+            },
+            "position": {
+              "basis": "120px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "{.../Table.props.selection.selectedRow}!\u003dnull "
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "path": "material/content_copy"
+                }
+              },
+              "primary": false,
+              "style": {
+                "fontSize": 13,
+                "marginLeft": "2px",
+                "whiteSpace": "pre-wrap"
+              },
+              "text": "Duplicate\nStep"
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\t#deletes teh current step from the recipe\n\tselectRow\u003dself.parent.parent.getChild(\"Table\").props.selection.selectedRow\n\tl\u003dself.parent.parent.getChild(\"Table\").props.data\n\tif selectRow\u003e\u003d0:\n\t\tl.pop(selectRow)\n\t\tself.parent.parent.getChild(\"Table\").props.selection.selectedRow\u003dNone\n\t\tself.parent.parent.getChild(\"Table\").props.selection.selectedColumn\u003dNone\n\t\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\t\tself.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Delete"
+            },
+            "position": {
+              "basis": "120px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "{.../Table.props.selection.selectedRow}!\u003dnull "
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "path": "material/delete"
+                }
+              },
+              "primary": false,
+              "style": {
+                "fontSize": 13,
+                "marginLeft": "2px",
+                "whiteSpace": "pre-wrap"
+              },
+              "text": "Delete\nStep"
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\t#clears the recipe\n\tself.parent.parent.getChild(\"Table\").props.data\u003d[]\n\tself.parent.parent.getChild(\"Button Error Check\").custom.errors\u003d0\n\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\tself.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            },
+            "meta": {
+              "name": "Button Clear"
+            },
+            "position": {
+              "basis": "120px",
+              "grow": 1
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "len({.../Table.props.data})\u003e0"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "path": "material/clear_all"
+                }
+              },
+              "primary": false,
+              "style": {
+                "fontSize": 13,
+                "marginLeft": "2px",
+                "whiteSpace": "pre-wrap"
+              },
+              "text": "Clear All\nSteps"
+            },
+            "type": "ia.input.button"
+          },
+          {
+            "events": {
+              "component": {
+                "onActionPerformed": [
+                  {
+                    "config": {
+                      "draggable": true,
+                      "id": "swapTags",
+                      "modal": true,
+                      "overlayDismiss": false,
+                      "resizable": true,
+                      "showCloseIcon": true,
+                      "type": "open",
+                      "viewParams": {
+                        "complete": "0",
+                        "data": "{/root/Table.props.data}"
+                      },
+                      "viewPath": "Exchange/SFC Recipe Handler/Build Recipe/Duplicate Recipe Change Tags",
+                      "viewportBound": true
+                    },
+                    "scope": "C",
+                    "type": "popup"
+                  },
+                  {
+                    "config": {
+                      "script": "\tself.parent.parent.getChild(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\tself.parent.parent.getChild(\"Button Error Check\").custom.nameErrorOnly\u003dFalse"
+                    },
+                    "scope": "G",
+                    "type": "script"
+                  }
+                ]
+              }
+            },
+            "meta": {
+              "name": "Button Swap Tags"
+            },
+            "position": {
+              "basis": "150px"
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "config": {
+                    "path": "view.params.modifyRecipe"
+                  },
+                  "type": "property"
+                }
+              },
+              "props.enabled": {
+                "binding": {
+                  "config": {
+                    "expression": "len({.../Table.props.data})\u003e0"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "image": {
+                "icon": {
+                  "path": "material/swap_vertical_circle"
+                }
+              },
+              "justify": "start",
+              "primary": false,
+              "style": {
+                "marginLeft": "2px",
+                "marginRight": "2px"
+              },
+              "text": "Swap Tag Paths",
+              "textStyle": {
+                "color": ""
+              }
+            },
+            "type": "ia.input.button"
+          }
+        ],
+        "meta": {
+          "name": "FlexContainer"
+        },
+        "position": {
+          "basis": "55px"
+        },
+        "props": {
+          "style": {
+            "marginBottom": "10px",
+            "marginTop": "5px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "custom": {
+          "errorList": [],
+          "errors": 0,
+          "errorsChecked": false,
+          "nameError": 0,
+          "nameErrorOnly": false,
+          "runningError": false
+        },
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t\n\t#check that all tag paths quality is good\n\t#returns a list of error message dictionaries\n\tdef checkPaths(data):\n\t\terrors\u003d[]\n\t\trow\u003d0\n\t\tfor x in data:\n\t\t\tpath\u003dx[\"t1\"]\n\t\t\tfunc\u003dx[\"recipe_function\"]\n\t\t\tif func!\u003d3 and func !\u003d 6:\n\t\t\t\ttag \u003d system.tag.readBlocking([path])[0]\n\t\t\t\tquality\u003dtag.getQuality()\n\t\t\t\tif not quality.isGood():\n\t\t\t\t\terrors.append({\"message\":\u0027Tag Path \"%s\" is Bad Quality\u0027 %path,\"tagPath\":path, \"Row\":row+1, \"Col\":\"t1\"})\n\t\t\trow+\u003d1\n\t\treturn errors\n\t\n\t#checks that functions 4 and 5 are not first in the recipe and that parameter 1 is equal to the prior step. Also checks that they dont follow a hold F3\n\t#returns a list of error message dictionaries\n\tdef checkFunc4and5(data):\n\t\terrors\u003d[]\n\t\tdataLenght\u003dlen(data)\n\t\trow\u003d0\n\t\tfor x in range(dataLenght):\n\t\t\tp1\u003ddata[x][\"p1\"]\n\t\t\tfunc\u003ddata[x][\"recipe_function\"]\n\t\t\tif func\u003d\u003d5 or func\u003d\u003d4:\n\t\t\t\tif x\u003d\u003d0:\n\t\t\t\t\terrors.append({\"message\":\"F%s Step 1 Not Allowed\" %func, \"Row\":row+1, \"Col\":\"Func.\"})\n\t\t\t\telse:\n\t\t\t\t\tpastp1\u003ddata[x-1][\"p1\"]\n\t\t\t\t\tpastfunc\u003ddata[x-1][\"recipe_function\"]\n\t\t\t\t\tif p1!\u003dpastp1 and pastfunc!\u003d3:\n\t\t\t\t\t\terrors.append({\"message\":\"F%s- P1 not equal to previous Step\"%func, \"Row\":row+1, \"Col\":\"p1\"})\n\t\t\t\t\telif pastfunc\u003d\u003d3:\n\t\t\t\t\t\terrors.append({\"message\":\"F%s- Cannot Follow F3\"%func, \"Row\":row+1, \"Col\":\"step_descrip\"})\n\t\t\trow+\u003d1\n\t\treturn errors\n\t\n\t#checks that the ramping function parameter 3 is defined as 0, 1, or 2 (time portion of the rate)\n\t#returns a list of error message dictionaries\n\tdef checkFunc2(data):\n\t\terrors\u003d[]\n\t\trow\u003d0\n\t\tfor x in data:\n\t\t\tp3\u003dx[\"p3\"]\n\t\t\tfunc\u003dx[\"recipe_function\"]\n\t\t\tif p3 not in [0,1,2] and func\u003d\u003d2:\n\t\t\t\terrors.append({\"message\":\"F2- P3 must be 0, 1, or 2\", \"Row\":row+1, \"Col\":\"p3\"})\n\t\t\trow+\u003d1\n\t\treturn errors\n\n\t#checks that the holding function parameter 2 is defined as 0, 1, or 2 (condition cooresponding to  \u003d, \u003c\u003d, \u003e\u003d)\n\t#returns a list of error message dictionaries\t\n\tdef checkFunc5(data):\n\t\terrors\u003d[]\n\t\trow\u003d0\n\t\tfor x in data:\n\t\t\tp2\u003dx[\"p2\"]\n\t\t\tfunc\u003dx[\"recipe_function\"]\n\t\t\tif p2 not in [0,1,2] and func\u003d\u003d5:\n\t\t\t\terrors.append({\"message\":\"F5- P2 must be 0, 1, or 2\", \"Row\":row, \"Col\":\"p2\"})\n\t\t\trow+\u003d1\n\t\treturn errors\n\t\n\t#checks that the function tagPath type cooresponds to what the function expects.\n\t#returns a list of error message dictionaries\t\n\tdef checkFuncTagType(data):\n\t\terrors\u003d[]\n\t\trow\u003d0\n\t\tfor x in data:\n\t\t\tpath\u003dx[\"t1\"]\n\t\t\tfunc\u003dx[\"recipe_function\"]\n\t\t\tif func\u003d\u003d7:\n\t\t\t\tconfig \u003d system.tag.getConfiguration(path, False)[0]\n\t\t\t\tdataType\u003d\"Unknown\"\n\t\t\t\tif \"typeId\" not in config.keys():\n\t\t\t\t\tif \"dataType\" in config.keys():\n\t\t\t\t\t\tdataType\u003dconfig[\"dataType\"]\n\t\t\t\tif str(dataType) !\u003d \u0027String\u0027:\n\t\t\t\t\terrors.append({\"message\":\u0027Tag Path \"%s\" is (%s) not a String Type\u0027 %(path,dataType),\"tagPath\":path, \"Row\":row+1, \"Col\":\"t1\"})\n\t\t\tif func in [1,2,4,5]:\n\t\t\t\tnumericList\u003d[\u0027Int1\u0027,\u0027Float4\u0027,\u0027Int2\u0027,\u0027Int8\u0027,\u0027Int4\u0027,\u0027Float8\u0027,\u0027Boolean\u0027]\n\t\t\t\tconfig \u003d system.tag.getConfiguration(path, False)[0]\n\t\t\t\tif \"dataType\" in config.keys():\n\t\t\t\t\tdataType\u003dstr(config[\"dataType\"])\n\t\t\t\t\tif dataType not in numericList:\n\t\t\t\t\t\terrors.append({\"message\":\u0027Tag Path \"%s\" is (%s) not a Numeric Type\u0027 %(path,dataType),\"tagPath\":path, \"Row\":row+1, \"Col\":\"t1\"})\n\t\t\t\n\t\t\trow+\u003d1\n\t\t\t\n\t\treturn errors\n\t\n\tself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").refreshBinding(\"custom.selectRunning\")\n\trunningError\u003d0\n\trunningErrors\u003d[]\n\tnameError\u003d0\n\tnameErrors\u003d[]\n\t\n\t\n\ttableData\u003dself.getSibling(\"Table\").props.data\n\t\n\t\n\t#run all the sub functions to generate lists of potential errors based of the recipe defined in the table.\n\ttagCheck\u003dcheckPaths(tableData)\n\tf45Check\u003dcheckFunc4and5(tableData)\n\tf2Check\u003dcheckFunc2(tableData)\n\tf5Check\u003dcheckFunc5(tableData)\n\ttypeCheck\u003dcheckFuncTagType(tableData)\n\t\n\tself.custom.runningError\u003d0\n\t\n\t#checks to see if the recipe is running and generates running error if it is.\n\tif self.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").custom.selectRunning:\n\t\trunningError\u003d1\n\t\tself.custom.runningError\u003d1\n\t\trunningErrors\u003d[{\"message\":\"Recipe Cannot Be Edited While Running\", \"Row\":\"All\", \"Col\":\"All\"}]\n\t\n\t#checks to see if a name as been defined and if it is unique.\n\t\n\t\t\t\n\tif self.getSibling(\"TextField\").props.text\u003d\u003d\"\":\n\t\tnameError\u003d1\n\t\tnameErrors\u003d[{\"message\":\"Recipe Name Required to Create\", \"Row\":\"All\", \"Col\":\"All\"}]\n\t\n\t#counts the total number of errors generated.\n\terrorCount\u003dlen(tagCheck)+len(f45Check)+len(f2Check)+len(f5Check)+runningError+nameError+len(typeCheck)\n\t\n\t\n\tself.custom.nameError\u003dnameError\n\tself.custom.errors\u003derrorCount\n\t\n\t\n\t#checks to see if errors contain only running error. Used for Creating new recipe\n\tif errorCount-runningError\u003c\u003d0:\n\t\tself.custom.errorsChecked\u003dTrue\n\telse:\n\t\tself.custom.errorsChecked\u003dFalse\n\t\n\t\n\t#checks to see if erros only contains a naming error. Used for generating new recipes\n\tif nameError\u003d\u003d1 and errorCount\u003d\u003d1 and runningError\u003d\u003d0:\n\t\tself.custom.nameErrorOnly\u003dTrue\n\telse:\n\t\tself.custom.nameErrorOnly\u003dFalse\t\n\t\n\t\n\t#creates a list of all errors for displaying in the error table.\n\terrorList\u003d[]\n\tfor error in tagCheck:\n\t\terrorList.append(error)\n\tfor error in f45Check:\n\t\terrorList.append(error)\n\tfor error in f2Check:\n\t\terrorList.append(error)\n\tfor error in f5Check:\n\t\terrorList.append(error)\n\tfor error in typeCheck:\n\t\terrorList.append(error)\n\tfor error in runningErrors:\n\t\terrorList.append(error)\n\tfor error in nameErrors:\n\t\terrorList.append(error)\n\n\tself.custom.errorList\u003derrorList"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Error Check"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "expression": "len({../Table.props.data})\u003e0"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "path": "material/pageview"
+            }
+          },
+          "primary": false,
+          "style": {
+            "marginBottom": "3px",
+            "marginLeft": "3px",
+            "marginRight": "3px",
+            "marginTop": "3px"
+          },
+          "text": "Error Check Recipe",
+          "textStyle": {
+            "color": ""
+          }
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "meta": {
+          "name": "Table Errors"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "propConfig": {
+          "position.basis": {
+            "binding": {
+              "config": {
+                "expression": "35+len({../Button Error Check.custom.errorList})*25+\"px\""
+              },
+              "type": "expr"
+            }
+          },
+          "position.display": {
+            "binding": {
+              "config": {
+                "expression": "{../Button Error Check.custom.errors}\u003e0"
+              },
+              "type": "expr"
+            }
+          },
+          "props.data": {
+            "binding": {
+              "config": {
+                "path": "../Button Error Check.custom.errorList"
+              },
+              "type": "property"
+            }
+          },
+          "props.selection.selectedRow": {
+            "onChange": {
+              "enabled": null,
+              "script": "\t#when a row is selected this will navigate the user to the recipe row where the error was flagged.\n\t\n\tif currentValue.value!\u003d-1 and  currentValue.value!\u003dNone:\n\t\trow\u003dself.props.data[int(currentValue.value)].Row\n\t\tcol\u003dself.props.data[int(currentValue.value)].Col\n\t\tif row!\u003d\"All\" and col!\u003d\"All\":\n\t\t\tself.getSibling(\"Table\").props.selection.selectedColumn\u003dcol\n\t\t\tself.getSibling(\"Table\").props.selection.selectedRow\u003drow-1\n\t\t\tself.getSibling(\"Table Errors\").props.selection.selectedRow\u003d-1\n\t\t\tself.getSibling(\"Table Errors\").props.selection.selectedColumn\u003d-1"
+            }
+          }
+        },
+        "props": {
+          "columns": [
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "message",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": "Error Messages"
+              },
+              "justify": "left",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": true,
+              "style": {
+                "classes": "",
+                "color": "#FF0000"
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": "350px"
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "Row",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": "Row"
+              },
+              "justify": "center",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": false,
+              "style": {
+                "classes": "",
+                "color": "#FF0000"
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": ""
+            },
+            {
+              "align": "center",
+              "boolean": "checkbox",
+              "dateFormat": "MM/DD/YYYY",
+              "editable": false,
+              "field": "Col",
+              "filter": {
+                "boolean": {
+                  "condition": ""
+                },
+                "date": {
+                  "condition": "",
+                  "value": ""
+                },
+                "enabled": false,
+                "number": {
+                  "condition": "",
+                  "value": ""
+                },
+                "string": {
+                  "condition": "",
+                  "value": ""
+                },
+                "visible": "on-hover"
+              },
+              "footer": {
+                "align": "center",
+                "justify": "left",
+                "style": {
+                  "classes": ""
+                },
+                "title": ""
+              },
+              "header": {
+                "align": "center",
+                "justify": "center",
+                "style": {
+                  "classes": ""
+                },
+                "title": "Column"
+              },
+              "justify": "center",
+              "number": "value",
+              "numberFormat": "0,0.##",
+              "progressBar": {
+                "bar": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "max": 100,
+                "min": 0,
+                "track": {
+                  "color": "",
+                  "style": {
+                    "classes": ""
+                  }
+                },
+                "value": {
+                  "enabled": true,
+                  "format": "0,0.##",
+                  "justify": "center",
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              },
+              "render": "auto",
+              "resizable": true,
+              "sort": "none",
+              "sortable": false,
+              "strictWidth": false,
+              "style": {
+                "classes": "",
+                "color": "#FF0000"
+              },
+              "toggleSwitch": {
+                "color": {
+                  "selected": "",
+                  "unselected": ""
+                }
+              },
+              "viewParams": {},
+              "viewPath": "",
+              "visible": true,
+              "width": ""
+            }
+          ],
+          "dragOrderable": false,
+          "pager": {
+            "bottom": false,
+            "initialOption": 100
+          },
+          "rows": {
+            "height": 25
+          },
+          "style": {
+            "margin": "5px"
+          }
+        },
+        "type": "ia.display.table"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t\n\t#add a recipe to the database\n\tdef addRecipe(name):\n\t\t#add recipe and get key back from update query. Used in step table update\n\t\t#try:\n\t\tkey\u003dsystem.db.runNamedQuery(path\u003d\"Exchange/SFC Recipe Handler/Update Add Recipe\",parameters\u003d{\"recipeName\":name}, getKey\u003d1)\n\t\tsystem.perspective.print(key)\n\t\t#except: #this should execute if the driver for psotgres is not up to date\n\t\t#\tsystem.db.runNamedQuery(path\u003d\"Exchange/SFC Recipe Handler/Update Add Recipe\",parameters\u003d{\"recipeName\":name})\n\t\t#\tkeydata\u003dsystem.db.runNamedQuery(path\u003d\"Exchange/SFC Recipe Handler/Query New Recipe Key\")\n\t\t#\tkey\u003dkeydata.getValueAt(0,0)\n\t\t\t\n\t\t#add steps to step table\n\t\tsteps\u003dself.getSibling(\"Table\").props.data\n\t\tstepNum\u003d1\n\t\t\n\t\t#build recipe step and add it to database table\n\t\tfor step in steps:\n\t\t\tp1\u003dstep[\"p1\"]\n\t\t\tp2\u003dstep[\"p2\"]\n\t\t\tp3\u003dstep[\"p3\"]\n\t\t\tt1\u003dstep[\"t1\"]\n\t\t\tp1Unit\u003dstep[\"p1Unit\"]\n\t\t\tp2Unit\u003dstep[\"p2Unit\"]\n\t\t\tp3Unit\u003dstep[\"p3Unit\"]\n\t\t\tpause\u003dstep[\"Pause\"]\n\t\t\t\n\t\t\t\n\t\t\tparams\u003d{\n\t\t\t\t\"recipeId\":key,\n\t\t\t\t\"recipeStep\":stepNum,\n\t\t\t\t\"recipeFunction\":step[\"recipe_function\"],\n\t\t\t\t\"stepDescrip\":step[\"step_descrip\"],\n\t\t\t\t\"p1\":p1,\n\t\t\t\t\"p2\":p2,\n\t\t\t\t\"p3\":p3,\n\t\t\t\t\"t1\":t1,\n\t\t\t\t\"p1Unit\":p1Unit,\n\t\t\t\t\"p2Unit\":p2Unit,\n\t\t\t\t\"p3Unit\":p3Unit,\n\t\t\t\t\"pauseAction\":pause}\n\t\t\t\t\n\t\t\tstepPath\u003d\"Exchange/SFC Recipe Handler/Update Add Recipe Step\"\n\t\t\tsystem.db.runNamedQuery(stepPath,params)\n\t\t\tstepNum+\u003d1\n\t\tself.getSibling(\"Table\").props.data\u003d[]\n\t\n\t\n\t#delete recipe from database recipe table and step table\n\tdef deleteRecipe():\n\t\trecipe_id\u003dself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").props.value\n\t\tif recipe_id is not None:\n\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Delete Recipe Steps by Recipe\",{\"recipeId\":recipe_id})\n\t\t\tsystem.db.runNamedQuery(\"Exchange/SFC Recipe Handler/Update Delete Recipe\",{\"id\":recipe_id})\n\n\t\n\t\n\t\n\t#if a recipe is just being added, (NOT MODIFIED) just addit to the database\n\tif not self.view.params.modifyRecipe:\n\t\taddRecipe(self.getSibling(\"TextField\").props.text)\n\t\n\t\n\t#if a recipe is being modified, delete the recipe and recreate. The database rows are not updated.\n\telse:\n\t\tdropdownval\u003dself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").props.value\n\t\tdropdownOptions\u003dself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").props.options\n\t\trecipeName\u003d\"\"\n\t\tfor item in dropdownOptions:\n\t\t\tif item[\"value\"]\u003d\u003ddropdownval:\n\t\t\t\trecipeName\u003ditem[\"label\"]\n\t\t\t\tbreak\n\t\tif recipeName!\u003d\"\":\n\t\t\tdeleteRecipe()\n\t\t\taddRecipe(recipeName)\n\t\n\t\n\t#set all fields to default/blank\n\tself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").refreshBinding(\"props.options\")\n\tself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").props.value\u003dNone\n\tself.getSibling(\"Table\").props.data\u003d[]\n\tself.getSibling(\"Button Error Check\").custom.errors\u003d0\n\tself.getSibling(\"Button Error Check\").custom.errorsChecked\u003dFalse\n\tself.getSibling(\"Button Error Check\").custom.nameErrorOnly\u003dFalse\n\tself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").refreshBinding(\"props.options\")"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Create"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "expression": "if(!{view.params.modifyRecipe},\r\n({../TextField.props.text}!\u003d\"\" \u0026\u0026 len({../Table.props.data})\u003e0 \u0026\u0026 {../TextField.custom.uniqueName}\u0026\u0026{../Button Error Check.custom.errorsChecked}),\r\n{../FlexContainer Modify/Dropdown.props.value} !\u003dNull \u0026\u0026 len({../Table.props.data})\u003e0 \u0026\u0026 ({../Button Error Check.custom.nameErrorOnly}||{../Button Error Check.custom.errorsChecked})\u0026\u0026{../Button Error Check.custom.runningError}\u003d0)"
+              },
+              "type": "expr"
+            }
+          },
+          "props.image.icon.path": {
+            "binding": {
+              "config": {
+                "expression": "if({view.params.modifyRecipe},\"material/published_with_changes\",\"material/library_add\")"
+              },
+              "type": "expr"
+            }
+          },
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "if({view.params.modifyRecipe},\"Apply Recipe Changes\",\"Create Recipe\")"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "color": "#00AC00"
+            }
+          },
+          "primary": false,
+          "style": {
+            "marginBottom": "3px",
+            "marginLeft": "3px",
+            "marginRight": "3px",
+            "marginTop": "3px"
+          },
+          "textStyle": {
+            "color": "#00AC00"
+          }
+        },
+        "type": "ia.input.button"
+      },
+      {
+        "events": {
+          "component": {
+            "onActionPerformed": {
+              "config": {
+                "script": "\t#add a recipe to the database\n\tdef addRecipe(name):\n\t\t#add recipe and get key back from update query. Used in step table update\n\t\ttry:\n\t\t\tkey\u003dsystem.db.runNamedQuery(path\u003d\"Exchange/SFC Recipe Handler/Update Add Recipe\",parameters\u003d{\"recipeName\":name}, getKey\u003d1)\n\t\t\n\t\texcept: #this should execute if the driver for psotgres is not up to date\n\t\t\tsystem.db.runNamedQuery(path\u003d\"Exchange/SFC Recipe Handler/Update Add Recipe\",parameters\u003d{\"recipeName\":name})\n\t\t\tkeydata\u003dsystem.db.runNamedQuery(path\u003d\"Exchange/SFC Recipe Handler/Query New Recipe Key\")\n\t\t\tkey\u003dkeydata.getValueAt(0,0)\n\t\t\n\t\t#add steps to step table\n\t\tsteps\u003dself.getSibling(\"Table\").props.data\n\t\tstepNum\u003d1\n\t\t\n\t\t#build recipe step and add it to database table\n\t\tfor step in steps:\n\t\t\tp1\u003dstep[\"p1\"]\n\t\t\tp2\u003dstep[\"p2\"]\n\t\t\tp3\u003dstep[\"p3\"]\n\t\t\tt1\u003dstep[\"t1\"]\n\t\t\tp1Unit\u003dstep[\"p1Unit\"]\n\t\t\tp2Unit\u003dstep[\"p2Unit\"]\n\t\t\tp3Unit\u003dstep[\"p3Unit\"]\n\t\t\tpause\u003dstep[\"Pause\"]\n\t\t\t\n\t\t\tparams\u003d{\n\t\t\t\t\"recipeId\":key,\n\t\t\t\t\"recipeStep\":stepNum,\n\t\t\t\t\"recipeFunction\":step[\"recipe_function\"],\n\t\t\t\t\"stepDescrip\":step[\"step_descrip\"],\n\t\t\t\t\"p1\":p1,\n\t\t\t\t\"p2\":p2,\n\t\t\t\t\"p3\":p3,\n\t\t\t\t\"t1\":t1,\n\t\t\t\t\"p1Unit\":p1Unit,\n\t\t\t\t\"p2Unit\":p2Unit,\n\t\t\t\t\"p3Unit\":p3Unit,\n\t\t\t\t\"pauseAction\":pause}\n\t\t\t\t\n\t\t\tstepPath\u003d\"Exchange/SFC Recipe Handler/Update Add Recipe Step\"\n\t\t\tsystem.db.runNamedQuery(stepPath,params)\n\t\t\tstepNum+\u003d1\n\t\tself.getSibling(\"Table\").props.data\u003d[]\n\t\n\n\n\taddRecipe(self.getSibling(\"TextField\").props.text)\n\tself.parent.getChild(\"FlexContainer Modify\").getChild(\"Dropdown\").refreshBinding(\"props.options\")"
+              },
+              "scope": "G",
+              "type": "script"
+            }
+          }
+        },
+        "meta": {
+          "name": "Button Create Modified"
+        },
+        "position": {
+          "basis": "34px"
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "config": {
+                "path": "view.params.modifyRecipe"
+              },
+              "type": "property"
+            }
+          },
+          "props.enabled": {
+            "binding": {
+              "config": {
+                "expression": "({../TextField.props.text}!\u003d\"\" \u0026\u0026 \r\nlen({../Table.props.data})\u003e0 \u0026\u0026\r\n{../TextField.custom.uniqueName})\u0026\u0026{../Button Error Check.custom.errorsChecked}"
+              },
+              "type": "expr"
+            }
+          },
+          "props.text": {
+            "binding": {
+              "config": {
+                "expression": "if({this.props.enabled},\u0027Create Recipe \"\u0027+{../TextField.props.text}+\u0027\"\u0027,\"Create Recipe. Add Recipe Name\")"
+              },
+              "type": "expr"
+            }
+          }
+        },
+        "props": {
+          "image": {
+            "icon": {
+              "color": "#00AC00",
+              "path": "material/library_add"
+            }
+          },
+          "primary": false,
+          "style": {
+            "marginBottom": "3px",
+            "marginLeft": "3px",
+            "marginRight": "3px",
+            "marginTop": "3px"
+          },
+          "textStyle": {
+            "color": "#00AC00"
+          }
+        },
+        "type": "ia.input.button"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column"
+    },
+    "type": "ia.container.flex"
+  }
+}

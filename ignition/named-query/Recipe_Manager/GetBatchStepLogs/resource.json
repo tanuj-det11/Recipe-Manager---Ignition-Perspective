@@ -1,0 +1,40 @@
+{
+  "scope": "DG",
+  "version": 2,
+  "restricted": false,
+  "overridable": true,
+  "files": [
+    "query.sql"
+  ],
+  "attributes": {
+    "useMaxReturnSize": false,
+    "autoBatchEnabled": false,
+    "fallbackValue": "",
+    "maxReturnSize": 100,
+    "cacheUnit": "SEC",
+    "type": "Query",
+    "enabled": true,
+    "cacheAmount": 1,
+    "cacheEnabled": false,
+    "database": "Recipe_Manager",
+    "fallbackEnabled": false,
+    "lastModificationSignature": "c50a00a7780b05e8650f2669fde3a5c10f592ac4dc68a810d631f218a3410b7b",
+    "permissions": [
+      {
+        "zone": "",
+        "role": ""
+      }
+    ],
+    "lastModification": {
+      "actor": "brad@detron.com.au",
+      "timestamp": "2026-01-06T06:48:37Z"
+    },
+    "parameters": [
+      {
+        "type": "Parameter",
+        "identifier": "batchId",
+        "sqlType": 2
+      }
+    ]
+  }
+}

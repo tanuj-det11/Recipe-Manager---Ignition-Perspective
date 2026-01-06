@@ -1,0 +1,16 @@
+{
+  "base": {
+    "style": {
+      "color": "#888888",
+      "fontFamily": "Roboto",
+      "fontSize": "20px",
+      "fontWeight": "bold",
+      "letterSpacing": "0.5px",
+      "marginBottom": "6px",
+      "overflowWrap": "normal",
+      "textAlign": "center",
+      "textOverflow": "ellipsis",
+      "textTransform": "uppercase"
+    }
+  }
+}
